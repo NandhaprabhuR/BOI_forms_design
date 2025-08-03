@@ -1,7 +1,8 @@
 import 'package:boiforms/screens/pdf_helpers.dart';
 import 'package:boiforms/screens/pdfdesign2.dart';
 import 'package:boiforms/screens/pdfdesign3.dart';
-import 'package:boiforms/screens/pdfdesign4.dart'; // 1. IMPORT THE NEW FILE
+import 'package:boiforms/screens/pdfdesign4.dart';
+import 'package:boiforms/screens/pdfdesign5.dart'; // 1. IMPORT THE NEW FILE
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -32,7 +33,6 @@ class PdfDesignPage extends StatelessWidget {
                 pw.MultiPage(
                   pageFormat: PdfPageFormat.a4,
                   margin: const pw.EdgeInsets.all(15),
-                  // ADDED FOOTER for automatic and error-free page numbering
                   footer: (pw.Context context) {
                     return pw.Container(
                         alignment: pw.Alignment.center,
@@ -58,8 +58,13 @@ class PdfDesignPage extends StatelessWidget {
                     // The content from page 3 is added after page 2
                     buildThirdPage(),
 
-                    // 2. ADD THE FOURTH PAGE CONTENT HERE
+                    // The content for page 4 is added here.
+                    // It will overflow onto page 5, which is expected.
                     buildFourthPage(),
+
+                    // 2. ADD THE FIFTH PAGE CONTENT HERE
+                    // This will appear after the overflowed content from page 4.
+                    buildFifthPage(),
                   ],
                 ),
               );
