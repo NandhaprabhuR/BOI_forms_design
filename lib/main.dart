@@ -1,4 +1,4 @@
-import 'package:boiforms/screens/pdfdesign.dart'; // Import the new PDF design screen
+import 'package:boiforms/screens/pdfdesign1.dart'; // Import the new PDF design screen
 import 'package:flutter/material.dart';
 
 void main() {
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
 // // import 'package:boiforms/screens/page7.dart';
 // // import 'package:boiforms/screens/page8.dart';
 // // import 'package:boiforms/screens/page9.dart';
-// import 'package:boiforms/screens/pdfdesign.dart'; // Import the new PDF design screen
+// import 'package:boiforms/screens/pdfdesign1.dart'; // Import the new PDF design screen
 // import 'package:flutter/material.dart';
 //
 //
