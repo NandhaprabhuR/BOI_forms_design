@@ -1,6 +1,4 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -13,171 +11,613 @@ class PdfDesignPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Complete Form Preview'),
-        centerTitle: true,
         backgroundColor: Colors.blue[800],
         foregroundColor: Colors.white,
+        centerTitle: true,
       ),
-      body: PdfPreview(
-        maxPageWidth: 700,
-        build: (format) => _generatePdf(format),
+      body: Center(
+        child: ElevatedButton(
+          child: const Text("Generate PDF"),
+          onPressed: () {
+            Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
+              final pdf = pw.Document();
+
+              pdf.addPage(
+                pw.MultiPage(
+                  pageFormat: PdfPageFormat.a4,
+                  margin: const pw.EdgeInsets.all(20),
+                  build: (pw.Context context) {
+                    return [
+                      _buildHeader(),
+                      _buildPersonalDetails(),
+                    ];
+                  },
+                ),
+              );
+
+              return pdf.save();
+            });
+          },
+        ),
       ),
     );
   }
 
-  // --- Main PDF Generation Function ---
-  Future<Uint8List> _generatePdf(PdfPageFormat format) async {
-    final doc = pw.Document();
-
-    final regularFont = await rootBundle.load("assets/fonts/Roboto-Regular.ttf");
-    final boldFont = await rootBundle.load("assets/fonts/Roboto-Bold.ttf");
-
-    final theme = pw.ThemeData.withFont(
-      base: pw.Font.ttf(regularFont),
-      bold: pw.Font.ttf(boldFont),
+  // --- HELPER WIDGETS ---
+  pw.Widget _formField(String label, pw.Widget child, {pw.Widget? subLabel, double width = 100}) {
+    return pw.Row(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.SizedBox(
+          width: width,
+          child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(label, style: const pw.TextStyle(fontSize: 8)),
+                if (subLabel != null) subLabel,
+              ]),
+        ),
+        pw.SizedBox(width: 5),
+        pw.Expanded(child: child),
+      ],
     );
-
-    doc.addPage(
-      pw.Page(
-        theme: theme,
-        pageFormat: format,
-        build: (pw.Context context) {
-          return pw.Column(
-            children: [
-              _buildHeader(context),
-              _buildSection1(context),
-              _buildSection2(context),
-              _buildSection3(context),
-            ],
-          );
-        },
-      ),
-    );
-
-    return doc.save();
   }
 
-  // --- SECTION BUILDERS ---
+  pw.Widget _labeledCheckbox(String label, {bool checked = false}) {
+    return pw.Row(mainAxisSize: pw.MainAxisSize.min, children: [
+      _checkBox(checked: checked),
+      pw.SizedBox(width: 2),
+      pw.Text(label, style: const pw.TextStyle(fontSize: 8)),
+    ]);
+  }
 
-  pw.Widget _buildHeader(pw.Context context) {
-    return pw.Column(children: [
-      pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
-        pw.Text('PSB', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-        pw.Column(children: [
-          pw.Text('ACCOUNT OPENING FORM FOR RESIDENT INDIVIDUAL (PART-1)', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11)),
-          pw.Text('CUSTOMER INFORMATION SHEET (CIF Creation/Amendment)', style: const pw.TextStyle(fontSize: 9)),
+  // --- PDF SECTION BUILDERS ---
+
+  pw.Widget _buildPersonalDetails() {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Container(
+          width: double.infinity,
+          color: PdfColors.grey200,
+          padding: const pw.EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+          child: pw.Text('1. Personal Details',
+              style: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  fontSize: 9,
+                  color: PdfColors.black)),
+        ),
+        pw.SizedBox(height: 5),
+        _buildIdAndBasicInfo(),
+        _buildFamilyAndDependantInfo(),
+        _buildStatusAndCategoryInfo(),
+      ],
+    );
+  }
+
+  pw.Widget _buildIdAndBasicInfo() {
+    return pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          _formField(
+            'Existing Customer ID:',
+            _charBoxes('', 15),
+            subLabel: pw.Text('(If applicable)', style: const pw.TextStyle(fontSize: 7)),
+          ),
+          pw.SizedBox(height: 2),
+          _formField(
+            'Name*',
+            pw.Row(children: [
+              pw.Column(children: [
+                _charBoxes('Mr.', 4),
+                pw.Text('Prefix', style: const pw.TextStyle(fontSize: 7))
+              ]),
+              pw.SizedBox(width: 5),
+              pw.Expanded(child: _charBoxes('ARUNKUMAR', 25)),
+            ]),
+            subLabel: pw.Text('(Same as ID Proof)', style: const pw.TextStyle(fontSize: 7)),
+          ),
+          pw.SizedBox(height: 2),
+          _formField('Maiden Name:', pw.Row(children: [
+            pw.Column(children: [
+              _charBoxes('', 4),
+              pw.Text('Prefix', style: const pw.TextStyle(fontSize: 7))
+            ]),
+            pw.SizedBox(width: 5),
+            pw.Expanded(child: _charBoxes('', 25)),
+          ]),
+          ),
+          pw.SizedBox(height: 2),
+          pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+            pw.Expanded(
+              flex: 2,
+              child: _formField(
+                'Date of Birth*',
+                pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      _charBoxes('15032000', 8),
+                      pw.Text('Prefix', style: const pw.TextStyle(fontSize: 7)),
+                    ]),
+              ),
+            ),
+            pw.Expanded(
+              flex: 3,
+              child: pw.Row(children: [
+                pw.Text('Gender*', style: const pw.TextStyle(fontSize: 8)),
+                pw.SizedBox(width: 5),
+                _labeledCheckbox('Male', checked: true),
+                pw.SizedBox(width: 5),
+                _labeledCheckbox('Female'),
+                pw.SizedBox(width: 5),
+                _labeledCheckbox('Transgender'),
+              ]),
+            ),
+            pw.Expanded(
+              flex: 3,
+              child: pw.Row(children: [
+                pw.Text('Marital Status*',
+                    style: const pw.TextStyle(fontSize: 8)),
+                pw.SizedBox(width: 5),
+                _labeledCheckbox('Married', checked: true),
+                pw.SizedBox(width: 5),
+                _labeledCheckbox('Unmarried'),
+                pw.SizedBox(width: 5),
+                _labeledCheckbox('Others'),
+              ]),
+            ),
+          ]),
+        ]);
+  }
+
+  pw.Widget _buildFamilyAndDependantInfo() {
+    return pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.SizedBox(height: 2),
+          _formField('Name of Father*', _charBoxes('BALASUBRAMANIYAM', 30)),
+          pw.SizedBox(height: 2),
+          _formField('Name of Mother*', _charBoxes('GOWRI', 30)),
+          pw.SizedBox(height: 2),
+          _formField('Name of Spouse*', _charBoxes('KRITHIKA', 30), subLabel: pw.Text('(Father\'s name is mandatory if PAN is not provided)', style: const pw.TextStyle(fontSize: 6))),
+          pw.SizedBox(height: 2),
+          _formField('No. of Dependents', _charBoxes('', 2)),
+          pw.SizedBox(height: 2),
+          _formField('Illiterate', pw.Row(
+              children: [
+                _labeledCheckbox('YES'),
+                pw.SizedBox(width: 10),
+                _labeledCheckbox('NO', checked: true),
+                pw.SizedBox(width: 10),
+                pw.Text('if yes : Identification Marks : ________________________', style: const pw.TextStyle(fontSize: 8)),
+              ]
+          )),
+          pw.SizedBox(height: 2),
+          _formField('Name of Guardian', _charBoxes('', 30), subLabel: pw.Text('(In Case of Minor*)', style: const pw.TextStyle(fontSize: 7))),
+          pw.SizedBox(height: 2),
+          _formField('Relationship with Guardian', pw.Container(height: 10, decoration: const pw.BoxDecoration(border: pw.Border(bottom: pw.BorderSide())))),
+        ]
+    );
+  }
+
+  // UPDATED: This function is now complete
+  pw.Widget _buildStatusAndCategoryInfo() {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.SizedBox(height: 5),
+        _formField(
+          'Nationality*',
+          pw.Row(children: [
+            _labeledCheckbox('In-Indian', checked: true),
+            pw.SizedBox(width: 10),
+            _labeledCheckbox('Others'),
+            pw.SizedBox(width: 10),
+            pw.Text('Country Name:', style: const pw.TextStyle(fontSize: 8)),
+            pw.SizedBox(width: 5),
+            pw.Expanded(child: _charBoxes('', 15)),
+          ]),
+        ),
+        pw.SizedBox(height: 4),
+        _formField(
+          'Occupation Type*',
+          pw.Column(children: [
+            pw.Row(children: [
+              pw.Expanded(child: _labeledCheckbox('S-Service')),
+              pw.Expanded(child: _labeledCheckbox('Private Sector')),
+              pw.Expanded(child: _labeledCheckbox('Public Sector')),
+              pw.Expanded(child: _labeledCheckbox('Government Sector')),
+            ]),
+            pw.SizedBox(height: 2),
+            pw.Row(children: [
+              pw.Expanded(child: _labeledCheckbox('O-Others')),
+              pw.Expanded(child: _labeledCheckbox('Professional')),
+              pw.Expanded(child: _labeledCheckbox('Self employed')),
+              pw.Expanded(child: _labeledCheckbox('Retired')),
+              pw.Expanded(child: _labeledCheckbox('House Wife')),
+              pw.Expanded(child: _labeledCheckbox('Student')),
+            ]),
+            pw.SizedBox(height: 2),
+            pw.Row(children: [
+              pw.Expanded(child: _labeledCheckbox('B-Business')),
+              pw.Expanded(
+                  child: _labeledCheckbox('Agriculture', checked: true)),
+              pw.Expanded(
+                  flex: 2,
+                  child: _labeledCheckbox(
+                      'X-Not categorised-Please specify..................')),
+            ])
+          ]),
+        ),
+        pw.SizedBox(height: 4),
+        _formField('Monthly Income*', pw.Row(children: [
+          pw.Text('Rs.', style: const pw.TextStyle(fontSize: 8)),
+          _charBoxes('300000', 8),
+          pw.SizedBox(width: 15),
+          pw.Text(
+              'Net Worth(approx value) ______________ Ra. ______________',
+              style: const pw.TextStyle(fontSize: 8)),
+        ])),
+        pw.SizedBox(height: 4),
+        _formField('Religion:', pw.Row(children: [
+          _labeledCheckbox('Hindu', checked: true),
+          pw.SizedBox(width: 10),
+          _labeledCheckbox('Muslim'),
+          pw.SizedBox(width: 10),
+          _labeledCheckbox('Christian'),
+          pw.SizedBox(width: 10),
+          _labeledCheckbox('Sikh'),
+          pw.SizedBox(width: 10),
+          _labeledCheckbox('Others'),
+        ])),
+        pw.SizedBox(height: 4),
+        // --- NEWLY ADDED FIELDS START HERE ---
+        _formField('Category:', pw.Row(children: [
+          pw.Expanded(child: _labeledCheckbox('General')),
+          pw.Expanded(child: _labeledCheckbox('OBC')),
+          pw.Expanded(child: _labeledCheckbox('SC')),
+          pw.Expanded(child: _labeledCheckbox('ST')),
+          pw.Expanded(child: _labeledCheckbox('Minority')),
+        ])),
+        pw.SizedBox(height: 4),
+        _formField('Customer Type', pw.Row(children: [
+          _labeledCheckbox('General'),
+          pw.SizedBox(width: 4),
+          _labeledCheckbox('Sr. Citizen'),
+          pw.SizedBox(width: 4),
+          _labeledCheckbox('Pensioner'),
+          pw.SizedBox(width: 4),
+          _labeledCheckbox('Minor'),
+          pw.SizedBox(width: 4),
+          _labeledCheckbox('Staff/Ex Staff PF No...........'),
+          pw.SizedBox(width: 4),
+          _labeledCheckbox('Others (Specify)...........'),
+        ])),
+        pw.SizedBox(height: 4),
+        _formField('Person with disability', pw.Row(children: [
+          _labeledCheckbox('Yes'),
+          pw.SizedBox(width: 4),
+          _labeledCheckbox('No'),
+          pw.SizedBox(width: 8),
+          pw.Text('If yes,', style: const pw.TextStyle(fontSize: 8)),
+          pw.SizedBox(width: 4),
+          _labeledCheckbox('i. Visually impaired'),
+          pw.SizedBox(width: 4),
+          _labeledCheckbox('ii. Differently abled'),
+        ])),
+        pw.SizedBox(height: 4),
+        _formField('Educational Qualification:', pw.Row(children: [
+          pw.Expanded(child: _labeledCheckbox('Below SSC')),
+          pw.Expanded(child: _labeledCheckbox('SSC')),
+          pw.Expanded(child: _labeledCheckbox('HSC')),
+          pw.Expanded(child: _labeledCheckbox('Graduate')),
+          pw.Expanded(child: _labeledCheckbox('Post Graduate')),
+          pw.Expanded(child: _labeledCheckbox('Professional')),
+          pw.Expanded(child: _labeledCheckbox('Others')),
+        ])),
+        pw.SizedBox(height: 4),
+        _formField('Organization\'s Name:', pw.Container(height: 10, decoration: const pw.BoxDecoration(border: pw.Border(bottom: pw.BorderSide())))),
+        pw.SizedBox(height: 4),
+        pw.Row(children: [
+          pw.SizedBox(width: 105), // Manual alignment for this specific row
+          pw.Text('Designation/Profession:', style: const pw.TextStyle(fontSize: 8)),
+          _charBoxes('', 10),
+          pw.SizedBox(width: 15),
+          pw.Text('Nature of Business:', style: const pw.TextStyle(fontSize: 8)),
+          _charBoxes('', 10),
         ]),
-        pw.Text('बैंक ऑफ इंडिया\nBank of India', textAlign: pw.TextAlign.right, style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-      ]),
-      pw.SizedBox(height: 10),
-      _buildLabeledBoxesRow('Branch Name :', 'GANAPATHYPALAYAM', 15, 'Branch Code :', '', 6, 'Date :', '', 8),
-      pw.SizedBox(height: 5),
-      _buildLabeledBoxesRow('Customer ID:', '', 15, 'Application type:', null, 0, '', null, 0),
-      _buildLabeledBoxesRow('Account No.:', '', 15, 'CKYC No.:', '', 15, '', null, 0),
-    ]);
+        pw.SizedBox(height: 4),
+        _formField('Please Tick the Applicable box*:', pw.Row(children: [
+          pw.Expanded(child: _labeledCheckbox('Politically exposed Person')),
+          pw.Expanded(child: _labeledCheckbox('Related to politically Exposed Person')),
+          pw.Expanded(child: _labeledCheckbox('None')),
+        ])),
+        pw.SizedBox(height: 4),
+        _formField('ISO 3166 Country Code of Jurisdiction of Residence*', pw.Row(children: [
+          _charBoxes('', 2),
+          pw.SizedBox(width: 5),
+          pw.Text('(Code for India is IN)', style: const pw.TextStyle(fontSize: 8))
+        ])),
+        pw.SizedBox(height: 4),
+        _formField('Place/City of Birth*', pw.Row(children: [
+          _charBoxes('', 15),
+          pw.SizedBox(width: 10),
+          pw.Text('ISO 3166 Country of Code of Birth* ____________', style: const pw.TextStyle(fontSize: 8)),
+          pw.SizedBox(width: 10),
+          pw.Text('Citizenship ____________', style: const pw.TextStyle(fontSize: 8)),
+        ])),
+        pw.SizedBox(height: 4),
+        _formField('Country of Tax Residence in India only and not in any other country or territory outside India*',
+            pw.Row(children: [
+              _labeledCheckbox('Yes'),
+              pw.SizedBox(width: 10),
+              _labeledCheckbox('No'),
+              pw.SizedBox(width: 5),
+              pw.Text('(If No, please fill the FATCA details form - Annexure II)', style: const pw.TextStyle(fontSize: 7)),
+            ])),
+        pw.SizedBox(height: 4),
+        _formField('PAN*/Tax Identification Number or equivalent (If issued by jurisdiction)', _charBoxes('', 15), subLabel: pw.Text('(If PAN is not submitted, submit Form 60 - Annexure I)', style: const pw.TextStyle(fontSize: 7))),
+
+
+      ],
+    );
   }
 
-  pw.Widget _buildSection1(pw.Context context) {
-    return pw.Column(children: [
-      _buildSectionTitle('1. Personal Details'),
-      _buildLabeledBoxesRow('Existing Customer ID:', '', 15, '', null, 0, '', null, 0),
-      _buildLabeledBoxesRow('Name*:', 'Mr. ARUNKUMAR', 30, 'Maiden Name:', '', 30),
-      pw.Table(
-          columnWidths: { 0: const pw.FlexColumnWidth(1.2), 1: const pw.FlexColumnWidth(2), 2: const pw.FlexColumnWidth(1), 3: const pw.FlexColumnWidth(2)},
-          children: [
-            pw.TableRow(children: [
-              _buildLabel('Date of Birth*:'), _buildBoxes('15032000', 8),
-              _buildLabel('Gender*:'), _buildCheckboxRow([
-                pw.Checkbox(name: 'gender_male', value: true, tristate: true), pw.Text('Male', style: const pw.TextStyle(fontSize: 9)),
-              ]),
-            ]),
-            pw.TableRow(children: [
-              _buildLabel('Marital Status*:'), _buildCheckboxRow([
-                pw.Checkbox(name: 'marital_married', value: true, tristate: true), pw.Text('Married', style: const pw.TextStyle(fontSize: 9)),
-              ]),
-              _buildLabel('No. of Dependents:'), _buildBoxes('', 2),
-            ]),
-          ]
+  // --- UNCHANGED SECTIONS AND HELPERS ---
+
+  pw.Widget _buildHeader() {
+    // This function remains exactly the same as before
+    return pw.Container(
+      decoration: const pw.BoxDecoration(
+        border: pw.Border(
+          top: pw.BorderSide(width: 1.0),
+          left: pw.BorderSide(width: 1.0),
+          right: pw.BorderSide(width: 1.0),
+        ),
       ),
-      _buildLabeledBoxesRow('Name of Father*:', 'BALASUBRAMANIYAM', 30, 'Name of Mother*:', 'GOWRI', 30),
-      _buildLabeledBoxesRow('Name of Spouse*:', 'KRITHIKA', 30, 'Name of Guardian:', '', 30),
-      pw.Table(columnWidths: { 0: const pw.FlexColumnWidth(1.5), 1: const pw.FlexColumnWidth(4.5)}, children: [
-        pw.TableRow(children: [ _buildLabel('Nationality*:'), _buildCheckboxRow([pw.Checkbox(name: 'nationality_indian', value: true, tristate: true), pw.Text('In-Indian', style: const pw.TextStyle(fontSize: 9))])]),
-        pw.TableRow(children: [ _buildLabel('Occupation Type*:'), _buildCheckboxRow([
-          pw.Checkbox(name: 'occ_service', value: false), pw.Text('S-Service', style: const pw.TextStyle(fontSize: 9)),
-          pw.Checkbox(name: 'occ_business', value: false), pw.Text('B-Business', style: const pw.TextStyle(fontSize: 9)),
-          pw.Checkbox(name: 'occ_agri', value: true, tristate: true), pw.Text('Agriculture', style: const pw.TextStyle(fontSize: 9)),
-        ])]),
-        pw.TableRow(children: [ _buildLabel('Monthly Income*: Rs.'), _buildBoxes('30000', 6) ]),
-        pw.TableRow(children: [ _buildLabel('Religion:'), _buildCheckboxRow([pw.Checkbox(name: 'religion_hindu', value: true, tristate: true), pw.Text('Hindu', style: const pw.TextStyle(fontSize: 9)), pw.Checkbox(name: 'religion_muslim', value: false), pw.Text('Muslim', style: const pw.TextStyle(fontSize: 9))])]),
-        pw.TableRow(children: [ _buildLabel('Category:'), _buildCheckboxRow([pw.Checkbox(name: 'cat_gen', value: false), pw.Text('General', style: const pw.TextStyle(fontSize: 9)), pw.Checkbox(name: 'cat_obc', value: false), pw.Text('OBC', style: const pw.TextStyle(fontSize: 9)), pw.Checkbox(name: 'cat_sc', value: false), pw.Text('SC', style: const pw.TextStyle(fontSize: 9))])]),
-        pw.TableRow(children: [ _buildLabel('Customer Type:'), _buildCheckboxRow([pw.Checkbox(name: 'cust_gen', value: false), pw.Text('General', style: const pw.TextStyle(fontSize: 9)), pw.Checkbox(name: 'cust_sr', value: false), pw.Text('Sr. Citizen', style: const pw.TextStyle(fontSize: 9)), pw.Checkbox(name: 'cust_minor', value: false), pw.Text('Minor', style: const pw.TextStyle(fontSize: 9))])]),
-        pw.TableRow(children: [ _buildLabel('Person with disability:'), _buildCheckboxRow([pw.Checkbox(name: 'dis_yes', value: false), pw.Text('Yes', style: const pw.TextStyle(fontSize: 9)), pw.Checkbox(name: 'dis_no', value: true, tristate: true), pw.Text('No', style: const pw.TextStyle(fontSize: 9))])]),
-        pw.TableRow(children: [ _buildLabel('Educational Qualification:'), _buildCheckboxRow([pw.Checkbox(name: 'edu_grad', value: false), pw.Text('Graduate', style: const pw.TextStyle(fontSize: 9)), pw.Checkbox(name: 'edu_postgrad', value: false), pw.Text('Post Graduate', style: const pw.TextStyle(fontSize: 9))])]),
-      ]),
-      _buildLabeledBoxesRow('PAN*:', '', 10, 'Place/City of Birth*:', '', 15),
-    ]);
-  }
-
-  pw.Widget _buildSection2(pw.Context context) {
-    return pw.Column(children: [
-      _buildSectionTitle('2. Contact Details (All communications will be sent on provided Mobile No./Email-ID)'),
-      _buildLabeledBoxesRow('Mobile No. +91', '9999999999', 10, 'Alternate Mob. No.', '', 10),
-      _buildLabeledBoxesRow('Email ID:', '', 30, 'Tel(Off):', '', 10),
-      _buildLabeledBoxesRow('', null, 0, 'Tel(Res):', '', 10),
-    ]);
-  }
-
-  pw.Widget _buildSection3(pw.Context context) {
-    return pw.Column(children: [
-      _buildSectionTitle('3. Proof of Identity/Address (Please tick the appropriate Box (any one ID type) and give details)*'),
-      pw.Wrap(
-          spacing: 10, runSpacing: 5,
-          children: [
-            _buildCheckboxRow([pw.Checkbox(name: 'proof_passport', value: false), pw.Text('A. PASSPORT', style: const pw.TextStyle(fontSize: 9))]),
-            _buildCheckboxRow([pw.Checkbox(name: 'proof_voter', value: false), pw.Text('B. VOTER\'S IDENTITY CARD', style: const pw.TextStyle(fontSize: 9))]),
-            _buildCheckboxRow([pw.Checkbox(name: 'proof_dl', value: false), pw.Text('C. DRIVING LICENCE', style: const pw.TextStyle(fontSize: 9))]),
-            _buildCheckboxRow([pw.Checkbox(name: 'proof_aadhaar', value: true, tristate: true), pw.Text('D. Proof of possession of AADHAAR', style: const pw.TextStyle(fontSize: 9))]),
-            _buildCheckboxRow([pw.Checkbox(name: 'proof_nrega', value: false), pw.Text('E. NREGA JOB CARD', style: const pw.TextStyle(fontSize: 9))]),
-          ]
+      padding: const pw.EdgeInsets.all(8),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.SizedBox(
+                width: 100,
+                child: pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.center,
+                  children: [
+                    pw.Container(
+                      width: 30,
+                      height: 30,
+                      decoration: pw.BoxDecoration(
+                        shape: pw.BoxShape.circle,
+                        border: pw.Border.all(width: 1.5),
+                      ),
+                      child: pw.Center(
+                        child: pw.Text('PSB',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold, fontSize: 8)),
+                      ),
+                    ),
+                    pw.SizedBox(width: 4),
+                    pw.Expanded(
+                      child: pw.Text(
+                        'Aligned for Long-term lineup of Initiatives Across Nation for Customer Excellence',
+                        style: const pw.TextStyle(fontSize: 5),
+                        textAlign: pw.TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              pw.Spacer(),
+              pw.Expanded(
+                flex: 2,
+                child: pw.Column(
+                  children: [
+                    pw.Text(
+                        'ACCOUNT OPENING FORM FOR RESIDENT INDIVIDUAL (PART-I)',
+                        style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
+                    pw.Text('CUSTOMER INFORMATION SHEET (CIF Creation/Amendment)',
+                        style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold, fontSize: 8)),
+                    pw.Text(
+                      '(In case of joint accounts, Part-I(CIF Sheet) to be taken for each customer)',
+                      style: pw.TextStyle(
+                          fontStyle: pw.FontStyle.italic, fontSize: 7),
+                    ),
+                  ],
+                ),
+              ),
+              pw.Spacer(),
+              pw.SizedBox(
+                width: 100,
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.end,
+                      children: [
+                        pw.Text('बैंक ऑफ़ इंडिया',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold, fontSize: 8)),
+                        pw.SizedBox(width: 4),
+                        pw.Text('BOI',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold, fontSize: 14)),
+                        pw.Text('★',
+                            style: const pw.TextStyle(
+                                color: PdfColors.black, fontSize: 20)),
+                      ],
+                    ),
+                    pw.Text('Bank of India',
+                        style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold, fontSize: 7)),
+                    pw.SizedBox(height: 2),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.only(right: 1),
+                      child: pw.Row(
+                        mainAxisSize: pw.MainAxisSize.min,
+                        children: [
+                          pw.Text('Date:',
+                              style: const pw.TextStyle(fontSize: 8)),
+                          _charBoxes('', 8),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 5),
+          pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.end,
+            children: [
+              pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                children: [
+                  pw.Text('Branch Name:',
+                      style: const pw.TextStyle(fontSize: 8)),
+                  _charBoxes('GANAPATHYPALAYAM', 20),
+                  pw.SizedBox(width: 10),
+                  pw.Text('Branch Code', style: const pw.TextStyle(fontSize: 8)),
+                  _charBoxes('', 5),
+                ],
+              ),
+              pw.Spacer(),
+              pw.Container(
+                width: 120,
+                height: 40,
+                decoration:
+                pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
+                child: pw.Center(
+                  child: pw.Text(
+                    'Bank/Branch to affix rubber stamp of name and code no.',
+                    style: const pw.TextStyle(
+                        fontSize: 6, color: PdfColors.grey700),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 5),
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                  'Fields marked asterisk (*) are mandatory. Please fill up in BLOCK letters only and use black ink for signature',
+                  style: const pw.TextStyle(fontSize: 7)),
+              pw.SizedBox(height: 2),
+              pw.Text('(For office use only)',
+                  style: const pw.TextStyle(fontSize: 8)),
+              pw.SizedBox(height: 2),
+              pw.Row(
+                children: [
+                  pw.Text('Customer ID:',
+                      style: const pw.TextStyle(fontSize: 8)),
+                  _charBoxes('', 15),
+                  pw.Spacer(),
+                  pw.Text('Application type:',
+                      style: const pw.TextStyle(fontSize: 8)),
+                  _checkBox(),
+                  pw.Text('New', style: const pw.TextStyle(fontSize: 8)),
+                  pw.SizedBox(width: 5),
+                  _checkBox(),
+                  pw.Text('Update', style: const pw.TextStyle(fontSize: 8)),
+                ],
+              ),
+              pw.SizedBox(height: 1),
+              pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Row(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    children: [
+                      pw.Text('Account No.:',
+                          style: const pw.TextStyle(fontSize: 8)),
+                      _charBoxes('', 15),
+                    ],
+                  ),
+                  pw.Spacer(),
+                  pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Row(
+                          crossAxisAlignment: pw.CrossAxisAlignment.center,
+                          children: [
+                            pw.Text('CKYC No.:',
+                                style: const pw.TextStyle(fontSize: 8)),
+                            _charBoxes('', 20),
+                          ],
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.only(left: 45),
+                          child: pw.Text(
+                              '(Mandatory for CKYC update request)',
+                              style: const pw.TextStyle(fontSize: 6)),
+                        )
+                      ]),
+                ],
+              ),
+              pw.SizedBox(height: 1),
+              pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                children: [
+                  pw.Text('Account type:',
+                      style: const pw.TextStyle(fontSize: 8)),
+                  _checkBox(),
+                  pw.Text('Normal', style: const pw.TextStyle(fontSize: 8)),
+                  pw.SizedBox(width: 10),
+                  _checkBox(),
+                  pw.Text('Small (For low risk customers)',
+                      style: const pw.TextStyle(fontSize: 8)),
+                ],
+              ),
+            ],
+          )
+        ],
       ),
-      pw.SizedBox(height: 8),
-      _buildLabeledBoxesRow('Document No/Identification Number*:', '222222222222', 12, '', null, 0),
-      _buildLabeledBoxesRow('Issue Date*:', '', 8, 'Expiry Date (If applicable)*:', '', 8),
-    ]);
+    );
   }
 
-
-  // --- UTILITY WIDGETS ---
-
-  pw.Widget _buildSectionTitle(String title) {
-    return pw.Container( margin: const pw.EdgeInsets.symmetric(vertical: 4), padding: const pw.EdgeInsets.all(3), width: double.infinity, color: PdfColors.grey200, child: pw.Text(title, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9)));
-  }
-
-  pw.Widget _buildLabeledBoxesRow(String label1, String? value1, int count1, String? label2, String? value2, int? count2, [String? label3, String? value3, int? count3]) {
-    return pw.Container( padding: const pw.EdgeInsets.symmetric(vertical: 2.0), child: pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.center, children: [
-      pw.Expanded(flex: (label2 != null && label2.isNotEmpty) ? 2 : 1, child: _buildLabeledBoxes(label1, value1, count1)),
-      if(label2 != null && label2.isNotEmpty) pw.SizedBox(width: 10),
-      if(label2 != null && label2.isNotEmpty) pw.Expanded(flex: 2, child: _buildLabeledBoxes(label2, value2, count2!)),
-      if(label3 != null && label3.isNotEmpty) pw.SizedBox(width: 10),
-      if(label3 != null && label3.isNotEmpty) pw.Expanded(flex: 1, child: _buildLabeledBoxes(label3, value3, count3!)),
-    ],
-    ));
-  }
-
-  pw.Widget _buildLabeledBoxes(String label, String? value, int count) {
-    return pw.Row(children: [ _buildLabel(label), if(value != null) _buildBoxes(value, count) ]);
-  }
-
-  pw.Widget _buildBoxes(String value, int count) {
+  pw.Widget _charBoxes(String data, int count, {double width = 12}) {
     List<pw.Widget> boxes = [];
-    List<String> chars = value.split('');
     for (int i = 0; i < count; i++) {
-      boxes.add(pw.Container( width: 11, height: 13, decoration: pw.BoxDecoration(border: pw.Border.all(color: PdfColors.black, width: 0.5)), child: pw.Center(child: pw.Text(i < chars.length ? chars[i] : '', style: const pw.TextStyle(fontSize: 8))),));
+      boxes.add(
+        pw.Container(
+          width: width,
+          height: 14,
+          margin: const pw.EdgeInsets.symmetric(horizontal: 0.5),
+          alignment: pw.Alignment.center,
+          decoration: pw.BoxDecoration(
+            border: pw.Border.all(width: 0.5),
+          ),
+          child: data.length > i
+              ? pw.Text(data[i],
+              style: const pw.TextStyle(fontSize: 9, lineSpacing: 1))
+              : pw.SizedBox(),
+        ),
+      );
     }
     return pw.Row(children: boxes);
   }
 
-  pw.Widget _buildLabel(String text) { return pw.SizedBox(width: 100, child: pw.Text(text, style: const pw.TextStyle(fontSize: 9))); }
-
-  pw.Widget _buildCheckboxRow(List<pw.Widget> children) { return pw.Row( children: children.map((e) => pw.Padding(padding: const pw.EdgeInsets.only(right: 5), child: e)).toList() ); }
+  pw.Widget _checkBox({bool checked = false}) {
+    return pw.Container(
+      width: 10,
+      height: 10,
+      margin: const pw.EdgeInsets.symmetric(horizontal: 4),
+      decoration: pw.BoxDecoration(
+        border: pw.Border.all(width: 0.8),
+      ),
+      child: checked
+          ? pw.Center(
+          child: pw.Text('✓', style: const pw.TextStyle(fontSize: 9)))
+          : null,
+    );
+  }
 }
