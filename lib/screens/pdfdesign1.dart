@@ -7,6 +7,7 @@ import 'package:boiforms/screens/pdfdesign6.dart';
 import 'package:boiforms/screens/pdfdesign6.dart'; // 1. IMPORT THE NEW FILE
 import 'package:boiforms/screens/pdfdesign7.dart';
 import 'package:boiforms/screens/pdfdesign8.dart';
+import 'package:boiforms/screens/pdfdesign9.dart';
 
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
@@ -74,6 +75,7 @@ class PdfDesignPage extends StatelessWidget {
                     buildSixthPage(),
                     buildSeventhPage(),
                     buildEighthPage(),
+                    buildNinthPage(),
                   ],
                 ),
               );
