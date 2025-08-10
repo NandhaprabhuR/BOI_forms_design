@@ -14,29 +14,36 @@ pw.Widget buildSecondPage() {
     'pin': '638701',
   };
 
-  return pw.Column(
-    crossAxisAlignment: pw.CrossAxisAlignment.start,
-    children: [
-      _buildAddressSection(
-        title: '4. Address details',
-        tabs: ['Current', 'Permanent', 'Overseas'],
-        data: addressData,
-      ),
-      pw.SizedBox(height: 6),
-      _buildAddressSection(
-        title: '5. Address details',
-        tabs: ['Correspondence', 'Local', 'Same as Current/Permanent Address'],
-        data: addressData,
-      ),
-      pw.SizedBox(height: 6),
-      _buildProofOfAddressDeclaration(),
-      pw.SizedBox(height: 6),
-      _buildAlternateAddressProof(),
-      pw.SizedBox(height: 6),
-      _buildFinalDeclaration(),
-      pw.SizedBox(height: 6),
-      _buildOfficeUseSection(),
-    ],
+  // NEW: A container that wraps the entire page content to add a border.
+  return pw.Container(
+    decoration: pw.BoxDecoration(
+      border: pw.Border.all(color: PdfColors.black, width: 1),
+    ),
+    padding: const pw.EdgeInsets.all(10), // Adds space between content and border
+    child: pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        _buildAddressSection(
+          title: '4. Address details',
+          tabs: ['Current', 'Permanent', 'Overseas'],
+          data: addressData,
+        ),
+        pw.SizedBox(height: 6),
+        _buildAddressSection(
+          title: '5. Address details',
+          tabs: ['Correspondence', 'Local', 'Same as Current/Permanent Address'],
+          data: addressData,
+        ),
+        pw.SizedBox(height: 6),
+        _buildProofOfAddressDeclaration(),
+        pw.SizedBox(height: 6),
+        _buildAlternateAddressProof(),
+        pw.SizedBox(height: 6),
+        _buildFinalDeclaration(),
+        pw.SizedBox(height: 6),
+        _buildOfficeUseSection(),
+      ],
+    ),
   );
 }
 
@@ -134,7 +141,7 @@ pw.Widget _buildAddressSection({
   );
 }
 
-// UPDATED: Section 6 - Border removed
+// Section 6 - Unchanged
 pw.Widget _buildProofOfAddressDeclaration() {
   return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -145,7 +152,6 @@ pw.Widget _buildProofOfAddressDeclaration() {
           padding: const pw.EdgeInsets.all(2),
           child: pw.Text('6. If the Proof of Address as per Aadhar (OVD) provided does not contain current address', style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold)),
         ),
-        // This container no longer has a border
         pw.Container(
           width: double.infinity,
           padding: const pw.EdgeInsets.fromLTRB(8, 4, 8, 4),
@@ -155,7 +161,7 @@ pw.Widget _buildProofOfAddressDeclaration() {
   );
 }
 
-// UPDATED: Section 7 - Border removed
+// Section 7 - Unchanged
 pw.Widget _buildAlternateAddressProof() {
   return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -198,7 +204,6 @@ pw.Widget _buildAlternateAddressProof() {
             ]
         ),
         pw.SizedBox(height: 3),
-        // This container no longer has a border
         pw.Container(
           width: double.infinity,
           padding: const pw.EdgeInsets.fromLTRB(8, 4, 8, 4),
@@ -208,9 +213,8 @@ pw.Widget _buildAlternateAddressProof() {
   );
 }
 
-// Final Declaration Section (Unchanged)
+// Final Declaration Section - Unchanged
 pw.Widget _buildFinalDeclaration() {
-  // This function is unchanged
   return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -298,7 +302,7 @@ pw.Widget _buildFinalDeclaration() {
   );
 }
 
-// UPDATED: Section 9 - Horizontal line removed
+// Section 9 - Unchanged
 pw.Widget _buildOfficeUseSection() {
   pw.Widget emptyBox(double width) => pw.Container(
       width: width, height: 12, decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)));
@@ -356,7 +360,6 @@ pw.Widget _buildOfficeUseSection() {
         ),
         pw.SizedBox(height: 3),
         pw.Text('Details of one or two identification marks, if any, such as a mole or scar (mandatory for illiterate applicant)', style: const pw.TextStyle(fontSize: 7.5)),
-        // The horizontal line that was here has been removed.
         pw.SizedBox(height: 3),
         pw.Text('In person verification carried out and Signature/LTI of the applicant verified by:', style: const pw.TextStyle(fontSize: 7.5)),
         pw.SizedBox(height: 4),
