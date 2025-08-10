@@ -3,6 +3,10 @@ import 'package:boiforms/screens/pdfdesign2.dart';
 import 'package:boiforms/screens/pdfdesign3.dart';
 import 'package:boiforms/screens/pdfdesign4.dart';
 import 'package:boiforms/screens/pdfdesign5.dart'; // 1. IMPORT THE NEW FILE
+import 'package:boiforms/screens/pdfdesign6.dart';
+import 'package:boiforms/screens/pdfdesign6.dart'; // 1. IMPORT THE NEW FILE
+import 'package:boiforms/screens/pdfdesign7.dart';
+
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -65,6 +69,9 @@ class PdfDesignPage extends StatelessWidget {
                     // 2. ADD THE FIFTH PAGE CONTENT HERE
                     // This will appear after the overflowed content from page 4.
                     buildFifthPage(),
+
+                    buildSixthPage(),
+                    buildSeventhPage(),
                   ],
                 ),
               );
