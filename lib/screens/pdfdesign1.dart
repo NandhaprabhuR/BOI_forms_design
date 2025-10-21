@@ -1,100 +1,27 @@
-import 'package:boiforms/screens/pdf_helpers.dart';
+// lib/screens/pdfdesign1.dart
+
+import 'package:boiforms/screens/pdf_helpers.dart'; // Assuming pdf_helpers.dart exists
 import 'package:boiforms/screens/pdfdesign10.dart';
 import 'package:boiforms/screens/pdfdesign2.dart';
 import 'package:boiforms/screens/pdfdesign3.dart';
 import 'package:boiforms/screens/pdfdesign4.dart';
-import 'package:boiforms/screens/pdfdesign5.dart'; // 1. IMPORT THE NEW FILE
+import 'package:boiforms/screens/pdfdesign5.dart';
 import 'package:boiforms/screens/pdfdesign6.dart';
-import 'package:boiforms/screens/pdfdesign6.dart'; // 1. IMPORT THE NEW FILE
 import 'package:boiforms/screens/pdfdesign7.dart';
 import 'package:boiforms/screens/pdfdesign8.dart';
 import 'package:boiforms/screens/pdfdesign9.dart';
 import 'package:boiforms/screens/pdfdesign10.dart';
-
-
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-
 class PdfDesignPage extends StatelessWidget {
   const PdfDesignPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Complete Form Preview'),
-        backgroundColor: Colors.blue[800],
-        foregroundColor: Colors.white,
-        centerTitle: true,
-      ),
-      body: Center(
-        child: ElevatedButton(
-          child: const Text("Generate PDF"),
-          onPressed: () {
-            Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
-              final pdf = pw.Document();
+  // --- HELPER WIDGETS (CLASS LEVEL) ---
 
-              // Use one MultiPage widget to create a continuous, scrollable document
-              pdf.addPage(
-                pw.MultiPage(
-                  pageFormat: PdfPageFormat.a4,
-                  margin: const pw.EdgeInsets.all(15),
-                  footer: (pw.Context context) {
-                    return pw.Container(
-                        alignment: pw.Alignment.center,
-                        child: pw.Text(
-                          '${context.pageNumber}',
-                          style: pw.Theme.of(context)
-                              .defaultTextStyle
-                              .copyWith(color: PdfColors.grey),
-                        ));
-                  },
-                  build: (pw.Context context) => <pw.Widget>[
-                    // All sections for page 1 are added here
-                    _buildHeader(),
-                    _buildPersonalDetails(),
-                    pw.SizedBox(height: 5),
-                    _buildContactDetails(),
-                    pw.SizedBox(height: 5),
-                    _buildProofOfIdentity(),
-
-                    // The content from page 2 is added directly after
-                    buildSecondPage(),
-
-                    // The content from page 3 is added after page 2
-                    buildThirdPage(),
-
-                    // The content for page 4 is added here.
-                    // It will overflow onto page 5, which is expected.
-                    buildFourthPage(),
-
-                    // 2. ADD THE FIFTH PAGE CONTENT HERE
-                    // This will appear after the overflowed content from page 4.
-                    buildFifthPage(),
-
-                    buildSixthPage(),
-                    buildSeventhPage(),
-                    buildEighthPage(),
-                    buildNinthPage(),
-                    buildTenthPage(),
-                  ],
-                ),
-              );
-
-              return pdf.save();
-            });
-          },
-        ),
-      ),
-    );
-  }
-
-  // All your previous _build... and helper functions for page 1 remain here unchanged
-
-  // --- HELPER WIDGETS ---
+  /// Helper for a label and a form field
   pw.Widget _formField(String label, pw.Widget child,
       {pw.Widget? subLabel, double width = 100}) {
     return pw.Row(
@@ -116,6 +43,7 @@ class PdfDesignPage extends StatelessWidget {
     );
   }
 
+  /// Helper for a single character box with a label underneath
   pw.Widget _charBoxWithLabel(String char, String label) {
     return pw.Column(children: [
       charBoxes(char, 1, width: 13, height: 13),
@@ -124,8 +52,227 @@ class PdfDesignPage extends StatelessWidget {
     ]);
   }
 
+  /// Helper for creating an underlined text field
+  pw.Widget _underlinedText(double width) {
+    return pw.Container(
+      width: width,
+      height: 8,
+      decoration: const pw.BoxDecoration(
+        border: pw.Border(bottom: pw.BorderSide(width: 0.5)),
+      ),
+    );
+  }
+
+  /// Helper for the empty rectangular boxes
+  pw.Widget _emptyRectBox({double width = 80, double height = 14}) {
+    return pw.Container(
+      width: width,
+      height: height,
+      decoration: pw.BoxDecoration(
+        border: pw.Border.all(width: 0.5),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Complete Form Preview'),
+        backgroundColor: Colors.blue[800],
+        foregroundColor: Colors.white,
+        centerTitle: true,
+      ),
+      body: Center(
+        child: ElevatedButton(
+          child: const Text("Generate PDF"),
+          onPressed: () {
+            Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
+              final pdf = pw.Document();
+
+              // Data for the address section on page 1
+              final addressData = {
+                'address': '104 Kovai Road Kadaiyur',
+                'city': 'Kangayam',
+                'district': 'Tirupur',
+                'state': 'Tamilnadu',
+                'pin': '638701',
+              };
+
+              pdf.addPage(
+                pw.MultiPage(
+                  pageFormat: PdfPageFormat.a4,
+                  margin: const pw.EdgeInsets.all(15),
+                  footer: (pw.Context context) {
+                    return pw.Container(
+                        alignment: pw.Alignment.center,
+                        child: pw.Text(
+                          '${context.pageNumber}',
+                          style: pw.Theme.of(context)
+                              .defaultTextStyle
+                              .copyWith(color: PdfColors.grey),
+                        ));
+                  },
+                  build: (pw.Context context) => <pw.Widget>[
+                    // --- START OF PAGE 1 CONTENT ---
+                    pw.Container(
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(color: PdfColors.black, width: 1),
+                      ),
+                      padding: const pw.EdgeInsets.all(10),
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          _buildHeader(),
+                          _buildPersonalDetails(),
+                          pw.SizedBox(height: 5),
+                          _buildContactDetails(),
+                          pw.SizedBox(height: 5),
+                          _buildProofOfIdentity(),
+                          pw.SizedBox(height: 5),
+                          _buildAddressSection(
+                            title: '4. Address details',
+                            tabs: ['Current', 'Permanent', 'Overseas'],
+                            data: addressData,
+                          ),
+                        ],
+                      ),
+                    ),
+                    // --- END OF PAGE 1 CONTENT ---
+
+                    buildSecondPage(),
+                    buildThirdPage(),
+                    buildFourthPage(),
+                    buildFifthPage(),
+                    buildSixthPage(),
+                    buildSeventhPage(),
+                    buildEighthPage(),
+                    buildNinthPage(),
+                    buildTenthPage(),
+                  ],
+                ),
+              );
+
+              return pdf.save();
+            });
+          },
+        ),
+      ),
+    );
+  }
+
   // --- PDF SECTION BUILDERS ---
+
+  /// Builds an address section (Moved from pdfdesign2.dart)
+  pw.Widget _buildAddressSection({
+    required String title,
+    required List<String> tabs,
+    required Map<String, String> data,
+  }) {
+    // (Content unchanged from previous version)
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Container(
+          decoration: const pw.BoxDecoration(
+            color: PdfColors.grey200,
+            border: pw.Border(bottom: pw.BorderSide(color: PdfColors.grey600)),
+          ),
+          padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          child: pw.Row(
+            children: [
+              pw.Text(title,
+                  style:
+                  pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8)),
+              pw.SizedBox(width: 20),
+              ...tabs.map((tab) => pw.Container(
+                margin: const pw.EdgeInsets.symmetric(horizontal: 8),
+                padding: const pw.EdgeInsets.symmetric(horizontal: 6),
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(color: PdfColors.grey600),
+                  color: PdfColors.white,
+                ),
+                child: pw.Text(tab, style: const pw.TextStyle(fontSize: 7.5)),
+              )),
+            ],
+          ),
+        ),
+        pw.SizedBox(height: 3),
+        pw.Row(children: [
+          pw.Text('Address type*', style: const pw.TextStyle(fontSize: 8)),
+          pw.SizedBox(width: 10),
+          labeledCheckbox('Residential/Business', checked: true),
+          pw.SizedBox(width: 8),
+          labeledCheckbox('Residential'),
+          pw.SizedBox(width: 8),
+          labeledCheckbox('Business'),
+          pw.SizedBox(width: 8),
+          labeledCheckbox('Registered Office'),
+          pw.SizedBox(width: 8),
+          labeledCheckbox('Unspecified'),
+        ]),
+        pw.SizedBox(height: 3),
+        pw.Row(children: [
+          pw.Text('Address*', style: const pw.TextStyle(fontSize: 8)),
+          pw.SizedBox(width: 10),
+          pw.Expanded(child: charBoxes(data['address']!, 35)),
+        ]),
+        pw.SizedBox(height: 2),
+        pw.Padding(
+          padding: const pw.EdgeInsets.only(left: 60),
+          child: charBoxes('', 35),
+        ),
+        pw.SizedBox(height: 3),
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Expanded(
+              child: pw.Column(mainAxisSize: pw.MainAxisSize.min, children: [
+                pw.Row(children: [
+                  pw.SizedBox(
+                      width: 50,
+                      child: pw.Text('City/Village*',
+                          style: const pw.TextStyle(fontSize: 8))),
+                  charBoxes(data['city']!, 15),
+                ]),
+                pw.SizedBox(height: 2),
+                pw.Row(children: [
+                  pw.SizedBox(
+                      width: 50,
+                      child: pw.Text('State*',
+                          style: const pw.TextStyle(fontSize: 8))),
+                  charBoxes(data['state']!, 15),
+                ]),
+              ]),
+            ),
+            pw.SizedBox(width: 20),
+            pw.Expanded(
+              child: pw.Column(mainAxisSize: pw.MainAxisSize.min, children: [
+                pw.Row(children: [
+                  pw.SizedBox(
+                      width: 40,
+                      child: pw.Text('District*',
+                          style: const pw.TextStyle(fontSize: 8))),
+                  charBoxes(data['district']!, 15),
+                ]),
+                pw.SizedBox(height: 2),
+                pw.Row(children: [
+                  pw.SizedBox(
+                      width: 40,
+                      child: pw.Text('Pin*',
+                          style: const pw.TextStyle(fontSize: 8))),
+                  charBoxes(data['pin']!, 6),
+                ]),
+              ]),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   pw.Widget _buildProofOfIdentity() {
+    // (Content unchanged from previous version)
     return pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
@@ -200,6 +347,7 @@ class PdfDesignPage extends StatelessWidget {
   }
 
   pw.Widget _buildContactDetails() {
+    // (Content unchanged from previous version)
     return pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
@@ -230,7 +378,7 @@ class PdfDesignPage extends StatelessWidget {
             pw.SizedBox(width: 12),
             pw.Text('Email ID', style: const pw.TextStyle(fontSize: 7.5)),
             pw.SizedBox(width: 4),
-            pw.Expanded(child: charBoxes('', 25)),
+            pw.Expanded(child: charBoxes('', 22)), // Fixed width
           ]),
           pw.SizedBox(height: 3),
           pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
@@ -320,49 +468,70 @@ class PdfDesignPage extends StatelessWidget {
             ]),
           ),
           pw.SizedBox(height: 1),
-          pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-            pw.Expanded(
-              flex: 2,
-              child: _formField(
-                'Date of Birth*',
-                pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      charBoxes('15032000', 8),
-                      pw.Text('Prefix', style: const pw.TextStyle(fontSize: 6.5)),
-                    ]),
-              ),
-            ),
-            pw.Expanded(
-              flex: 3,
-              child: pw.Row(children: [
-                pw.Text('Gender*', style: const pw.TextStyle(fontSize: 7.5)),
-                pw.SizedBox(width: 4),
-                labeledCheckbox('Male', checked: true),
-                pw.SizedBox(width: 4),
-                labeledCheckbox('Female'),
-                pw.SizedBox(width: 4),
-                labeledCheckbox('Transgender'),
-              ]),
-            ),
-            pw.Expanded(
-              flex: 3,
-              child: pw.Row(children: [
-                pw.Text('Marital Status*',
+          // --- FIX: Date of Birth / Gender / Marital Status Row (Spacing Adjusted) ---
+          pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start, // Align to top
+            children: [
+              // Column for Date of Birth Label
+              pw.SizedBox(
+                width: 100, // Same width as the _formField label
+                child: pw.Text('Date of Birth*',
                     style: const pw.TextStyle(fontSize: 7.5)),
-                pw.SizedBox(width: 4),
-                labeledCheckbox('Married', checked: true),
-                pw.SizedBox(width: 4),
-                labeledCheckbox('Unmarried'),
-                pw.SizedBox(width: 4),
-                labeledCheckbox('Others'),
-              ]),
-            ),
-          ]),
+              ),
+              pw.SizedBox(width: 4),
+              // The actual boxes and gender/marital status fields
+              pw.Expanded(
+                child: pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    // Date boxes
+                    pw.Row(children: [
+                      _charBoxWithLabel('', 'D'),
+                      _charBoxWithLabel('', 'D'),
+                      pw.SizedBox(width: 3),
+                      _charBoxWithLabel('', 'M'),
+                      _charBoxWithLabel('', 'M'),
+                      pw.SizedBox(width: 3),
+                      _charBoxWithLabel('', 'Y'),
+                      _charBoxWithLabel('', 'Y'),
+                      _charBoxWithLabel('', 'Y'),
+                      _charBoxWithLabel('', 'Y'),
+                    ]),
+                    pw.SizedBox(width: 8), // Adjusted space
+                    // Gender
+                    pw.Row(mainAxisSize: pw.MainAxisSize.min, children: [ // Use min size
+                      pw.Text('Gender*', style: const pw.TextStyle(fontSize: 7.5)),
+                      pw.SizedBox(width: 3), // Adjusted space
+                      labeledCheckbox('Male', checked: true),
+                      pw.SizedBox(width: 3), // Adjusted space
+                      labeledCheckbox('Female'),
+                      pw.SizedBox(width: 3), // Adjusted space
+                      labeledCheckbox('Transgender'),
+                    ]),
+                    pw.SizedBox(width: 8), // Adjusted space
+                    // Marital Status
+                    pw.Row(mainAxisSize: pw.MainAxisSize.min, children: [ // Use min size
+                      pw.Text('Marital Status*',
+                          style: const pw.TextStyle(fontSize: 7.5)),
+                      pw.SizedBox(width: 3), // Adjusted space
+                      labeledCheckbox('Married', checked: true),
+                      pw.SizedBox(width: 3), // Adjusted space
+                      labeledCheckbox('Unmarried'),
+                      pw.SizedBox(width: 3), // Adjusted space
+                      labeledCheckbox('Others'),
+                    ]),
+                    pw.Spacer(), // Pushes Marital Status to the right edge if needed
+                  ],
+                ),
+              ),
+            ],
+          )
+          // --- END FIX ---
         ]);
   }
 
   pw.Widget _buildFamilyAndDependantInfo() {
+    // (Content unchanged from previous version)
     return pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
@@ -390,20 +559,27 @@ class PdfDesignPage extends StatelessWidget {
                     style: const pw.TextStyle(fontSize: 7.5)),
               ])),
           pw.SizedBox(height: 1),
-          _formField('Name of Guardian', charBoxes('', 30),
+          _formField('Name of Guardian',
+              pw.Row(children: [
+                pw.Column(children: [
+                  charBoxes('', 4),
+                  pw.Text('Prefix', style: const pw.TextStyle(fontSize: 6.5))
+                ]),
+                pw.SizedBox(width: 4),
+                pw.Expanded(child: charBoxes('', 25)),
+              ]),
               subLabel: pw.Text('(In Case of Minor*)',
                   style: const pw.TextStyle(fontSize: 6.5))),
           pw.SizedBox(height: 1),
           _formField(
-              'Relationship with Guardian',
-              pw.Container(
-                  height: 10,
-                  decoration: const pw.BoxDecoration(
-                      border: pw.Border(bottom: pw.BorderSide())))),
+            'Relationship with Guardian',
+            charBoxes('', 25),
+          ),
         ]);
   }
 
   pw.Widget _buildStatusAndCategoryInfo() {
+    // (Content mostly unchanged from previous version, only Monthly Income row)
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -450,15 +626,33 @@ class PdfDesignPage extends StatelessWidget {
           ]),
         ),
         pw.SizedBox(height: 2),
+        // --- FIX 2: Monthly Income Row (Using Rect Boxes) ---
         _formField(
-            'Monthly Income*',
-            pw.Row(children: [
+          'Monthly Income*',
+          pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            children: [
               pw.Text('Rs.', style: const pw.TextStyle(fontSize: 7.5)),
-              charBoxes('300000', 8),
-              pw.SizedBox(width: 12),
-              pw.Text('Net Worth(approx value) ___________ Ra. ___________',
+              pw.SizedBox(width: 2),
+              _emptyRectBox(width: 80), // Box for Income
+              pw.SizedBox(width: 8),
+              pw.Text('Net Worth(approx)',
                   style: const pw.TextStyle(fontSize: 7.5)),
-            ])),
+              pw.SizedBox(width: 2),
+              pw.Text('Rs.', style: const pw.TextStyle(fontSize: 7.5)),
+              pw.SizedBox(width: 2),
+              _emptyRectBox(width: 60), // Box for Net Worth
+              pw.SizedBox(width: 8),
+              pw.Text('Est. Annual Turnover',
+                  style: const pw.TextStyle(fontSize: 7.5)),
+              pw.SizedBox(width: 2),
+              pw.Text('Rs.', style: const pw.TextStyle(fontSize: 7.5)),
+              pw.SizedBox(width: 2),
+              pw.Expanded(child: _emptyRectBox(width: 0)), // Box for Turnover
+            ],
+          ),
+        ),
+        // --- END FIX 2 ---
         pw.SizedBox(height: 2),
         _formField(
             'Religion:',
@@ -543,12 +737,6 @@ class PdfDesignPage extends StatelessWidget {
             pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Container(
-                      height: 1,
-                      width: double.infinity,
-                      decoration: const pw.BoxDecoration(
-                          border: pw.Border(bottom: pw.BorderSide()))),
-                  pw.SizedBox(height: 2),
                   pw.Row(children: [
                     pw.Text('Designation/Profession:',
                         style: const pw.TextStyle(fontSize: 7.5)),
@@ -574,7 +762,7 @@ class PdfDesignPage extends StatelessWidget {
         pw.SizedBox(height: 2),
         _formField('ISO 3166 Country Code of Jurisdiction of Residence*',
             pw.Row(children: [
-              charBoxes('', 2),
+              charBoxes('IN', 2),
               pw.SizedBox(width: 4),
               pw.Text('(Code for India is IN)',
                   style: const pw.TextStyle(fontSize: 7.5))
@@ -585,17 +773,19 @@ class PdfDesignPage extends StatelessWidget {
             pw.Row(children: [
               charBoxes('', 15),
               pw.SizedBox(width: 8),
-              pw.Text('ISO 3166 Country of Code of Birth* __________',
+              pw.Text('ISO 3166 Country of Code of Birth* ',
                   style: const pw.TextStyle(fontSize: 7.5)),
+              _underlinedText(40),
               pw.SizedBox(width: 8),
-              pw.Text('Citizenship __________',
+              pw.Text('Citizenship ',
                   style: const pw.TextStyle(fontSize: 7.5)),
+              pw.Expanded(child: _underlinedText(0)),
             ])),
         pw.SizedBox(height: 2),
         _formField(
             'Country of Tax Residence in India only and not in any other country or territory outside India*',
             pw.Row(children: [
-              labeledCheckbox('Yes'),
+              labeledCheckbox('Yes', checked: true),
               pw.SizedBox(width: 8),
               labeledCheckbox('No'),
               pw.SizedBox(width: 4),
@@ -604,24 +794,39 @@ class PdfDesignPage extends StatelessWidget {
             ]),
             width: 200),
         pw.SizedBox(height: 2),
-        _formField(
-            'PAN*/Tax Identification Number or equivalent (If issued by jurisdiction)',
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Expanded(
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text(
+                      'PAN*/Tax Identification Number or equivalent (If issued by jurisdiction)',
+                      style: const pw.TextStyle(fontSize: 7.5)),
+                  pw.Text(
+                      '(If PAN is not submitted, submit Form 60 - Annexure I)',
+                      style: const pw.TextStyle(fontSize: 6.5)),
+                ],
+              ),
+            ),
+            pw.SizedBox(width: 8),
             charBoxes('', 10),
-            subLabel: pw.Text(
-                '(If PAN is not submitted, submit Form 60 - Annexure I)',
-                style: const pw.TextStyle(fontSize: 6.5)),
-            width: 200),
+          ],
+        ),
       ],
     );
   }
 
   pw.Widget _buildHeader() {
+    // (Content unchanged from previous version)
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
+            // Left Column (PSB)
             pw.SizedBox(
               width: 100,
               child: pw.Row(
@@ -651,9 +856,8 @@ class PdfDesignPage extends StatelessWidget {
                 ],
               ),
             ),
-            pw.Spacer(),
+            // Center Column (Title)
             pw.Expanded(
-              flex: 2,
               child: pw.Column(
                 children: [
                   pw.Text(
@@ -673,9 +877,9 @@ class PdfDesignPage extends StatelessWidget {
                 ],
               ),
             ),
-            pw.Spacer(),
+            // Right Column (BOI & Date)
             pw.SizedBox(
-              width: 100,
+              width: 120,
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
@@ -762,11 +966,9 @@ class PdfDesignPage extends StatelessWidget {
                 pw.Spacer(),
                 pw.Text('Application type:',
                     style: const pw.TextStyle(fontSize: 8)),
-                checkBox(),
-                pw.Text('New', style: const pw.TextStyle(fontSize: 8)),
+                labeledCheckbox('New', checked: true),
                 pw.SizedBox(width: 4),
-                checkBox(),
-                pw.Text('Update', style: const pw.TextStyle(fontSize: 8)),
+                labeledCheckbox('Update'),
               ],
             ),
             pw.SizedBox(height: 1),
@@ -807,12 +1009,9 @@ class PdfDesignPage extends StatelessWidget {
               children: [
                 pw.Text('Account type:',
                     style: const pw.TextStyle(fontSize: 8)),
-                checkBox(),
-                pw.Text('Normal', style: const pw.TextStyle(fontSize: 8)),
+                labeledCheckbox('Normal', checked: true),
                 pw.SizedBox(width: 8),
-                checkBox(),
-                pw.Text('Small (For low risk customers)',
-                    style: const pw.TextStyle(fontSize: 8)),
+                labeledCheckbox('Small (For low risk customers)'),
               ],
             ),
           ],
