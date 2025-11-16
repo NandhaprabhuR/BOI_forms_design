@@ -2,9 +2,10 @@
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'model/form_data_model.dart'; // <--- ADDED: Import the data model
 
 /// Builds the entire fifth page of the document.
-pw.Widget buildFifthPage() {
+pw.Widget buildFifthPage(FormDataModel data) { // <--- MODIFIED: Accepts data
   /// A helper function for creating the signature box.
   pw.Widget _signatureBox({String text = '', String? label, double height = 40}) {
     return pw.Column(
@@ -115,7 +116,7 @@ pw.Widget buildFifthPage() {
             pw.Align(
               alignment: pw.Alignment.centerRight,
               child: _signatureBox(
-                text: 'Arun Kumar',
+                text: data.signature1Text, // <--- MODIFIED: Use model data
                 label: 'Signature / Thumb Impression of\nApplicant(s)',
               ),
             ),

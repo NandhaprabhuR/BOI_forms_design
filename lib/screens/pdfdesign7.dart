@@ -2,9 +2,10 @@
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'model/form_data_model.dart'; // <--- NEW: Import the data model
 
 // Main build function
-pw.Widget buildSeventhPage() {
+pw.Widget buildSeventhPage(FormDataModel data) { // <--- MODIFIED
   // A Container to wrap the entire page content and add a border
   return pw.Container(
     decoration: pw.BoxDecoration(
@@ -16,9 +17,9 @@ pw.Widget buildSeventhPage() {
       children: [
         _buildHeader(),
         pw.SizedBox(height: 8),
-        _buildFormTable(),
+        _buildFormTable(data), // <--- MODIFIED
         pw.SizedBox(height: 15),
-        _buildVerificationSection(),
+        _buildVerificationSection(data), // <--- MODIFIED
         pw.SizedBox(height: 15),
         _buildFinalNoteSection(),
       ],
@@ -26,7 +27,7 @@ pw.Widget buildSeventhPage() {
   );
 }
 
-// Helper function dedicated to building the header.
+// Helper function dedicated to building the header. (Unchanged)
 pw.Widget _buildHeader() {
   const double regularFontSize = 9;
   return pw.Column(
@@ -53,23 +54,32 @@ pw.Widget _buildHeader() {
 }
 
 // Helper function dedicated to building the main table.
-pw.Widget _buildFormTable() {
+pw.Widget _buildFormTable(FormDataModel data) { // <--- MODIFIED
   const PdfColor borderColor = PdfColors.black;
 
+  // ===== FIX: Add a length check for the mobile number =====
+  final safeMobile = data.mobileNo.length > 3 ? data.mobileNo.substring(3) : '';
+
+  // ===== FIX: Safely split the address to prevent RangeError =====
+  final addressParts = data.currentAddress.split(' ');
+  final flatNo = addressParts.isNotEmpty ? addressParts[0] : ''; // Gets first word, or '' if empty
+  final road = addressParts.length > 1 ? addressParts[1] : ''; // Gets second word, or '' if no second word
+  // ============================================================
+
   final List<Map<String, String>> simpleRowsData = [
-    {'no': '2', 'desc': 'Date of Birth / Incorporation of declarant', 'value': '28.07.2000'},
-    {'no': '3', 'desc': 'Father\'s Name (in case of individual)', 'value': 'KANAGARAJ'},
-    {'no': '4', 'desc': 'Flat No./Floor No.', 'value': '104'},
+    {'no': '2', 'desc': 'Date of Birth / Incorporation of declarant', 'value': data.dob}, // <--- FROM MODEL
+    {'no': '3', 'desc': 'Father\'s Name (in case of individual)', 'value': data.form60FatherName}, // <--- FROM MODEL
+    {'no': '4', 'desc': 'Flat No./Floor No.', 'value': flatNo}, // <--- FIX APPLIED
     {'no': '5', 'desc': 'Name of premises / Block Name & No.', 'value': ''},
-    {'no': '6', 'desc': 'Road / Street / Lane', 'value': 'Kovai Road'},
-    {'no': '7', 'desc': 'Area / Locality', 'value': 'Kadaiyur'},
-    {'no': '8', 'desc': 'Town/District/State', 'value': 'Kangayam'},
-    {'no': '9', 'desc': 'Pin code', 'value': '638701'},
+    {'no': '6', 'desc': 'Road / Street / Lane', 'value': road}, // <--- FIX APPLIED
+    {'no': '7', 'desc': 'Area / Locality', 'value': data.currentCity}, // <--- FROM MODEL (used city)
+    {'no': '8', 'desc': 'Town/District/State', 'value': data.currentDistrict}, // <--- FROM MODEL (used district)
+    {'no': '9', 'desc': 'Pin code', 'value': data.currentPin}, // <--- FROM MODEL
     {'no': '10', 'desc': 'Telephone Number (with STD code)', 'value': ''},
-    {'no': '11', 'desc': 'Mobile Number', 'value': '9999999999'},
+    {'no': '11', 'desc': 'Mobile Number', 'value': safeMobile}, // <--- FROM MODEL (FIX APPLIED HERE)
     {'no': '12', 'desc': 'Amount of Transaction (Rs.)', 'value': ''},
     {'no': '14', 'desc': 'In case of transaction in joint names, number of persons involved in the transaction', 'value': ''},
-    {'no': '16', 'desc': 'Aadhaar Number issued by UIDAI (if available)', 'value': ''},
+    {'no': '16', 'desc': 'Aadhaar Number issued by UIDAI (if available)', 'value': data.aadharDocNo}, // <--- FROM MODEL
   ];
 
   return pw.Table(
@@ -81,7 +91,7 @@ pw.Widget _buildFormTable() {
     },
     defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
     children: [
-      _buildNameRow('1', 'First Name'),
+      _buildNameRow('1', 'First\nName', data), // <--- MODIFIED
       ...simpleRowsData.where((row) => int.parse(row['no']!) <= 10).map((rowData) {
         return _buildSimpleRow(rowData['no']!, rowData['desc']!, rowData['value']!);
       }).toList(),
@@ -99,7 +109,7 @@ pw.Widget _buildFormTable() {
 }
 
 // Helper function for the Verification section
-pw.Widget _buildVerificationSection() {
+pw.Widget _buildVerificationSection(FormDataModel data) { // <--- MODIFIED
   const double regularFontSize = 9;
   const double smallFontSize = 7.5;
   const PdfColor borderColor = PdfColors.black;
@@ -132,7 +142,7 @@ pw.Widget _buildVerificationSection() {
           children: [
             pw.TextSpan(text: 'I, '),
             pw.TextSpan(
-              text: ' ' * 45,
+              text: ' ${data.customerFirstName} ', // <--- FROM MODEL
               style: pw.TextStyle(decoration: pw.TextDecoration.underline),
             ),
             pw.TextSpan(text: ' do '),
@@ -149,11 +159,11 @@ pw.Widget _buildVerificationSection() {
       pw.Row(
         children: [
           pw.Text('Verified today the ', style: pw.TextStyle(fontSize: regularFontSize)),
-          underlineWithText('27', width: 50),
+          underlineWithText(data.form60VerifiedDay, width: 50), // <--- FROM MODEL
           pw.Text(' day of ', style: pw.TextStyle(fontSize: regularFontSize)),
-          underlineWithText('April', width: 100),
+          underlineWithText(data.form60VerifiedMonth, width: 100), // <--- FROM MODEL
           pw.Text(' 20', style: pw.TextStyle(fontSize: regularFontSize)),
-          underlineWithText('23', width: 50),
+          underlineWithText(data.form60VerifiedYear, width: 50), // <--- FROM MODEL
         ],
       ),
       pw.SizedBox(height: 25),
@@ -161,10 +171,10 @@ pw.Widget _buildVerificationSection() {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         crossAxisAlignment: pw.CrossAxisAlignment.end,
         children: [
-          pw.Text('Place : GANAPATHYPALAYAM', style: pw.TextStyle(fontSize: regularFontSize, fontWeight: pw.FontWeight.bold)),
+          pw.Text('Place : ${data.form60VerificationPlace}', style: pw.TextStyle(fontSize: regularFontSize, fontWeight: pw.FontWeight.bold)), // <--- FROM MODEL
           pw.Column(
             children: [
-              pw.Text('Arun Kumar', style: pw.TextStyle(fontSize: regularFontSize)),
+              pw.Text(data.customerFirstName, style: pw.TextStyle(fontSize: regularFontSize)), // <--- FROM MODEL
               pw.SizedBox(height: 2),
               pw.Container(width: 150, height: 1, color: borderColor),
               pw.SizedBox(height: 3),
@@ -177,7 +187,7 @@ pw.Widget _buildVerificationSection() {
   );
 }
 
-// Helper function for the final note section.
+// Helper function for the final note section. (Unchanged)
 pw.Widget _buildFinalNoteSection() {
   const double fontSize = 9;
 
@@ -257,18 +267,18 @@ pw.TableRow _buildSimpleRow(String no, String desc, String value) {
 }
 
 // UPDATED Helper function for Row 1 to match the new style.
-pw.TableRow _buildNameRow(String no, String desc) {
+pw.TableRow _buildNameRow(String no, String desc, FormDataModel data) { // <--- MODIFIED
   const PdfColor borderColor = PdfColors.black;
   return pw.TableRow(
     children: [
       _buildCell(no, align: pw.TextAlign.center),
-      _buildCell('First\nName', align: pw.TextAlign.center),
+      _buildCell(desc, align: pw.TextAlign.center),
       pw.Row(
         children: [
           pw.Expanded(
             flex: 2,
             child: _buildCell(
-              'Arunkumar',
+              data.customerFirstName, // <--- FROM MODEL
               align: pw.TextAlign.center,
               style: pw.TextStyle(
                   letterSpacing: 3,
@@ -294,7 +304,7 @@ pw.TableRow _buildNameRow(String no, String desc) {
                   _buildCell('Surname',
                       align: pw.TextAlign.center,
                       style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                  _buildCell('K.',
+                  _buildCell(data.form60Surname, // <--- FROM MODEL
                       align: pw.TextAlign.center,
                       style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                 ],

@@ -2,9 +2,10 @@
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'model/form_data_model.dart'; // <--- NEW: Import the data model
 
 /// Builds the sixth page using a hybrid two-column and single-column layout.
-pw.Widget buildSixthPage() {
+pw.Widget buildSixthPage(FormDataModel data) { // <--- MODIFIED
   // NEW: A Container to wrap the entire page content and add a border
   return pw.Container(
     decoration: pw.BoxDecoration(
@@ -36,13 +37,13 @@ pw.Widget buildSixthPage() {
         // PART 2: The final sections in a single, full-width column.
         _buildBsbdFeaturesSection(),
         pw.SizedBox(height: 5),
-        _buildAcknowledgementForm(),
+        _buildAcknowledgementForm(data), // <--- MODIFIED
       ],
     ),
   );
 }
 
-/// Builds the "SAVINGS BANK RULES (ABRIDGED)" section with summarized text.
+/// Builds the "SAVINGS BANK RULES (ABRIDGED)" section with summarized text. (Unchanged)
 pw.Widget _buildSavingsBankRulesSection() {
   const double headingFontSize = 9;
   const double bodyFontSize = 8.5;
@@ -127,7 +128,7 @@ pw.Widget _buildSavingsBankRulesSection() {
   );
 }
 
-/// Builds the second section of rules with summarized text.
+/// Builds the second section of rules with summarized text. (Unchanged)
 pw.Widget _buildGeneralRulesSection() {
   const double headingFontSize = 9;
   const double bodyFontSize = 8.5;
@@ -184,7 +185,7 @@ pw.Widget _buildGeneralRulesSection() {
   );
 }
 
-/// Builds the "Features of BSBD account" section (Single Column).
+/// Builds the "Features of BSBD account" section (Single Column). (Unchanged)
 pw.Widget _buildBsbdFeaturesSection() {
   const double fontSize = 8.5;
 
@@ -234,8 +235,8 @@ pw.Widget _buildBsbdFeaturesSection() {
   );
 }
 
-/// Builds the final "ACKNOWLEDGEMENT DA-1" form (Single Column).
-pw.Widget _buildAcknowledgementForm() {
+/// Builds the final "ACKNOWLEDGEMENT DA-1" form
+pw.Widget _buildAcknowledgementForm(FormDataModel data) { // <--- MODIFIED
   const double regularFontSize = 9.0;
   const double smallFontSize = 8.0;
   const PdfColor borderColor = PdfColors.black;
@@ -286,6 +287,7 @@ pw.Widget _buildAcknowledgementForm() {
                     children: [
                       pw.Text('Name of the Nominee', style: pw.TextStyle(fontSize: regularFontSize)),
                       pw.SizedBox(width: 4),
+                      pw.Text(data.nomineeName, style: pw.TextStyle(fontSize: regularFontSize)), // <--- FROM MODEL
                       pw.Expanded(child: underline(double.infinity)),
                       pw.SizedBox(width: 4),
                       pw.Text('Age:', style: pw.TextStyle(fontSize: regularFontSize)),

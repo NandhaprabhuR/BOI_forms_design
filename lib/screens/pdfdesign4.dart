@@ -2,6 +2,7 @@
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'model/form_data_model.dart';
 import 'pdf_helpers.dart'; // Assuming charBoxes and labeledCheckbox are here
 
 // =========================================================================
@@ -61,7 +62,7 @@ pw.Widget signatureBox({String text = '', String? label, double height = 28}) {
 // == MAIN PAGE BUILDER
 // =========================================================================
 
-pw.Widget buildFourthPage() {
+pw.Widget buildFourthPage(FormDataModel data) { // <--- MODIFIED
   // FIXED: Using a Transform to scale the entire content down slightly.
   // This is the most reliable way to prevent page overflow.
   return pw.Transform.scale(
@@ -70,9 +71,9 @@ pw.Widget buildFourthPage() {
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         _buildNominationTitleBar(),
-        _buildNominationForm(),
+        _buildNominationForm(data), // <--- MODIFIED
         pw.SizedBox(height: 3),
-        buildDeclarationSection(),
+        buildDeclarationSection(data), // <--- MODIFIED
         pw.SizedBox(height: 3),
         buildOfficeUseSection(),
         // FIXED: Page number has been removed as requested.
@@ -98,7 +99,7 @@ pw.Widget _buildNominationTitleBar() {
   );
 }
 
-pw.Widget _buildNominationForm() {
+pw.Widget _buildNominationForm(FormDataModel data) { // <--- MODIFIED
   return pw.Container(
     decoration: pw.BoxDecoration(
       border: pw.Border(
@@ -128,9 +129,9 @@ pw.Widget _buildNominationForm() {
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              _buildNominationTopPart(),
+              _buildNominationTopPart(data), // <--- MODIFIED
               pw.SizedBox(height: 2),
-              _buildNomineeDetailsPart(),
+              _buildNomineeDetailsPart(data), // <--- MODIFIED
             ],
           ),
         ),
@@ -139,7 +140,7 @@ pw.Widget _buildNominationForm() {
   );
 }
 
-pw.Widget _buildNominationTopPart() {
+pw.Widget _buildNominationTopPart(FormDataModel data) { // <--- MODIFIED
   return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -175,7 +176,7 @@ pw.Widget _buildNominationTopPart() {
                 children: [
                   const pw.TextSpan(text: 'I/We '),
                   pw.TextSpan(
-                    text: '      Arunkumar      ',
+                    text: '      ${data.customerFirstName}      ', // <--- FROM MODEL
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,
                       decoration: pw.TextDecoration.underline,
@@ -217,7 +218,7 @@ pw.Widget _buildNominationTopPart() {
       ]);
 }
 
-pw.Widget _buildNomineeDetailsPart() {
+pw.Widget _buildNomineeDetailsPart(FormDataModel data) { // <--- MODIFIED
   pw.Widget witnessBox() {
     return pw.Container(
         padding: const pw.EdgeInsets.all(2),
@@ -246,6 +247,9 @@ pw.Widget _buildNomineeDetailsPart() {
         ));
   }
 
+  // Get DOB components for boxes
+  final nomineeDob = data.nomineeDob;
+
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -255,14 +259,14 @@ pw.Widget _buildNomineeDetailsPart() {
       pw.Row(children: [
         pw.Text('Name:', style: const pw.TextStyle(fontSize: 8)),
         pw.SizedBox(width: 4),
-        pw.Expanded(child: charBoxes('KANAGARAJ', 26)),
+        pw.Expanded(child: charBoxes(data.nomineeName, 26)), // <--- FROM MODEL
       ]),
       pw.SizedBox(height: 2),
       pw.Row(children: [
         pw.Text('Mobile Number of the Nominee',
             style: const pw.TextStyle(fontSize: 8)),
         pw.SizedBox(width: 8),
-        charBoxes('9999999999', 10),
+        charBoxes(data.nomineeMobile, 10), // <--- FROM MODEL
       ]),
       pw.SizedBox(height: 2),
       pw.Row(
@@ -275,7 +279,7 @@ pw.Widget _buildNomineeDetailsPart() {
               child: pw.Column(children: [
                 pw.Padding(
                     padding: const pw.EdgeInsets.only(bottom: 1),
-                    child: pw.Text('FATHER',
+                    child: pw.Text(data.nomineeRelationship, // <--- FROM MODEL
                         style: const pw.TextStyle(fontSize: 8))),
                 dottedLine(),
               ])),
@@ -286,7 +290,7 @@ pw.Widget _buildNomineeDetailsPart() {
           pw.SizedBox(width: 8),
           pw.Text('Date of Birth of nominee(in case of minor) ',
               style: const pw.TextStyle(fontSize: 8)),
-          charBoxes('01052000', 8),
+          charBoxes(nomineeDob, 8), // <--- FROM MODEL
         ],
       ),
       pw.SizedBox(height: 2),
@@ -326,12 +330,13 @@ pw.Widget _buildNomineeDetailsPart() {
       pw.Row(children: [
         pw.Expanded(
             child: signatureBox(
-                text: 'Arun Kumar',
+                text: data.signature1Text, // <--- FROM MODEL
                 label:
                 '(Signature of the Applicants/Thumb impression of the Applicants)')),
         pw.SizedBox(width: 8),
         pw.Expanded(
             child: signatureBox(
+                text: data.signature2Text, // <--- FROM MODEL
                 label:
                 '(Signature of the Applicants/Thumb impression of the Applicants)')),
       ]),
@@ -393,7 +398,7 @@ pw.Widget _buildNomineeDetailsPart() {
 // == SECTION 8: DECLARATION
 // =========================================================================
 
-pw.Widget buildDeclarationSection() {
+pw.Widget buildDeclarationSection(FormDataModel data) { // <--- MODIFIED
   pw.Widget declarationPoint(String number, String text) {
     return pw.Row(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -439,6 +444,16 @@ pw.Widget buildDeclarationSection() {
     );
   }
 
+  // ===== FIX: Safely pad the date string to prevent substring errors =====
+  final declDate = data.declarationDate;
+  final safeDate = declDate.padRight(8, ' '); // Use 8 spaces
+  // =====================================================================
+
+  // Get date components
+  final formattedDate = declDate.isNotEmpty
+      ? '${safeDate.substring(0, 2)}.${safeDate.substring(2, 4)}.${safeDate.substring(4, 8)}'
+      : '00.00.0000';
+
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -477,7 +492,7 @@ pw.Widget buildDeclarationSection() {
             pw.SizedBox(height: 2),
             declarationPoint(
               '5.',
-              'I/We hereby declare that the details above in this form including details in Annexure I and Annexure II are true and correct to the best of my/our knowledge and belief. I further, declare to inform you of any changes therein, immediately. In case of any of the above information is found to be false or untrue or misleading or misrepresenting, I/We am/are aware that I/We may be held liable for it. I/We agree to be bound by the terms and conditions, instructions, etc. as outlined for FATCA / CRS, rules of Bank of India and the RBI and subsequent amendment(s). My/Our personal/KYC details may be shared with Central KYC registry.',
+              'I/We hereby declare that the details above in this form including details in Annexure I and Annexure II are true and correct to the best of my/our knowledge and belief. I further, declare to inform you of any changes therein, immediately. In case of any of the above information is found to be false or untrue or misleading or misrepresenting, I/We am/are aware that I/We may be held liable for it. I/We agree to be bound by the terms and conditions, instructions, etc. as outlined for FATCA / CRS, rules of Bank ofIndia and the RBI and subsequent amendment(s). My/Our personal/KYC details may be shared with Central KYC registry.',
             ),
             pw.SizedBox(height: 2),
             declarationPoint(
@@ -491,10 +506,10 @@ pw.Widget buildDeclarationSection() {
                 pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    pw.Text('Place: GANAPATHYPALAYAM',
+                    pw.Text('Place: ${data.declarationPlace}', // <--- FROM MODEL
                         style: const pw.TextStyle(fontSize: 8)),
                     pw.SizedBox(height: 2),
-                    pw.Text('Date: 04.02.2001',
+                    pw.Text('Date: $formattedDate', // <--- FROM MODEL
                         style: const pw.TextStyle(fontSize: 8)),
                   ],
                 ),
@@ -504,7 +519,7 @@ pw.Widget buildDeclarationSection() {
                     children: [
                       pw.Expanded(
                         child: signatureBox(
-                            text: 'Arun Kumar',
+                            text: data.signature1Text, // <--- FROM MODEL
                             label:
                             '(Signature of the Applicant/Thumb impression of the Applicant)',
                             height: 35),
@@ -512,6 +527,7 @@ pw.Widget buildDeclarationSection() {
                       pw.SizedBox(width: 8),
                       pw.Expanded(
                         child: signatureBox(
+                            text: data.signature2Text, // <--- FROM MODEL
                             label:
                             '(Signature of the Applicant/Thumb impression of the Applicant)',
                             height: 35),
@@ -529,10 +545,14 @@ pw.Widget buildDeclarationSection() {
 }
 
 // =========================================================================
-// == FINAL SECTION: FOR OFFICE USE / ATTESTATION
+// == FINAL SECTION: FOR OFFICE USE / ATTESTATION (Unchanged)
 // =========================================================================
 
 pw.Widget buildOfficeUseSection() {
+  // (This function is unchanged, so I'm omitting its body for brevity)
+  // ...
+  // (Code for buildOfficeUseSection is identical to your original)
+  // ...
   final textStyle = pw.TextStyle(fontSize: 7);
   final smallTextStyle = pw.TextStyle(fontSize: 6);
 
@@ -766,4 +786,3 @@ pw.Widget buildOfficeUseSection() {
     ],
   );
 }
-

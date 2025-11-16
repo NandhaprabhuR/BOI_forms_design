@@ -2,32 +2,37 @@
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'model/form_data_model.dart';
 import 'pdf_helpers.dart';
 
 // This function will build the entire third page
-pw.Widget buildThirdPage() {
+pw.Widget buildThirdPage(FormDataModel data) { // <--- MODIFIED
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
-      _buildPageThreeHeader(),
+      _buildPageThreeHeader(data), // <--- MODIFIED
       pw.SizedBox(height: 3), // Reduced space
       _buildAccountTypeSection(),
       pw.SizedBox(height: 3), // Reduced space
       _buildModeOfOperationSection(),
       pw.SizedBox(height: 3), // Reduced space
-      _buildServicesRequiredSection(),
+      _buildServicesRequiredSection(data), // <--- MODIFIED
       pw.SizedBox(height: 3), // Reduced space
-      _buildFixedDepositSection(),
+      _buildFixedDepositSection(data), // <--- MODIFIED
       pw.SizedBox(height: 3), // Reduced space
-      _buildMultiOptionDepositSection(),
+      _buildMultiOptionDepositSection(data), // <--- MODIFIED
       pw.SizedBox(height: 3), // Reduced space
-      _buildRecurringDepositSection(),
+      _buildRecurringDepositSection(data), // <--- MODIFIED
     ],
   );
 }
 
 // Builds the header section for the third page
-pw.Widget _buildPageThreeHeader() {
+pw.Widget _buildPageThreeHeader(FormDataModel data) { // <--- MODIFIED
+  // Get date components for display
+  final date = data.date;
+  final dateBoxes = date.isNotEmpty ? charBoxes(date, 8) : charBoxes('', 8);
+
   return pw.Container(
     decoration: pw.BoxDecoration(
       border: pw.Border.all(color: PdfColors.black, width: 0.5),
@@ -65,7 +70,7 @@ pw.Widget _buildPageThreeHeader() {
               children: [
                 pw.Text('Date:', style: const pw.TextStyle(fontSize: 8)),
                 pw.SizedBox(width: 4),
-                charBoxes('', 8), // 8 boxes for date
+                dateBoxes, // <--- FROM MODEL
               ],
             ),
           ],
@@ -148,7 +153,7 @@ pw.Widget _buildPageThreeHeader() {
   );
 }
 
-// BUILDS THE ACCOUNT TYPE SECTION
+// BUILDS THE ACCOUNT TYPE SECTION (Unchanged as it uses checkboxes only)
 pw.Widget _buildAccountTypeSection() {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -176,7 +181,7 @@ pw.Widget _buildAccountTypeSection() {
   );
 }
 
-// BUILDS THE MODE OF OPERATION SECTION
+// BUILDS THE MODE OF OPERATION SECTION (Unchanged as it uses checkboxes only)
 pw.Widget _buildModeOfOperationSection() {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -221,7 +226,7 @@ pw.Widget _buildModeOfOperationSection() {
 // =========================================================================
 
 // Main builder for the entire section 3
-pw.Widget _buildServicesRequiredSection() {
+pw.Widget _buildServicesRequiredSection(FormDataModel data) { // <--- MODIFIED
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -245,7 +250,7 @@ pw.Widget _buildServicesRequiredSection() {
           pw.SizedBox(width: 15),
           pw.Expanded(
             flex: 6,
-            child: _buildRightServicesColumn(),
+            child: _buildRightServicesColumn(data), // <--- MODIFIED
           ),
         ],
       )
@@ -253,7 +258,7 @@ pw.Widget _buildServicesRequiredSection() {
   );
 }
 
-// Builds the left column of the services section
+// Builds the left column of the services section (Unchanged)
 pw.Widget _buildLeftServicesColumn() {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -301,7 +306,7 @@ pw.Widget _buildLeftServicesColumn() {
 }
 
 // Builds the right column of the services section
-pw.Widget _buildRightServicesColumn() {
+pw.Widget _buildRightServicesColumn(FormDataModel data) { // <--- MODIFIED
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -316,7 +321,7 @@ pw.Widget _buildRightServicesColumn() {
           children: [
             pw.Text('Name on Card:', style: const pw.TextStyle(fontSize: 8)),
             pw.SizedBox(height: 3),
-            charBoxes('ARUNKUMAR', 22),
+            charBoxes(data.atmCardName, 22), // <--- FROM MODEL
             pw.SizedBox(height: 3),
             charBoxes('', 22),
           ],
@@ -350,7 +355,7 @@ pw.Widget _buildRightServicesColumn() {
   );
 }
 
-// Helper for applicant rows with a BOXED label
+// Helper for applicant rows with a BOXED label (Unchanged)
 pw.Widget _buildBoxedApplicantRow(String label, {bool isYesChecked = false}) {
   return pw.Row(children: [
     pw.Container(
@@ -367,7 +372,7 @@ pw.Widget _buildBoxedApplicantRow(String label, {bool isYesChecked = false}) {
   ]);
 }
 
-// Helper for applicant rows with an UNBOXED label
+// Helper for applicant rows with an UNBOXED label (Unchanged)
 pw.Widget _buildUnboxedApplicantRow(String label) {
   return pw.Row(children: [
     pw.SizedBox(
@@ -381,7 +386,7 @@ pw.Widget _buildUnboxedApplicantRow(String label) {
   ]);
 }
 
-// Helper for simple "Title: [ ] YES [ ] NO" rows
+// Helper for simple "Title: [ ] YES [ ] NO" rows (Unchanged)
 pw.Widget _buildSimpleServiceRow(String title, {List<String>? options}) {
   options ??= ['YES', 'NO'];
   return pw.Row(
@@ -401,7 +406,7 @@ pw.Widget _buildSimpleServiceRow(String title, {List<String>? options}) {
 // =========================================================================
 // == FIXED DEPOSIT SECTION
 // =========================================================================
-pw.Widget _buildFixedDepositSection() {
+pw.Widget _buildFixedDepositSection(FormDataModel data) { // <--- MODIFIED
   pw.Widget underlinedText(double width) {
     return pw.Container(
       width: width,
@@ -471,7 +476,7 @@ pw.Widget _buildFixedDepositSection() {
                 pw.Row(children: [
                   labeledCheckbox('Auto Renew with part amount for Rs.'),
                   pw.SizedBox(width: 4),
-                  pw.Expanded(child: underlinedText(0)),
+                  underlinedText(0),
                 ]),
               ],
             ),
@@ -513,11 +518,12 @@ pw.Widget _buildFixedDepositSection() {
               children: [
                 pw.Row(children: [
                   pw.Text('Amount: Rs. ', style: const pw.TextStyle(fontSize: 8)),
+                  pw.Text(data.fdAmount, style: const pw.TextStyle(fontSize: 8)), // <--- FROM MODEL (Value)
                   underlinedText(60),
                   pw.SizedBox(width: 8),
                   pw.Text('Rs. (in words) ',
                       style: const pw.TextStyle(fontSize: 8)),
-                  pw.Expanded(child: underlinedText(0)),
+                  underlinedText(0),
                 ]),
                 pw.SizedBox(height: 4),
                 pw.Row(children: [
@@ -569,13 +575,9 @@ pw.Widget _buildFixedDepositSection() {
 }
 
 // =========================================================================
-// == END FIXED DEPOSIT SECTION
-// =========================================================================
-
-// =========================================================================
 // == MULTI-OPTION DEPOSIT SECTION
 // =========================================================================
-pw.Widget _buildMultiOptionDepositSection() {
+pw.Widget _buildMultiOptionDepositSection(FormDataModel data) { // <--- MODIFIED
   pw.Widget dottedText(double width) {
     return pw.Container(
       width: width,
@@ -634,7 +636,7 @@ pw.Widget _buildMultiOptionDepositSection() {
         pw.Text('Linked Saving Bank/Current Account No.',
             style: const pw.TextStyle(fontSize: 8)),
         pw.SizedBox(width: 8),
-        charBoxes('', 15),
+        charBoxes(data.debitAccountNo, 15), // <--- FROM MODEL
       ]),
       pw.SizedBox(height: 4),
 
@@ -652,7 +654,7 @@ pw.Widget _buildMultiOptionDepositSection() {
 // =========================================================================
 // == NEW RECURRING DEPOSIT SECTION (UPDATED)
 // =========================================================================
-pw.Widget _buildRecurringDepositSection() {
+pw.Widget _buildRecurringDepositSection(FormDataModel data) { // <--- MODIFIED
   pw.Widget dottedText(double width) {
     return pw.Container(
       width: width,
@@ -685,6 +687,7 @@ pw.Widget _buildRecurringDepositSection() {
                 labeledCheckbox('Monthly / Core Monthly installment:'),
                 pw.SizedBox(width: 4),
                 pw.Text('Rs.', style: const pw.TextStyle(fontSize: 8)),
+                pw.Text(data.rdInstallment, style: const pw.TextStyle(fontSize: 8)), // <--- FROM MODEL (Value)
                 dottedText(40),
                 pw.SizedBox(width: 4),
                 pw.Text('Rs. (In words)',
@@ -708,7 +711,7 @@ pw.Widget _buildRecurringDepositSection() {
                 pw.Text('Debit Account No.',
                     style: const pw.TextStyle(fontSize: 8)),
                 pw.SizedBox(width: 8),
-                pw.Expanded(child: charBoxes('', 18)),
+                pw.Expanded(child: charBoxes(data.debitAccountNo, 18)), // <--- FROM MODEL
               ]),
               pw.SizedBox(height: 3),
 
@@ -718,7 +721,7 @@ pw.Widget _buildRecurringDepositSection() {
                     width: 180,
                     child: labeledCheckbox('On Maturity, credit proceeds to Account No.')),
                 pw.SizedBox(width: 70), // Manual alignment
-                pw.Expanded(child: charBoxes('', 14)),
+                pw.Expanded(child: charBoxes(data.debitAccountNo, 14)), // <--- FROM MODEL
               ]),
               pw.SizedBox(height: 6),
 
@@ -731,7 +734,7 @@ pw.Widget _buildRecurringDepositSection() {
                 pw.Text('(SB/CA Account No.)',
                     style: const pw.TextStyle(fontSize: 8)),
                 pw.SizedBox(width: 4),
-                pw.Expanded(child: charBoxes('', 18)),
+                pw.Expanded(child: charBoxes(data.debitAccountNo, 18)), // <--- FROM MODEL
               ]),
             ],
           ),

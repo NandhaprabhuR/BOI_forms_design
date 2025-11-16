@@ -5,12 +5,13 @@ import 'package:flutter/services.dart'; // Required for rootBundle
 import 'package:path_provider/path_provider.dart'; // Add path_provider to your pubspec.yaml
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'model/form_data_model.dart'; // <--- ADDED: Import the data model
 
 // -------------------------------------------------------------------
 // NEW: Function to generate and save the PDF for this specific page.
 // -------------------------------------------------------------------
 /// Generates a PDF of the NRI Declaration page with a footer and saves it.
-Future<File> generateTenthPagePdf() async {
+Future<File> generateTenthPagePdf(FormDataModel data) async { // <--- MODIFIED: Accepts data
   final doc = pw.Document();
 
   doc.addPage(
@@ -19,7 +20,7 @@ Future<File> generateTenthPagePdf() async {
 
       // The build method now uses the existing form builder function.
       build: (pw.Context context) => [
-        _buildNriDeclarationForm(),
+        _buildNriDeclarationForm(data), // <--- MODIFIED: Passes data
       ],
 
       // The footer is added here, at the document/page level.
@@ -62,13 +63,13 @@ Future<File> generateTenthPagePdf() async {
 // -------------------------------------------------------------------
 
 /// Builds the tenth page of the document (Annexure III - NRI Declaration).
-pw.Widget buildTenthPage() {
+pw.Widget buildTenthPage(FormDataModel data) { // <--- MODIFIED: Accepts data
   // The main builder function simply returns the fully constructed form.
-  return _buildNriDeclarationForm();
+  return _buildNriDeclarationForm(data); // <--- MODIFIED: Passes data
 }
 
 /// Builds the entire NRI Declaration Form, including the border, text, and signature boxes.
-pw.Widget _buildNriDeclarationForm() {
+pw.Widget _buildNriDeclarationForm(FormDataModel data) { // <--- MODIFIED: Accepts data
   const double headingFontSize = 12;
   const double bodyFontSize = 10.5;
   const double annexureFontSize = 11;
@@ -83,7 +84,7 @@ pw.Widget _buildNriDeclarationForm() {
       'I/we undertake that I/we shall not make available to any person resident in India foreign currency against reimbursement in rupees or any other manner in India I/we further undertake that in case of debits to the accounts for the purpose of investing in India and credits representing sale proceeds of investments. I/we shall ensure that such investments/disinvestments would be covered by either general or special permission of Reserve Bank.';
 
   // Helper widget for creating a signature box.
-  pw.Widget _buildSignatureBox(String label) {
+  pw.Widget _buildSignatureBox(String label, String signatureText) { // <--- MODIFIED: Accepts signatureText
     return pw.Container(
       width: 160,
       height: 70,
@@ -95,6 +96,11 @@ pw.Widget _buildNriDeclarationForm() {
         child: pw.Column(
           mainAxisAlignment: pw.MainAxisAlignment.end,
           children: [
+            if (signatureText.isNotEmpty) // Display signature text if available
+              pw.Text(
+                signatureText,
+                style:  pw.TextStyle(fontSize: 10, fontStyle: pw.FontStyle.italic),
+              ),
             pw.Text(
               label,
               style: const pw.TextStyle(fontSize: signatureLabelFontSize),
@@ -168,9 +174,9 @@ pw.Widget _buildNriDeclarationForm() {
         pw.Row(
           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
           children: [
-            _buildSignatureBox('Signature of Applicant 1'),
-            _buildSignatureBox('Signature of Applicant 2'),
-            _buildSignatureBox('Signature of Applicant 3'),
+            _buildSignatureBox('Signature of Applicant 1', data.signature1Text), // <--- MODIFIED
+            _buildSignatureBox('Signature of Applicant 2', data.signature2Text), // <--- MODIFIED
+            _buildSignatureBox('Signature of Applicant 3', ''), // Retain original third signature (no model data)
           ],
         ),
       ],

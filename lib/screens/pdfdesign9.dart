@@ -2,9 +2,11 @@
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'model/form_data_model.dart' show FormDataModel;
+import 'pdf_helpers.dart'; // Assuming helper functions are available
 
 /// Builds the ninth page of the document with a single form border.
-pw.Widget buildNinthPage() {
+pw.Widget buildNinthPage(FormDataModel data) { // <--- MODIFIED
   // NEW: A container that wraps the entire page content to add a border.
   return pw.Container(
     decoration: pw.BoxDecoration(
@@ -13,21 +15,21 @@ pw.Widget buildNinthPage() {
     padding: const pw.EdgeInsets.all(10), // Adds some space inside the border
     child: pw.Column(
       children: [
-        _buildAnnexure2Form(),
+        _buildAnnexure2Form(data), // <--- MODIFIED
         pw.SizedBox(height: 5),
-        _buildProofOfIdentitySection(),
+        _buildProofOfIdentitySection(data), // <--- MODIFIED
         pw.SizedBox(height: 5),
         _buildFatcaDeclarationForm(),
         pw.SizedBox(height: 2),
         _buildTaxResidencySection(),
         pw.SizedBox(height: 5),
-        _buildForeignTaxAddressSection(),
+        _buildForeignTaxAddressSection(data), // <--- MODIFIED
       ],
     ),
   );
 }
 
-/// Builds the Tax Residency details section.
+/// Builds the Tax Residency details section. (Unchanged, no custom data used)
 pw.Widget _buildTaxResidencySection() {
   const double regularFontSize = 8;
   const double smallFontSize = 7;
@@ -105,7 +107,7 @@ pw.Widget _buildTaxResidencySection() {
   );
 }
 
-/// Builds the FATCA Declaration Form section.
+/// Builds the FATCA Declaration Form section. (Unchanged, no custom data used)
 pw.Widget _buildFatcaDeclarationForm() {
   const double smallFontSize = 7;
 
@@ -221,7 +223,7 @@ pw.Widget _buildFatcaDeclarationForm() {
 }
 
 /// Builds the entire Annexure-2 form section.
-pw.Widget _buildAnnexure2Form() {
+pw.Widget _buildAnnexure2Form(FormDataModel data) { // <--- MODIFIED
   const double smallFontSize = 7;
 
   // Main container for the section. The outer border was removed from here.
@@ -264,7 +266,7 @@ pw.Widget _buildAnnexure2Form() {
             pw.SizedBox(height: 3),
             _buildFormField('Account No.:', _buildBoxes(18)),
             pw.SizedBox(height: 3),
-            _buildNameRow('Name*:', 'Mr', 'KANAGARAJ'),
+            _buildNameRow('Name*:', data.relatedPersonPrefix, data.relatedPersonFirstName), // <--- FROM MODEL (Uses parent's name model as a stand-in)
             pw.SizedBox(height: 4),
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
@@ -279,7 +281,7 @@ pw.Widget _buildAnnexure2Form() {
             pw.SizedBox(height: 4),
             _buildRelatedPersonTypeRow(),
             pw.SizedBox(height: 3),
-            _buildNameRow('Name*:', 'Mr', 'KANAGARAJ', isRelatedPerson: true),
+            _buildNameRow('Name*:', data.relatedPersonPrefix, data.relatedPersonFirstName, isRelatedPerson: true), // <--- FROM MODEL
             pw.SizedBox(height: 3),
             pw.Align(
               alignment: pw.Alignment.centerLeft,
@@ -297,7 +299,7 @@ pw.Widget _buildAnnexure2Form() {
 }
 
 // Builds the Proof of Identity section
-pw.Widget _buildProofOfIdentitySection() {
+pw.Widget _buildProofOfIdentitySection(FormDataModel data) { // <--- MODIFIED
   const double regularFontSize = 9;
 
   final poiList = {
@@ -334,7 +336,7 @@ pw.Widget _buildProofOfIdentitySection() {
       ),
       pw.SizedBox(height: 4),
       _buildFormField('Document No/Identification Number*',
-          _buildBoxes(30, text: '222222222222')),
+          _buildBoxes(30, text: data.relatedPersonDocNo)), // <--- FROM MODEL
       pw.SizedBox(height: 4),
       pw.Row(
         children: [
@@ -363,7 +365,7 @@ pw.Widget _buildProofOfIdentitySection() {
 }
 
 /// Builds the Foreign Tax Address section, signature, and date.
-pw.Widget _buildForeignTaxAddressSection() {
+pw.Widget _buildForeignTaxAddressSection(FormDataModel data) { // <--- MODIFIED
   const double regularFontSize = 9;
   const double smallFontSize = 7;
 
@@ -438,9 +440,10 @@ pw.Widget _buildForeignTaxAddressSection() {
                 pw.Container(
                   width: 150,
                   height: 10,
-                  decoration: const pw.BoxDecoration(
+                  decoration: pw.BoxDecoration(
                     border: pw.Border(bottom: pw.BorderSide(width: 0.5)),
                   ),
+                  child: pw.Text(data.declarationPlace, style: pw.TextStyle(fontSize: regularFontSize)), // <--- FROM MODEL
                 ),
               ),
               pw.SizedBox(height: 8),
@@ -449,9 +452,10 @@ pw.Widget _buildForeignTaxAddressSection() {
                 pw.Container(
                   width: 150,
                   height: 10,
-                  decoration: const pw.BoxDecoration(
+                  decoration: pw.BoxDecoration(
                     border: pw.Border(bottom: pw.BorderSide(width: 0.5)),
                   ),
+                  child: pw.Text(data.declarationDate, style: pw.TextStyle(fontSize: regularFontSize)), // <--- FROM MODEL
                 ),
               ),
             ],

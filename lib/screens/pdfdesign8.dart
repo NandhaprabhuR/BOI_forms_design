@@ -2,9 +2,10 @@
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'model/form_data_model.dart'; // <--- ADDED: Import the data model
 
 /// Builds the eighth page of the document.
-pw.Widget buildEighthPage() {
+pw.Widget buildEighthPage(FormDataModel data) { // <--- MODIFIED: Accepts data
   return pw.Container(
     decoration: pw.BoxDecoration(
       border: pw.Border.all(color: PdfColors.black, width: 1),
