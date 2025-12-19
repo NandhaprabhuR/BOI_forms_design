@@ -6,15 +6,16 @@ import 'model/form_data_model.dart';
 import 'pdf_helpers.dart';
 
 // This function will build the entire third page
-pw.Widget buildThirdPage(FormDataModel data) { // <--- MODIFIED
+pw.Widget buildThirdPage(FormDataModel data) {
+  // <--- MODIFIED
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
       _buildPageThreeHeader(data), // <--- MODIFIED
       pw.SizedBox(height: 3), // Reduced space
-      _buildAccountTypeSection(),
+      _buildAccountTypeSection(data),
       pw.SizedBox(height: 3), // Reduced space
-      _buildModeOfOperationSection(),
+      _buildModeOfOperationSection(data),
       pw.SizedBox(height: 3), // Reduced space
       _buildServicesRequiredSection(data), // <--- MODIFIED
       pw.SizedBox(height: 3), // Reduced space
@@ -28,7 +29,8 @@ pw.Widget buildThirdPage(FormDataModel data) { // <--- MODIFIED
 }
 
 // Builds the header section for the third page
-pw.Widget _buildPageThreeHeader(FormDataModel data) { // <--- MODIFIED
+pw.Widget _buildPageThreeHeader(FormDataModel data) {
+  // <--- MODIFIED
   // Get date components for display
   final date = data.date;
   final dateBoxes = date.isNotEmpty ? charBoxes(date, 8) : charBoxes('', 8);
@@ -53,13 +55,17 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) { // <--- MODIFIED
                     'ACCOUNT OPENING FORM FOR INDIVIDUAL (PART -II)',
                     textAlign: pw.TextAlign.center,
                     style: pw.TextStyle(
-                        fontWeight: pw.FontWeight.bold, fontSize: 10),
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 10,
+                    ),
                   ),
                   pw.Text(
                     '(SAVING BANK, CURRENT ACCOUNT AND TERM DEPOSITS)',
                     textAlign: pw.TextAlign.center,
                     style: pw.TextStyle(
-                        fontWeight: pw.FontWeight.bold, fontSize: 9),
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 9,
+                    ),
                   ),
                 ],
               ),
@@ -79,7 +85,8 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) { // <--- MODIFIED
 
         // --- Middle Row: Instructions, IDs, and Stamp Box ---
         pw.Row(
-          crossAxisAlignment: pw.CrossAxisAlignment.end, // Align items to the bottom
+          crossAxisAlignment:
+              pw.CrossAxisAlignment.end, // Align items to the bottom
           children: [
             pw.Expanded(
               child: pw.Column(
@@ -96,29 +103,44 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) { // <--- MODIFIED
                   ),
                   pw.SizedBox(height: 8),
                   // ID and Account Fields
-                  pw.Row(children: [
-                    pw.SizedBox(
+                  pw.Row(
+                    children: [
+                      pw.SizedBox(
                         width: 120,
-                        child: pw.Text('First Applicant Customer ID',
-                            style: const pw.TextStyle(fontSize: 8))),
-                    charBoxes('', 18), // 18 boxes for ID
-                  ]),
+                        child: pw.Text(
+                          'First Applicant Customer ID',
+                          style: const pw.TextStyle(fontSize: 8),
+                        ),
+                      ),
+                      charBoxes('', 18), // 18 boxes for ID
+                    ],
+                  ),
                   pw.SizedBox(height: 4),
-                  pw.Row(children: [
-                    pw.SizedBox(
+                  pw.Row(
+                    children: [
+                      pw.SizedBox(
                         width: 120,
-                        child: pw.Text('Second Applicant Customer ID',
-                            style: const pw.TextStyle(fontSize: 8))),
-                    charBoxes('', 18), // 18 boxes for ID
-                  ]),
+                        child: pw.Text(
+                          'Second Applicant Customer ID',
+                          style: const pw.TextStyle(fontSize: 8),
+                        ),
+                      ),
+                      charBoxes('', 18), // 18 boxes for ID
+                    ],
+                  ),
                   pw.SizedBox(height: 4),
-                  pw.Row(children: [
-                    pw.SizedBox(
+                  pw.Row(
+                    children: [
+                      pw.SizedBox(
                         width: 120,
-                        child: pw.Text('Account No.',
-                            style: const pw.TextStyle(fontSize: 8))),
-                    charBoxes('', 12), // 12 boxes for Account No.
-                  ]),
+                        child: pw.Text(
+                          'Account No.',
+                          style: const pw.TextStyle(fontSize: 8),
+                        ),
+                      ),
+                      charBoxes('', 12), // 12 boxes for Account No.
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -131,8 +153,10 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) { // <--- MODIFIED
               child: pw.Center(
                 child: pw.Text(
                   'Bank/Branch to affix rubber stamp of name and code no.',
-                  style:
-                  const pw.TextStyle(fontSize: 6, color: PdfColors.grey700),
+                  style: const pw.TextStyle(
+                    fontSize: 6,
+                    color: PdfColors.grey700,
+                  ),
                   textAlign: pw.TextAlign.center,
                 ),
               ),
@@ -154,7 +178,7 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) { // <--- MODIFIED
 }
 
 // BUILDS THE ACCOUNT TYPE SECTION (Unchanged as it uses checkboxes only)
-pw.Widget _buildAccountTypeSection() {
+pw.Widget _buildAccountTypeSection(FormDataModel data) {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -162,27 +186,38 @@ pw.Widget _buildAccountTypeSection() {
         width: double.infinity,
         color: PdfColors.grey200,
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        child: pw.Text('1. Type of Account',
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
+        child: pw.Text(
+          '1. Type of Account',
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+        ),
       ),
       pw.SizedBox(height: 4),
       pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          labeledCheckbox('SAVINGS BANK ACCOUNT', checked: true),
-          labeledCheckbox('BSBDA'),
-          labeledCheckbox('SMALL ACCOUNT'),
-          labeledCheckbox('CURRENT ACCOUNT'),
-          labeledCheckbox('FIXED DEPOSIT/RD'),
-          labeledCheckbox('CAPS GAIN(SB)'),
+          labeledCheckbox(
+            'SAVINGS BANK ACCOUNT',
+            checked: data.accountTypeSavingsBank,
+          ),
+          labeledCheckbox('BSBDA', checked: data.accountTypeBSBDA),
+          labeledCheckbox(
+            'SMALL ACCOUNT',
+            checked: data.accountTypeSmallAccount,
+          ),
+          labeledCheckbox('CURRENT ACCOUNT', checked: data.accountTypeCurrent),
+          labeledCheckbox(
+            'FIXED DEPOSIT/RD',
+            checked: data.accountTypeFixedDeposit,
+          ),
+          labeledCheckbox('CAPS GAIN(SB)', checked: data.accountTypeCapsGain),
         ],
       ),
     ],
   );
 }
 
-// BUILDS THE MODE OF OPERATION SECTION (Unchanged as it uses checkboxes only)
-pw.Widget _buildModeOfOperationSection() {
+// BUILDS THE MODE OF OPERATION SECTION
+pw.Widget _buildModeOfOperationSection(FormDataModel data) {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -190,29 +225,47 @@ pw.Widget _buildModeOfOperationSection() {
         width: double.infinity,
         color: PdfColors.grey200,
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        child: pw.Text('2. Mode of Operation',
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
+        child: pw.Text(
+          '2. Mode of Operation',
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+        ),
       ),
       pw.SizedBox(height: 4),
       pw.Row(
         children: [
-          labeledCheckbox('Self'),
+          labeledCheckbox('Self', checked: data.modeOfOperationSelf),
           pw.SizedBox(width: 15),
-          labeledCheckbox('Either or Survivor'),
+          labeledCheckbox(
+            'Either or Survivor',
+            checked: data.modeOfOperationEitherOrSurvivor,
+          ),
           pw.SizedBox(width: 15),
-          labeledCheckbox('Former or Survivor'),
+          labeledCheckbox(
+            'Former or Survivor',
+            checked: data.modeOfOperationFormerOrSurvivor,
+          ),
           pw.SizedBox(width: 15),
-          labeledCheckbox('Any one or Survivor'),
+          labeledCheckbox(
+            'Any one or Survivor',
+            checked: data.modeOfOperationAnyoneOrSurvivor,
+          ),
           pw.SizedBox(width: 15),
-          labeledCheckbox('Jointly Operated'),
+          labeledCheckbox(
+            'Jointly Operated',
+            checked: data.modeOfOperationJointly,
+          ),
           pw.SizedBox(width: 15),
-          labeledCheckbox('Other'),
+          labeledCheckbox('Other', checked: data.modeOfOperationOtherCheckbox),
           pw.SizedBox(width: 4),
           pw.Container(
             width: 70,
             height: 10,
             decoration: const pw.BoxDecoration(
               border: pw.Border(bottom: pw.BorderSide(color: PdfColors.black)),
+            ),
+            child: pw.Text(
+              data.modeOfOperationOther,
+              style: const pw.TextStyle(fontSize: 7),
             ),
           ),
         ],
@@ -226,7 +279,8 @@ pw.Widget _buildModeOfOperationSection() {
 // =========================================================================
 
 // Main builder for the entire section 3
-pw.Widget _buildServicesRequiredSection(FormDataModel data) { // <--- MODIFIED
+pw.Widget _buildServicesRequiredSection(FormDataModel data) {
+  // <--- MODIFIED
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -235,78 +289,97 @@ pw.Widget _buildServicesRequiredSection(FormDataModel data) { // <--- MODIFIED
         width: double.infinity,
         color: PdfColors.grey200,
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        child: pw.Text('3. Services Required',
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
+        child: pw.Text(
+          '3. Services Required',
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+        ),
       ),
       pw.SizedBox(height: 4),
       // Two-column layout
       pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Expanded(
-            flex: 5,
-            child: _buildLeftServicesColumn(),
-          ),
+          pw.Expanded(flex: 5, child: _buildLeftServicesColumn(data)),
           pw.SizedBox(width: 15),
           pw.Expanded(
             flex: 6,
             child: _buildRightServicesColumn(data), // <--- MODIFIED
           ),
         ],
-      )
+      ),
     ],
   );
 }
 
-// Builds the left column of the services section (Unchanged)
-pw.Widget _buildLeftServicesColumn() {
+// Builds the left column of the services section
+pw.Widget _buildLeftServicesColumn(FormDataModel data) {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
       // --- ATM CARD ---
       pw.Text('1. ATM-CUM-DEBIT CARD', style: const pw.TextStyle(fontSize: 8)),
       pw.SizedBox(height: 2),
-      _buildBoxedApplicantRow('1st Applicant', isYesChecked: true),
+      _buildBoxedApplicantRow(
+        '1st Applicant',
+        isYesChecked: data.atmCard1stApplicant,
+      ),
       pw.SizedBox(height: 2),
-      _buildBoxedApplicantRow('2nd Applicant'),
+      _buildBoxedApplicantRow(
+        '2nd Applicant',
+        isYesChecked: data.atmCard2ndApplicant,
+      ),
       pw.SizedBox(height: 2),
-      pw.Text('(Mobile no. is mandatory for services 2 to 8)',
-          style: const pw.TextStyle(fontSize: 7)),
+      pw.Text(
+        '(Mobile no. is mandatory for services 2 to 8)',
+        style: const pw.TextStyle(fontSize: 7),
+      ),
       pw.SizedBox(height: 8),
 
       // --- CHEQUE BOOK ---
-      pw.Row(children: [
-        pw.Text('2. CHEQUE BOOK', style: const pw.TextStyle(fontSize: 8)),
-        pw.SizedBox(width: 8),
-        labeledCheckbox('YES', checked: true),
-        pw.SizedBox(width: 8),
-        labeledCheckbox('NO'),
-      ]),
+      pw.Row(
+        children: [
+          pw.Text('2. CHEQUE BOOK', style: const pw.TextStyle(fontSize: 8)),
+          pw.SizedBox(width: 8),
+          labeledCheckbox('YES', checked: data.chequeBookYes),
+          pw.SizedBox(width: 8),
+          labeledCheckbox('NO', checked: data.chequeBookNo),
+        ],
+      ),
       pw.SizedBox(height: 2),
       pw.Text(
-          '(Only for Regular SB/Current Accounts/Caps Gain(SB))\n(Not available for Regular BSBD/Small Accounts)',
-          style: const pw.TextStyle(fontSize: 7)),
+        '(Only for Regular SB/Current Accounts/Caps Gain(SB))\n(Not available for Regular BSBD/Small Accounts)',
+        style: const pw.TextStyle(fontSize: 7),
+      ),
       pw.SizedBox(height: 8),
 
       // --- INTERNET BANKING ---
-      pw.Text('3. INTERNET BANKING REQUIRED:',
-          style: const pw.TextStyle(fontSize: 8)),
-      pw.Text('Transaction rights required',
-          style: const pw.TextStyle(fontSize: 8)),
+      pw.Text(
+        '3. INTERNET BANKING REQUIRED:',
+        style: const pw.TextStyle(fontSize: 8),
+      ),
+      pw.Text(
+        'Transaction rights required',
+        style: const pw.TextStyle(fontSize: 8),
+      ),
       pw.SizedBox(height: 2),
-      _buildUnboxedApplicantRow('1st Applicant'),
+      _buildUnboxedApplicantRow(
+        '1st Applicant',
+        isYesChecked: data.netBankingYes,
+      ),
       pw.SizedBox(height: 2),
       _buildUnboxedApplicantRow('2nd Applicant'),
       pw.SizedBox(height: 2),
       pw.Text(
-          '(Available only for singly operated accounts and joint accounts operated by Either or Survivor mode. In case of accounts operated as Former or Survivor mode INB facility is available to1st applicant only)',
-          style: const pw.TextStyle(fontSize: 6.5, height: 1.2)),
+        '(Available only for singly operated accounts and joint accounts operated by Either or Survivor mode. In case of accounts operated as Former or Survivor mode INB facility is available to1st applicant only)',
+        style: const pw.TextStyle(fontSize: 6.5, height: 1.2),
+      ),
     ],
   );
 }
 
 // Builds the right column of the services section
-pw.Widget _buildRightServicesColumn(FormDataModel data) { // <--- MODIFIED
+pw.Widget _buildRightServicesColumn(FormDataModel data) {
+  // <--- MODIFIED
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -330,71 +403,113 @@ pw.Widget _buildRightServicesColumn(FormDataModel data) { // <--- MODIFIED
       pw.SizedBox(height: 4),
 
       // --- OTHER SERVICES ---
-      _buildSimpleServiceRow('4. SMS ALERTS(Charges Applicable)'),
+      _buildSimpleServiceRow(
+        '4. SMS ALERTS(Charges Applicable)',
+        data.smsAlertYes,
+        data.smsAlertNo,
+      ),
       pw.Padding(
         padding: const pw.EdgeInsets.only(left: 8),
-        child: pw.Text('SMS Alerts on Registered Mobile Number',
-            style: const pw.TextStyle(fontSize: 7)),
+        child: pw.Text(
+          'SMS Alerts on Registered Mobile Number',
+          style: const pw.TextStyle(fontSize: 7),
+        ),
       ),
       pw.SizedBox(height: 6),
-      _buildSimpleServiceRow('5. PHONE BANKING SERVICES:'),
-      pw.SizedBox(height: 6),
-      _buildSimpleServiceRow('6. MOBILE BANKING:'),
-      pw.SizedBox(height: 6),
-      _buildSimpleServiceRow('7. PASSBOOK REQUIRED:'),
-      pw.Padding(
-        padding: const pw.EdgeInsets.only(left: 8),
-        child: pw.Text('(For Savings Bank Account)',
-            style: const pw.TextStyle(fontSize: 7)),
-      ),
+      _buildSimpleServiceRow('5. PHONE BANKING SERVICES:', false, false),
       pw.SizedBox(height: 6),
       _buildSimpleServiceRow(
-          '8. e-Statement(at monthly intervals), in lieu of paper copy:',
-          options: ['Required', 'Not Required']),
+        '6. MOBILE BANKING:',
+        data.mobileBankingYes,
+        data.mobileBankingNo,
+      ),
+      pw.SizedBox(height: 6),
+      _buildSimpleServiceRow('7. PASSBOOK REQUIRED:', false, false),
+      pw.Padding(
+        padding: const pw.EdgeInsets.only(left: 8),
+        child: pw.Text(
+          '(For Savings Bank Account)',
+          style: const pw.TextStyle(fontSize: 7),
+        ),
+      ),
+      pw.SizedBox(height: 6),
+      _buildSimpleServiceRowCustom(
+        '8. e-Statement(at monthly intervals), in lieu of paper copy:',
+        ['Required', 'Not Required'],
+        [data.emailStatementYes, data.emailStatementNo],
+      ),
     ],
   );
 }
 
 // Helper for applicant rows with a BOXED label (Unchanged)
 pw.Widget _buildBoxedApplicantRow(String label, {bool isYesChecked = false}) {
-  return pw.Row(children: [
-    pw.Container(
-      width: 60,
-      padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
-      child:
-      pw.Center(child: pw.Text(label, style: const pw.TextStyle(fontSize: 8))),
-    ),
-    pw.SizedBox(width: 8),
-    labeledCheckbox('Yes', checked: isYesChecked),
-    pw.SizedBox(width: 8),
-    labeledCheckbox('No'),
-  ]);
-}
-
-// Helper for applicant rows with an UNBOXED label (Unchanged)
-pw.Widget _buildUnboxedApplicantRow(String label) {
-  return pw.Row(children: [
-    pw.SizedBox(
-      width: 60,
-      child: pw.Text(label, style: const pw.TextStyle(fontSize: 8)),
-    ),
-    pw.SizedBox(width: 8),
-    labeledCheckbox('YES'),
-    pw.SizedBox(width: 8),
-    labeledCheckbox('NO'),
-  ]);
-}
-
-// Helper for simple "Title: [ ] YES [ ] NO" rows (Unchanged)
-pw.Widget _buildSimpleServiceRow(String title, {List<String>? options}) {
-  options ??= ['YES', 'NO'];
   return pw.Row(
     children: [
-      pw.Expanded(child: pw.Text(title, style: const pw.TextStyle(fontSize: 8))),
-      labeledCheckbox(options[0]),
+      pw.Container(
+        width: 60,
+        padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
+        child: pw.Center(
+          child: pw.Text(label, style: const pw.TextStyle(fontSize: 8)),
+        ),
+      ),
+      pw.SizedBox(width: 8),
+      labeledCheckbox('Yes', checked: isYesChecked),
+      pw.SizedBox(width: 8),
+      labeledCheckbox('No'),
+    ],
+  );
+}
+
+// Helper for applicant rows with an UNBOXED label
+pw.Widget _buildUnboxedApplicantRow(String label, {bool isYesChecked = false}) {
+  return pw.Row(
+    children: [
+      pw.SizedBox(
+        width: 60,
+        child: pw.Text(label, style: const pw.TextStyle(fontSize: 8)),
+      ),
+      pw.SizedBox(width: 8),
+      labeledCheckbox('YES', checked: isYesChecked),
+      pw.SizedBox(width: 8),
+      labeledCheckbox('NO', checked: !isYesChecked),
+    ],
+  );
+}
+
+// Helper for simple "Title: [ ] YES [ ] NO" rows
+pw.Widget _buildSimpleServiceRow(
+  String title,
+  bool yesChecked,
+  bool noChecked,
+) {
+  return pw.Row(
+    children: [
+      pw.Expanded(
+        child: pw.Text(title, style: const pw.TextStyle(fontSize: 8)),
+      ),
+      labeledCheckbox('YES', checked: yesChecked),
+      pw.SizedBox(width: 8),
+      labeledCheckbox('NO', checked: noChecked),
+    ],
+  );
+}
+
+// Helper for custom option labels
+pw.Widget _buildSimpleServiceRowCustom(
+  String title,
+  List<String> options,
+  List<bool> checked,
+) {
+  return pw.Row(
+    children: [
+      pw.Expanded(
+        child: pw.Text(title, style: const pw.TextStyle(fontSize: 8)),
+      ),
+      labeledCheckbox(options[0], checked: checked[0]),
       pw.SizedBox(width: 4),
-      labeledCheckbox(options[1]),
+      labeledCheckbox(options[1], checked: checked[1]),
     ],
   );
 }
@@ -406,7 +521,8 @@ pw.Widget _buildSimpleServiceRow(String title, {List<String>? options}) {
 // =========================================================================
 // == FIXED DEPOSIT SECTION
 // =========================================================================
-pw.Widget _buildFixedDepositSection(FormDataModel data) { // <--- MODIFIED
+pw.Widget _buildFixedDepositSection(FormDataModel data) {
+  // <--- MODIFIED
   pw.Widget underlinedText(double width) {
     return pw.Container(
       width: width,
@@ -422,30 +538,32 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) { // <--- MODIFIED
     width: 150,
     height: 40,
     decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
-    child: pw.Row(children: [
-      pw.Expanded(
-        flex: 3,
-        child: pw.Padding(
-          padding: const pw.EdgeInsets.all(2),
-          child: pw.Text(
-            'Name of Depositor(s) Amount and Period of Deposit authenticated by Cash Officer in case of illiterate Depositor',
-            style: const pw.TextStyle(fontSize: 5, color: PdfColors.grey700),
-            textAlign: pw.TextAlign.center,
+    child: pw.Row(
+      children: [
+        pw.Expanded(
+          flex: 3,
+          child: pw.Padding(
+            padding: const pw.EdgeInsets.all(2),
+            child: pw.Text(
+              'Name of Depositor(s) Amount and Period of Deposit authenticated by Cash Officer in case of illiterate Depositor',
+              style: const pw.TextStyle(fontSize: 5, color: PdfColors.grey700),
+              textAlign: pw.TextAlign.center,
+            ),
           ),
         ),
-      ),
-      pw.VerticalDivider(width: 0.5, color: PdfColors.black),
-      pw.Expanded(
-        flex: 2,
-        child: pw.Center(
-          child: pw.Text(
-            'Initials of Cash Officer',
-            textAlign: pw.TextAlign.center,
-            style: const pw.TextStyle(fontSize: 5, color: PdfColors.grey700),
+        pw.VerticalDivider(width: 0.5, color: PdfColors.black),
+        pw.Expanded(
+          flex: 2,
+          child: pw.Center(
+            child: pw.Text(
+              'Initials of Cash Officer',
+              textAlign: pw.TextAlign.center,
+              style: const pw.TextStyle(fontSize: 5, color: PdfColors.grey700),
+            ),
           ),
         ),
-      ),
-    ]),
+      ],
+    ),
   );
 
   final maturityInstructionWidget = pw.Column(
@@ -460,9 +578,15 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) { // <--- MODIFIED
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                labeledCheckbox('Auto renew principal & payback interest'),
+                labeledCheckbox(
+                  'Auto renew principal & payback interest',
+                  checked: data.fdAutoRenewPrincipalPaybackInterest,
+                ),
                 pw.SizedBox(height: 2),
-                labeledCheckbox('Pay principal & interest'),
+                labeledCheckbox(
+                  'Pay principal & interest',
+                  checked: data.fdPayPrincipalAndInterest,
+                ),
               ],
             ),
           ),
@@ -471,13 +595,21 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) { // <--- MODIFIED
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                labeledCheckbox('Auto renew principal & interest'),
+                labeledCheckbox(
+                  'Auto renew principal & interest',
+                  checked: data.fdAutoRenewBoth,
+                ),
                 pw.SizedBox(height: 2),
-                pw.Row(children: [
-                  labeledCheckbox('Auto Renew with part amount for Rs.'),
-                  pw.SizedBox(width: 4),
-                  underlinedText(0),
-                ]),
+                pw.Row(
+                  children: [
+                    labeledCheckbox(
+                      'Auto Renew with part amount for Rs.',
+                      checked: data.fdAutoRenewPartAmount,
+                    ),
+                    pw.SizedBox(width: 4),
+                    underlinedText(0),
+                  ],
+                ),
               ],
             ),
           ),
@@ -494,82 +626,122 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) { // <--- MODIFIED
         color: PdfColors.grey200,
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         child: pw.Text(
-            '4. Fixed Deposit: For the following products/facilities, please furnish options/details:',
-            style:
-            pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
+          '4. Fixed Deposit: For the following products/facilities, please furnish options/details:',
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+        ),
       ),
       pw.SizedBox(height: 3),
       pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          labeledCheckbox('Recurring Deposit'),
-          labeledCheckbox('Double Benefit Deposit'),
-          labeledCheckbox('MIC/QIC'),
-          labeledCheckbox('Short / Fixed Deposit'),
-          labeledCheckbox('Tax Saving Scheme'),
-          labeledCheckbox('Capital Gain (TDR)'),
+          labeledCheckbox(
+            'Recurring Deposit',
+            checked: data.modRecurringDeposit,
+          ),
+          labeledCheckbox(
+            'Double Benefit Deposit',
+            checked: data.modDoubleBenefit,
+          ),
+          labeledCheckbox('MIC/QIC', checked: data.modMICQIC),
+          labeledCheckbox(
+            'Short / Fixed Deposit',
+            checked: data.modShortFixedDeposit,
+          ),
+          labeledCheckbox('Tax Saving Scheme', checked: data.modTaxSaving),
+          labeledCheckbox('Capital Gain (TDR)', checked: data.modCapitalGain),
         ],
       ),
       pw.SizedBox(height: 4),
-      pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-        pw.Expanded(
-          child: pw.Column(
+      pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Expanded(
+            child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Row(children: [
-                  pw.Text('Amount: Rs. ', style: const pw.TextStyle(fontSize: 8)),
-                  pw.Text(data.fdAmount, style: const pw.TextStyle(fontSize: 8)), // <--- FROM MODEL (Value)
-                  underlinedText(60),
-                  pw.SizedBox(width: 8),
-                  pw.Text('Rs. (in words) ',
-                      style: const pw.TextStyle(fontSize: 8)),
-                  underlinedText(0),
-                ]),
+                pw.Row(
+                  children: [
+                    pw.Text(
+                      'Amount: Rs. ',
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                    pw.Text(
+                      data.fdAmount,
+                      style: const pw.TextStyle(fontSize: 8),
+                    ), // <--- FROM MODEL (Value)
+                    underlinedText(60),
+                    pw.SizedBox(width: 8),
+                    pw.Text(
+                      'Rs. (in words) ',
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                    underlinedText(0),
+                  ],
+                ),
                 pw.SizedBox(height: 4),
-                pw.Row(children: [
-                  pw.Text('Period: ', style: const pw.TextStyle(fontSize: 8)),
-                  underlinedText(30),
-                  pw.Text(' year(s) ', style: const pw.TextStyle(fontSize: 8)),
-                  underlinedText(30),
-                  pw.Text(' month(s) ', style: const pw.TextStyle(fontSize: 8)),
-                  underlinedText(30),
-                  pw.Text(' days', style: const pw.TextStyle(fontSize: 8)),
-                ]),
-              ]),
-        ),
-        pw.SizedBox(width: 8),
-        stampBox,
-      ]),
+                pw.Row(
+                  children: [
+                    pw.Text('Period: ', style: const pw.TextStyle(fontSize: 8)),
+                    underlinedText(30),
+                    pw.Text(
+                      ' year(s) ',
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                    underlinedText(30),
+                    pw.Text(
+                      ' month(s) ',
+                      style: const pw.TextStyle(fontSize: 8),
+                    ),
+                    underlinedText(30),
+                    pw.Text(' days', style: const pw.TextStyle(fontSize: 8)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          pw.SizedBox(width: 8),
+          stampBox,
+        ],
+      ),
       pw.SizedBox(height: 4),
-      pw.Text('In case of Term Deposit, interest payable#:',
-          style: const pw.TextStyle(fontSize: 8)),
+      pw.Text(
+        'In case of Term Deposit, interest payable#:',
+        style: const pw.TextStyle(fontSize: 8),
+      ),
       pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-          children: [
-            labeledCheckbox('Monthly'),
-            labeledCheckbox('Quarterly'),
-            labeledCheckbox('Calender Quarter'),
-            labeledCheckbox('Half Yearly'),
-            labeledCheckbox('Yearly'),
-          ]),
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: [
+          labeledCheckbox('Monthly', checked: data.rdMonthly),
+          labeledCheckbox('Quarterly', checked: data.rdQuarterly),
+          labeledCheckbox('Calender Quarter', checked: data.rdCalenderQuarter),
+          labeledCheckbox('Half Yearly', checked: data.rdHalfYearly),
+          labeledCheckbox('Yearly', checked: data.rdYearly),
+        ],
+      ),
       pw.SizedBox(height: 4),
       maturityInstructionWidget,
       pw.SizedBox(height: 2),
       pw.Text(
-          '*(Auto Renewal will be done for the similar term at the prevailing interest rate on the date of renewal.)',
-          style: const pw.TextStyle(fontSize: 6.5)),
+        '*(Auto Renewal will be done for the similar term at the prevailing interest rate on the date of renewal.)',
+        style: const pw.TextStyle(fontSize: 6.5),
+      ),
       pw.SizedBox(height: 1),
       pw.Text(
-          '@# (All Interest payable and Maturity instructions options will not be offered bt all Banks. Contact respective Banks for the options available) Proceeds/Residual amount):',
-          style: const pw.TextStyle(fontSize: 6.5)),
+        '@# (All Interest payable and Maturity instructions options will not be offered bt all Banks. Contact respective Banks for the options available) Proceeds/Residual amount):',
+        style: const pw.TextStyle(fontSize: 6.5),
+      ),
       pw.SizedBox(height: 4),
-      pw.Text('Payment instruction (Maturity Proceeds/Residual amount):',
-          style: const pw.TextStyle(fontSize: 8)),
-      pw.Row(children: [
-        labeledCheckbox('By credit to my Bank Account No.'),
-        pw.SizedBox(width: 8),
-        charBoxes('', 15),
-      ]),
+      pw.Text(
+        'Payment instruction (Maturity Proceeds/Residual amount):',
+        style: const pw.TextStyle(fontSize: 8),
+      ),
+      pw.Row(
+        children: [
+          labeledCheckbox('By credit to my Bank Account No.'),
+          pw.SizedBox(width: 8),
+          charBoxes('', 15),
+        ],
+      ),
     ],
   );
 }
@@ -577,14 +749,16 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) { // <--- MODIFIED
 // =========================================================================
 // == MULTI-OPTION DEPOSIT SECTION
 // =========================================================================
-pw.Widget _buildMultiOptionDepositSection(FormDataModel data) { // <--- MODIFIED
+pw.Widget _buildMultiOptionDepositSection(FormDataModel data) {
+  // <--- MODIFIED
   pw.Widget dottedText(double width) {
     return pw.Container(
       width: width,
       height: 10,
       decoration: const pw.BoxDecoration(
         border: pw.Border(
-            bottom: pw.BorderSide(width: 0.5, style: pw.BorderStyle.dotted)),
+          bottom: pw.BorderSide(width: 0.5, style: pw.BorderStyle.dotted),
+        ),
       ),
     );
   }
@@ -597,26 +771,29 @@ pw.Widget _buildMultiOptionDepositSection(FormDataModel data) { // <--- MODIFIED
         width: double.infinity,
         color: PdfColors.grey200,
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        child: pw.Text('5. MULTI-OPTION DEPOSIT SCHEME/AUTO SWEEP',
-            style:
-            pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
+        child: pw.Text(
+          '5. MULTI-OPTION DEPOSIT SCHEME/AUTO SWEEP',
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+        ),
       ),
       pw.SizedBox(height: 4),
 
       // Type and Period Row
-      pw.Row(children: [
-        pw.Text('Type of Deposit', style: const pw.TextStyle(fontSize: 8)),
-        pw.SizedBox(width: 8),
-        labeledCheckbox('Term Deposit'),
-        pw.SizedBox(width: 8),
-        labeledCheckbox('Term Deposit (Reinvestment)'),
-        pw.SizedBox(width: 20),
-        pw.Text('Period of Deposit', style: const pw.TextStyle(fontSize: 8)),
-        dottedText(50),
-        pw.Text(' Years(s)', style: const pw.TextStyle(fontSize: 8)),
-        dottedText(50),
-        pw.Text(' Months', style: const pw.TextStyle(fontSize: 8)),
-      ]),
+      pw.Row(
+        children: [
+          pw.Text('Type of Deposit', style: const pw.TextStyle(fontSize: 8)),
+          pw.SizedBox(width: 8),
+          labeledCheckbox('Term Deposit'),
+          pw.SizedBox(width: 8),
+          labeledCheckbox('Term Deposit (Reinvestment)'),
+          pw.SizedBox(width: 20),
+          pw.Text('Period of Deposit', style: const pw.TextStyle(fontSize: 8)),
+          dottedText(50),
+          pw.Text(' Years(s)', style: const pw.TextStyle(fontSize: 8)),
+          dottedText(50),
+          pw.Text(' Months', style: const pw.TextStyle(fontSize: 8)),
+        ],
+      ),
       pw.SizedBox(height: 4),
 
       // Consent Rows
@@ -632,21 +809,29 @@ pw.Widget _buildMultiOptionDepositSection(FormDataModel data) { // <--- MODIFIED
       pw.SizedBox(height: 4),
 
       // Linked Account Row
-      pw.Row(children: [
-        pw.Text('Linked Saving Bank/Current Account No.',
-            style: const pw.TextStyle(fontSize: 8)),
-        pw.SizedBox(width: 8),
-        charBoxes(data.debitAccountNo, 15), // <--- FROM MODEL
-      ]),
+      pw.Row(
+        children: [
+          pw.Text(
+            'Linked Saving Bank/Current Account No.',
+            style: const pw.TextStyle(fontSize: 8),
+          ),
+          pw.SizedBox(width: 8),
+          charBoxes(data.debitAccountNo, 15), // <--- FROM MODEL
+        ],
+      ),
       pw.SizedBox(height: 4),
 
       // Reverse Sweep Row
-      pw.Row(children: [
-        pw.Text('Under reverse sweep facility for breaking the MOD to be broken by',
-            style: const pw.TextStyle(fontSize: 8)),
-        pw.SizedBox(width: 8),
-        labeledCheckbox('Last in first out', checked: true),
-      ]),
+      pw.Row(
+        children: [
+          pw.Text(
+            'Under reverse sweep facility for breaking the MOD to be broken by',
+            style: const pw.TextStyle(fontSize: 8),
+          ),
+          pw.SizedBox(width: 8),
+          labeledCheckbox('Last in first out', checked: true),
+        ],
+      ),
     ],
   );
 }
@@ -654,14 +839,16 @@ pw.Widget _buildMultiOptionDepositSection(FormDataModel data) { // <--- MODIFIED
 // =========================================================================
 // == NEW RECURRING DEPOSIT SECTION (UPDATED)
 // =========================================================================
-pw.Widget _buildRecurringDepositSection(FormDataModel data) { // <--- MODIFIED
+pw.Widget _buildRecurringDepositSection(FormDataModel data) {
+  // <--- MODIFIED
   pw.Widget dottedText(double width) {
     return pw.Container(
       width: width,
       height: 10,
       decoration: const pw.BoxDecoration(
         border: pw.Border(
-            bottom: pw.BorderSide(width: 0.5, style: pw.BorderStyle.dotted)),
+          bottom: pw.BorderSide(width: 0.5, style: pw.BorderStyle.dotted),
+        ),
       ),
     );
   }
@@ -674,68 +861,93 @@ pw.Widget _buildRecurringDepositSection(FormDataModel data) { // <--- MODIFIED
           width: double.infinity,
           color: PdfColors.grey200,
           padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-          child: pw.Text('6   RECURRING DEPOSIT',
-              style:
-              pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
+          child: pw.Text(
+            '6   RECURRING DEPOSIT',
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+          ),
         ),
         pw.Padding(
           padding: const pw.EdgeInsets.fromLTRB(4, 3, 4, 3),
           child: pw.Column(
             children: [
               // Installment Row
-              pw.Row(children: [
-                labeledCheckbox('Monthly / Core Monthly installment:'),
-                pw.SizedBox(width: 4),
-                pw.Text('Rs.', style: const pw.TextStyle(fontSize: 8)),
-                pw.Text(data.rdInstallment, style: const pw.TextStyle(fontSize: 8)), // <--- FROM MODEL (Value)
-                dottedText(40),
-                pw.SizedBox(width: 4),
-                pw.Text('Rs. (In words)',
-                    style: const pw.TextStyle(fontSize: 8)),
-                dottedText(60),
-                pw.SizedBox(width: 4),
-                pw.Text('Period:', style: const pw.TextStyle(fontSize: 8)),
-                dottedText(20),
-                pw.Text(' Years:', style: const pw.TextStyle(fontSize: 8)),
-                dottedText(20),
-                pw.Text(' Month(s)', style: const pw.TextStyle(fontSize: 8)),
-                dottedText(20),
-              ]),
+              pw.Row(
+                children: [
+                  labeledCheckbox('Monthly / Core Monthly installment:'),
+                  pw.SizedBox(width: 4),
+                  pw.Text('Rs.', style: const pw.TextStyle(fontSize: 8)),
+                  dottedText(40),
+                  pw.SizedBox(width: 4),
+                  pw.Text(
+                    'Rs. (In words)',
+                    style: const pw.TextStyle(fontSize: 8),
+                  ),
+                  dottedText(80),
+                  pw.SizedBox(width: 4),
+                  pw.Text('Period:', style: const pw.TextStyle(fontSize: 8)),
+                  dottedText(20),
+                  pw.Text(' Years:', style: const pw.TextStyle(fontSize: 8)),
+                  dottedText(20),
+                  pw.Text(' Month(s)', style: const pw.TextStyle(fontSize: 8)),
+                  dottedText(20),
+                ],
+              ),
               pw.SizedBox(height: 3),
 
               // Standing Instruction Row
-              pw.Row(children: [
-                pw.SizedBox(
+              pw.Row(
+                children: [
+                  pw.SizedBox(
                     width: 180,
-                    child: labeledCheckbox('Standing instruction (if any)')),
-                pw.Text('Debit Account No.',
-                    style: const pw.TextStyle(fontSize: 8)),
-                pw.SizedBox(width: 8),
-                pw.Expanded(child: charBoxes(data.debitAccountNo, 18)), // <--- FROM MODEL
-              ]),
+                    child: labeledCheckbox('Standing instruction (if any)'),
+                  ),
+                  pw.Text(
+                    'Debit Account No.',
+                    style: const pw.TextStyle(fontSize: 8),
+                  ),
+                  pw.SizedBox(width: 8),
+                  pw.Expanded(
+                    child: charBoxes(data.debitAccountNo, 18),
+                  ), // <--- FROM MODEL
+                ],
+              ),
               pw.SizedBox(height: 3),
 
               // On Maturity Row
-              pw.Row(children: [
-                pw.SizedBox(
+              pw.Row(
+                children: [
+                  pw.SizedBox(
                     width: 180,
-                    child: labeledCheckbox('On Maturity, credit proceeds to Account No.')),
-                pw.SizedBox(width: 70), // Manual alignment
-                pw.Expanded(child: charBoxes(data.debitAccountNo, 14)), // <--- FROM MODEL
-              ]),
+                    child: labeledCheckbox(
+                      'On Maturity, credit proceeds to Account No.',
+                    ),
+                  ),
+                  pw.SizedBox(width: 70), // Manual alignment
+                  pw.Expanded(
+                    child: charBoxes(data.debitAccountNo, 14),
+                  ), // <--- FROM MODEL
+                ],
+              ),
               pw.SizedBox(height: 6),
 
               // TDS Row
-              pw.Row(children: [
-                pw.Text(
+              pw.Row(
+                children: [
+                  pw.Text(
                     'For the above Term Deposit Account, please deduct applicable TDS from',
-                    style: const pw.TextStyle(fontSize: 8)),
-                pw.SizedBox(width: 4),
-                pw.Text('(SB/CA Account No.)',
-                    style: const pw.TextStyle(fontSize: 8)),
-                pw.SizedBox(width: 4),
-                pw.Expanded(child: charBoxes(data.debitAccountNo, 18)), // <--- FROM MODEL
-              ]),
+                    style: const pw.TextStyle(fontSize: 8),
+                  ),
+                  pw.SizedBox(width: 4),
+                  pw.Text(
+                    '(SB/CA Account No.)',
+                    style: const pw.TextStyle(fontSize: 8),
+                  ),
+                  pw.SizedBox(width: 4),
+                  pw.Expanded(
+                    child: charBoxes(data.debitAccountNo, 18),
+                  ), // <--- FROM MODEL
+                ],
+              ),
             ],
           ),
         ),

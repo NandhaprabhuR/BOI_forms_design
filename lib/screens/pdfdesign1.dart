@@ -1,6 +1,8 @@
 // lib/screens/pdfdesign1.dart
 
 import 'dart:typed_data';
+import 'dart:io';
+import 'dart:convert'; // <--- ADDED for Base64
 import 'package:boiforms/screens/pdf_helpers.dart';
 import 'package:boiforms/screens/pdfdesign2.dart';
 import 'package:boiforms/screens/pdfdesign3.dart';
@@ -11,6 +13,7 @@ import 'package:boiforms/screens/pdfdesign7.dart';
 import 'package:boiforms/screens/pdfdesign8.dart';
 import 'package:boiforms/screens/pdfdesign9.dart';
 import 'package:boiforms/screens/pdfdesign10.dart';
+import 'package:boiforms/screens/signature_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -23,7 +26,13 @@ import 'model/form_data_model.dart';
 // --- MODIFIED: Converted to StatefulWidget ---
 class PdfDesignPage extends StatefulWidget {
   final FormDataModel formData; // For the single preview
-  const PdfDesignPage({super.key, required this.formData});
+  final bool autoPreview; // Auto-show PDF preview when page loads
+
+  const PdfDesignPage({
+    super.key,
+    required this.formData,
+    this.autoPreview = false,
+  });
 
   @override
   State<PdfDesignPage> createState() => _PdfDesignPageState();
@@ -33,6 +42,30 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
   // --- ADDED: State variables ---
   List<FormDataModel> _importedData = [];
   String _importMessage = "";
+  bool _isGenerating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-preview PDF if enabled
+    if (widget.autoPreview) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showPdfPreview();
+      });
+    }
+  }
+
+  // Method to show PDF preview
+  void _showPdfPreview() {
+    Printing.layoutPdf(
+      onLayout: (format) async {
+        final List<int> bytes = await _generatePdfBytesFromModel(
+          widget.formData,
+        );
+        return Uint8List.fromList(bytes);
+      },
+    );
+  }
 
   // --- HELPER WIDGETS (CLASS LEVEL) ---
   // (Standard helper methods here)
@@ -92,9 +125,252 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
     );
   }
 
+  // Helper method to check if a string is Base64
+  bool _isBase64(String str) {
+    try {
+      // Base64 strings should be at least 4 characters and be divisible by 4 (with padding)
+      if (str.length < 4) return false;
+
+      // Try to decode - if it works, it's Base64
+      base64Decode(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // --- CORE PDF GENERATION LOGIC (METHOD DEFINED INSIDE CLASS) ---
   Future<List<int>> _generatePdfBytesFromModel(FormDataModel model) async {
     final pdf = pw.Document();
+
+    // --- LOAD SIGNATURE IMAGES ---
+    pw.MemoryImage? signature1Image;
+    pw.MemoryImage? signature2Image;
+    pw.MemoryImage? applicantPhoto;
+    pw.MemoryImage? applicantSignature;
+
+    print('🔍 Attempting to load signatures...');
+    print('📝 Signature 1 Path: ${model.signature1Text}');
+    print('📝 Signature 2 Path: ${model.signature2Text}');
+    print('📝 Applicant Photo Path: ${model.applicantPhoto}');
+    print('📝 Applicant Signature Path: ${model.applicantSignatureImage}');
+
+    // --- SIGNATURE 1 ---
+    try {
+      if (model.signature1Text.isNotEmpty) {
+        print('🔎 Checking signature 1...');
+
+        // Check if it's Base64 encoded (starts with data:image or is pure base64)
+        if (model.signature1Text.startsWith('data:image')) {
+          // Handle data URL format: data:image/png;base64,iVBORw0KG...
+          final base64String = model.signature1Text.split(',')[1];
+          final bytes = base64Decode(base64String);
+          signature1Image = pw.MemoryImage(bytes);
+          print(
+            '✅ Signature 1 loaded from Base64 data URL: ${bytes.length} bytes',
+          );
+        } else if (_isBase64(model.signature1Text)) {
+          // Pure Base64 string
+          final bytes = base64Decode(model.signature1Text);
+          signature1Image = pw.MemoryImage(bytes);
+          print('✅ Signature 1 loaded from Base64: ${bytes.length} bytes');
+        } else {
+          // File path
+          final file = File(model.signature1Text);
+          final exists = await file.exists();
+          print('📁 Signature 1 file exists: $exists');
+
+          if (exists) {
+            final bytes = await file.readAsBytes();
+            print('✅ Signature 1 loaded from file: ${bytes.length} bytes');
+            signature1Image = pw.MemoryImage(bytes);
+          } else {
+            print('❌ Signature 1 file not found at: ${model.signature1Text}');
+          }
+        }
+      } else {
+        print('⚠️ Signature 1 path is empty');
+      }
+    } catch (e) {
+      print('❌ Error loading signature 1: $e');
+    }
+
+    // --- SIGNATURE 2 ---
+    try {
+      if (model.signature2Text.isNotEmpty) {
+        print('🔎 Checking signature 2...');
+
+        // Check if it's Base64 encoded
+        if (model.signature2Text.startsWith('data:image')) {
+          final base64String = model.signature2Text.split(',')[1];
+          final bytes = base64Decode(base64String);
+          signature2Image = pw.MemoryImage(bytes);
+          print(
+            '✅ Signature 2 loaded from Base64 data URL: ${bytes.length} bytes',
+          );
+        } else if (_isBase64(model.signature2Text)) {
+          final bytes = base64Decode(model.signature2Text);
+          signature2Image = pw.MemoryImage(bytes);
+          print('✅ Signature 2 loaded from Base64: ${bytes.length} bytes');
+        } else {
+          // File path
+          final file = File(model.signature2Text);
+          final exists = await file.exists();
+          print('📁 Signature 2 file exists: $exists');
+
+          if (exists) {
+            final bytes = await file.readAsBytes();
+            print('✅ Signature 2 loaded from file: ${bytes.length} bytes');
+            signature2Image = pw.MemoryImage(bytes);
+          } else {
+            print('❌ Signature 2 file not found at: ${model.signature2Text}');
+          }
+        }
+      } else {
+        print('⚠️ Signature 2 path is empty');
+      }
+    } catch (e) {
+      print('❌ Error loading signature 2: $e');
+    }
+
+    // --- APPLICANT PHOTO ---
+    try {
+      if (model.applicantPhoto.isNotEmpty) {
+        print('🔎 Checking applicant photo...');
+
+        if (model.applicantPhoto.startsWith('data:image')) {
+          final base64String = model.applicantPhoto.split(',')[1];
+          final bytes = base64Decode(base64String);
+          applicantPhoto = pw.MemoryImage(bytes);
+          print(
+            '✅ Applicant photo loaded from Base64 data URL: ${bytes.length} bytes',
+          );
+        } else if (_isBase64(model.applicantPhoto)) {
+          final bytes = base64Decode(model.applicantPhoto);
+          applicantPhoto = pw.MemoryImage(bytes);
+          print('✅ Applicant photo loaded from Base64: ${bytes.length} bytes');
+        } else {
+          final file = File(model.applicantPhoto);
+          final exists = await file.exists();
+          print('📁 Applicant photo file exists: $exists');
+
+          if (exists) {
+            final bytes = await file.readAsBytes();
+            print('✅ Applicant photo loaded from file: ${bytes.length} bytes');
+            applicantPhoto = pw.MemoryImage(bytes);
+          } else {
+            print(
+              '❌ Applicant photo file not found at: ${model.applicantPhoto}',
+            );
+          }
+        }
+      } else {
+        print('⚠️ Applicant photo path is empty');
+      }
+    } catch (e) {
+      print('❌ Error loading applicant photo: $e');
+    }
+
+    // --- APPLICANT SIGNATURE ---
+    try {
+      if (model.applicantSignatureImage.isNotEmpty) {
+        print('🔎 Checking applicant signature...');
+
+        if (model.applicantSignatureImage.startsWith('data:image')) {
+          final base64String = model.applicantSignatureImage.split(',')[1];
+          final bytes = base64Decode(base64String);
+          applicantSignature = pw.MemoryImage(bytes);
+          print(
+            '✅ Applicant signature loaded from Base64 data URL: ${bytes.length} bytes',
+          );
+        } else if (_isBase64(model.applicantSignatureImage)) {
+          final bytes = base64Decode(model.applicantSignatureImage);
+          applicantSignature = pw.MemoryImage(bytes);
+          print(
+            '✅ Applicant signature loaded from Base64: ${bytes.length} bytes',
+          );
+        } else {
+          final file = File(model.applicantSignatureImage);
+          final exists = await file.exists();
+          print('📁 Applicant signature file exists: $exists');
+
+          if (exists) {
+            final bytes = await file.readAsBytes();
+            print(
+              '✅ Applicant signature loaded from file: ${bytes.length} bytes',
+            );
+            applicantSignature = pw.MemoryImage(bytes);
+          } else {
+            print(
+              '❌ Applicant signature file not found at: ${model.applicantSignatureImage}',
+            );
+          }
+        }
+      } else {
+        print('⚠️ Applicant signature path is empty');
+      }
+    } catch (e) {
+      print('❌ Error loading applicant signature: $e');
+    }
+
+    // --- OFFICIAL SIGNATURE ---
+    pw.MemoryImage? officialSignature;
+    try {
+      if (model.officialSignature.isNotEmpty) {
+        print('🔎 Checking official signature...');
+
+        if (model.officialSignature.startsWith('data:image')) {
+          final base64String = model.officialSignature.split(',')[1];
+          final bytes = base64Decode(base64String);
+          officialSignature = pw.MemoryImage(bytes);
+          print(
+            '✅ Official signature loaded from Base64 data URL: ${bytes.length} bytes',
+          );
+        } else if (_isBase64(model.officialSignature)) {
+          final bytes = base64Decode(model.officialSignature);
+          officialSignature = pw.MemoryImage(bytes);
+          print(
+            '✅ Official signature loaded from Base64: ${bytes.length} bytes',
+          );
+        } else {
+          final file = File(model.officialSignature);
+          final exists = await file.exists();
+          print('📁 Official signature file exists: $exists');
+
+          if (exists) {
+            final bytes = await file.readAsBytes();
+            print(
+              '✅ Official signature loaded from file: ${bytes.length} bytes',
+            );
+            officialSignature = pw.MemoryImage(bytes);
+          } else {
+            print(
+              '❌ Official signature file not found at: ${model.officialSignature}',
+            );
+          }
+        }
+      } else {
+        print('⚠️ Official signature path is empty');
+      }
+    } catch (e) {
+      print('❌ Error loading official signature: $e');
+    }
+
+    print(
+      '🎯 Final status - Signature 1: ${signature1Image != null ? "LOADED" : "NOT LOADED"}',
+    );
+    print(
+      '🎯 Final status - Signature 2: ${signature2Image != null ? "LOADED" : "NOT LOADED"}',
+    );
+    print(
+      '🎯 Final status - Applicant Photo: ${applicantPhoto != null ? "LOADED" : "NOT LOADED"}',
+    );
+    print(
+      '🎯 Final status - Applicant Signature: ${applicantSignature != null ? "LOADED" : "NOT LOADED"}',
+    );
+    print(
+      '🎯 Final status - Official Signature: ${officialSignature != null ? "LOADED" : "NOT LOADED"}',
+    );
 
     final addressData = {
       'address': model.currentAddress,
@@ -145,15 +421,26 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
             ),
           ),
           // --- PASS MODEL TO ALL OTHER PAGES ---
-          buildSecondPage(model),
+          buildSecondPage(
+            model,
+            signature1Image,
+            signature2Image,
+            applicantPhoto,
+            applicantSignature,
+            officialSignature,
+          ),
           buildThirdPage(model),
-          buildFourthPage(model),
-          buildFifthPage(model),
+          buildFourthPage(model, signature1Image, signature2Image),
+          buildFifthPage(model, signature1Image: signature1Image),
           buildSixthPage(model),
           buildSeventhPage(model),
           buildEighthPage(model),
           buildNinthPage(model),
-          buildTenthPage(model),
+          buildTenthPage(
+            model,
+            signature1Image: signature1Image,
+            signature2Image: signature2Image,
+          ),
         ],
       ),
     );
@@ -165,215 +452,172 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BOI Account Opening Form'),
+        title: const Text('Complete Form Preview'),
         backgroundColor: Colors.blue[800],
         foregroundColor: Colors.white,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.image),
+            tooltip: 'Get Signature Paths',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SignaturePathHelper(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Button 1: Generate single PDF (uses imported data if available)
-              ElevatedButton.icon(
-                icon: const Icon(Icons.picture_as_pdf),
-                label: const Text("Generate PDF Preview"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 15,
-                  ),
-                ),
-                onPressed: () async {
-                  // Use imported data if available, otherwise use default blank form
-                  final dataToUse = _importedData.isNotEmpty
-                      ? _importedData.first
-                      : widget.formData;
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Button 1: Generate single PDF using the default/current in-app data
+            ElevatedButton(
+              child: const Text("Generate Single PDF (Current Data)"),
+              onPressed: () {
+                Printing.layoutPdf(
+                  onLayout: (format) async {
+                    final List<int> bytes = await _generatePdfBytesFromModel(
+                      widget.formData,
+                    );
+                    return Uint8List.fromList(bytes);
+                  },
+                );
+              },
+            ),
 
-                  await Printing.layoutPdf(
-                    onLayout: (format) async {
-                      final List<int> bytes = await _generatePdfBytesFromModel(
-                        dataToUse,
-                      );
-                      return Uint8List.fromList(bytes);
-                    },
+            const SizedBox(height: 20),
+
+            // --- MODIFIED: Bulk Import/Generate Section ---
+
+            // Button 2: Bulk Import
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+              child: const Text("Import Excel (XLSX) File"),
+              onPressed: () async {
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+                if (!context.mounted) return;
+
+                final List<FormDataModel> result;
+                try {
+                  result = await importBulkData();
+                } catch (e) {
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text('Error importing: ${e.toString()}')),
                   );
-                },
-              ),
+                  return;
+                }
 
-              const SizedBox(height: 30),
+                if (!context.mounted) return;
 
-              // Divider
-              const Divider(thickness: 2),
-              const SizedBox(height: 10),
-              Text(
-                'Import Data from Excel',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[700],
-                ),
-              ),
-              const SizedBox(height: 10),
+                if (result.isEmpty) {
+                  scaffoldMessenger.showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Bulk import failed, file was empty, or operation cancelled.',
+                      ),
+                    ),
+                  );
+                  setState(() {
+                    _importedData = [];
+                    _importMessage = "";
+                  });
+                } else {
+                  // SUCCESS: Update state to show the new button
+                  setState(() {
+                    _importedData = result;
+                    _importMessage =
+                        "${result.length} record(s) imported successfully.";
+                  });
+                }
+              },
+            ),
 
-              // Button 2: Import Excel File
-              ElevatedButton.icon(
-                icon: const Icon(Icons.upload_file),
-                label: const Text("Import Excel (.xlsx) File"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 15,
+            const SizedBox(height: 20),
+
+            // --- ADDED: Conditional UI for Generation ---
+            if (_importedData.isNotEmpty && !_isGenerating)
+              Column(
+                children: [
+                  Text(
+                    _importMessage,
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                onPressed: () async {
-                  try {
-                    final result = await importBulkData();
-
-                    if (!context.mounted) return;
-
-                    if (result.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'No data imported. File might be empty or operation was cancelled.',
-                          ),
-                          backgroundColor: Colors.orange,
-                        ),
-                      );
+                  const SizedBox(height: 10),
+                  // Button 3: Generate from imported data
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                    ),
+                    child: const Text(
+                      "Click to Generate PDFs from Imported Data",
+                    ),
+                    onPressed: () async {
+                      // Show loading indicator
                       setState(() {
+                        _isGenerating = true;
+                      });
+
+                      final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+                      try {
+                        // --- THIS IS THE KEY CHANGE ---
+                        // 1. Get the first (or only) imported model
+                        final modelToPreview = _importedData.first;
+
+                        // 2. Call Printing.layoutPdf to show the preview
+                        await Printing.layoutPdf(
+                          onLayout: (format) async {
+                            final List<int> bytes =
+                                await _generatePdfBytesFromModel(
+                                  modelToPreview,
+                                );
+                            return Uint8List.fromList(bytes);
+                          },
+                        );
+                        // --- END OF CHANGE ---
+                      } catch (e) {
+                        if (!context.mounted) return;
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Error generating PDF: ${e.toString()}',
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (!context.mounted) return;
+
+                      // Hide generation button and reset
+                      setState(() {
+                        _isGenerating = false;
                         _importedData = [];
                         _importMessage = "";
                       });
-                    } else {
-                      setState(() {
-                        _importedData = result;
-                        _importMessage =
-                            "✓ Successfully imported ${result.length} record(s)";
-                      });
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Successfully imported ${result.length} record(s)!',
-                          ),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    }
-                  } catch (e) {
-                    if (!context.mounted) return;
-
-                    setState(() {
-                      _importedData = [];
-                      _importMessage = "✗ Import failed: ${e.toString()}";
-                    });
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error importing: ${e.toString()}'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                },
+                    },
+                  ),
+                ],
               ),
 
-              const SizedBox(height: 20),
-
-              // Show import status message
-              if (_importMessage.isNotEmpty)
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: _importedData.isEmpty
-                        ? Colors.red[50]
-                        : Colors.green[50],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: _importedData.isEmpty ? Colors.red : Colors.green,
-                      width: 2,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        _importedData.isEmpty
-                            ? Icons.error_outline
-                            : Icons.check_circle_outline,
-                        color: _importedData.isEmpty
-                            ? Colors.red
-                            : Colors.green,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _importMessage,
-                        style: TextStyle(
-                          color: _importedData.isEmpty
-                              ? Colors.red[900]
-                              : Colors.green[900],
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-              const SizedBox(height: 20),
-
-              // Button 3: Preview PDFs from imported data (with option to save from preview)
-              if (_importedData.isNotEmpty)
-                Column(
-                  children: [
-                    const Divider(thickness: 2),
-                    const SizedBox(height: 10),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.preview),
-                      label: Text(
-                        "Preview All PDFs (${_importedData.length} records)",
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 15,
-                        ),
-                      ),
-                      onPressed: () async {
-                        // Show preview for each imported record one by one
-                        for (int i = 0; i < _importedData.length; i++) {
-                          await Printing.layoutPdf(
-                            name: 'BOI_Form_${i + 1}.pdf',
-                            onLayout: (format) async {
-                              final List<int> bytes =
-                                  await _generatePdfBytesFromModel(
-                                    _importedData[i],
-                                  );
-                              return Uint8List.fromList(bytes);
-                            },
-                          );
-
-                          // Small delay between previews if multiple records
-                          if (i < _importedData.length - 1) {
-                            await Future.delayed(
-                              const Duration(milliseconds: 500),
-                            );
-                          }
-                        }
-                      },
-                    ),
-                  ],
-                ),
-            ],
-          ),
+            // Show a loading indicator while PDFs are being generated
+            if (_isGenerating)
+              const Column(
+                children: [
+                  Text("Generating PDFs..."),
+                  SizedBox(height: 10),
+                  CircularProgressIndicator(),
+                ],
+              ),
+          ],
         ),
       ),
     );
@@ -625,6 +869,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
   pw.Widget _buildContactDetails(FormDataModel data) {
     // ===== FIX: Safely pad the mobile number to prevent substring errors =====
     final safeMobile = data.mobileNo.padRight(13, ' ');
+    // =======================================================================
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -1410,15 +1655,15 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
             pw.Row(
               children: [
                 pw.Text('Customer ID:', style: const pw.TextStyle(fontSize: 8)),
-                charBoxes('', 15),
+                charBoxes(data.customerId, 15),
                 pw.Spacer(),
                 pw.Text(
                   'Application type:',
                   style: const pw.TextStyle(fontSize: 8),
                 ),
-                labeledCheckbox('New', checked: true),
+                labeledCheckbox('New', checked: data.applicationTypeNew),
                 pw.SizedBox(width: 4),
-                labeledCheckbox('Update'),
+                labeledCheckbox('Update', checked: data.applicationTypeUpdate),
               ],
             ),
             pw.SizedBox(height: 1),
@@ -1432,7 +1677,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                       'Account No.:',
                       style: const pw.TextStyle(fontSize: 8),
                     ),
-                    charBoxes('', 15),
+                    charBoxes(data.accountNo, 15),
                   ],
                 ),
                 pw.Spacer(),
@@ -1446,7 +1691,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                           'CKYC No.:',
                           style: const pw.TextStyle(fontSize: 8),
                         ),
-                        charBoxes('', 20),
+                        charBoxes(data.ckycNo, 20),
                       ],
                     ),
                     pw.Padding(
@@ -1468,9 +1713,12 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                   'Account type:',
                   style: const pw.TextStyle(fontSize: 8),
                 ),
-                labeledCheckbox('Normal', checked: true),
+                labeledCheckbox('Normal', checked: data.accountTypeNormal),
                 pw.SizedBox(width: 8),
-                labeledCheckbox('Small (For low risk customers)'),
+                labeledCheckbox(
+                  'Small (For low risk customers)',
+                  checked: data.accountTypeSmallRisk,
+                ),
               ],
             ),
           ],

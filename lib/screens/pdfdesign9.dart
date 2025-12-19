@@ -3,10 +3,10 @@
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'model/form_data_model.dart' show FormDataModel;
-import 'pdf_helpers.dart'; // Assuming helper functions are available
 
 /// Builds the ninth page of the document with a single form border.
-pw.Widget buildNinthPage(FormDataModel data) { // <--- MODIFIED
+pw.Widget buildNinthPage(FormDataModel data) {
+  // <--- MODIFIED
   // NEW: A container that wraps the entire page content to add a border.
   return pw.Container(
     decoration: pw.BoxDecoration(
@@ -37,10 +37,14 @@ pw.Widget _buildTaxResidencySection() {
   pw.Widget _buildHeaderCell(String text) {
     return pw.Padding(
       padding: const pw.EdgeInsets.all(2),
-      child: pw.Text(text,
-          textAlign: pw.TextAlign.center,
-          style:
-          pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: smallFontSize)),
+      child: pw.Text(
+        text,
+        textAlign: pw.TextAlign.center,
+        style: pw.TextStyle(
+          fontWeight: pw.FontWeight.bold,
+          fontSize: smallFontSize,
+        ),
+      ),
     );
   }
 
@@ -50,13 +54,15 @@ pw.Widget _buildTaxResidencySection() {
 
   pw.Widget _bulletPoint(String text) {
     return pw.Row(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.SizedBox(width: 10), // Indent
-          pw.Text('*', style: pw.TextStyle(fontSize: regularFontSize)),
-          pw.SizedBox(width: 5),
-          pw.Expanded(child: pw.Text(text, style: pw.TextStyle(fontSize: regularFontSize))),
-        ]
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.SizedBox(width: 10), // Indent
+        pw.Text('*', style: pw.TextStyle(fontSize: regularFontSize)),
+        pw.SizedBox(width: 5),
+        pw.Expanded(
+          child: pw.Text(text, style: pw.TextStyle(fontSize: regularFontSize)),
+        ),
+      ],
     );
   }
 
@@ -74,35 +80,51 @@ pw.Widget _buildTaxResidencySection() {
           pw.TableRow(
             children: [
               _buildHeaderCell('Country of Tax Residence#'),
-              _buildHeaderCell('Tax Identification number or equivalent if issued by Jurisdiction'),
-              _buildHeaderCell('Identification type (TIN or Other, please specify)'),
+              _buildHeaderCell(
+                'Tax Identification number or equivalent if issued by Jurisdiction',
+              ),
+              _buildHeaderCell(
+                'Identification type (TIN or Other, please specify)',
+              ),
             ],
           ),
-          pw.TableRow(children: [_buildEmptyCell(), _buildEmptyCell(), _buildEmptyCell()]),
-          pw.TableRow(children: [_buildEmptyCell(), _buildEmptyCell(), _buildEmptyCell()]),
+          pw.TableRow(
+            children: [_buildEmptyCell(), _buildEmptyCell(), _buildEmptyCell()],
+          ),
+          pw.TableRow(
+            children: [_buildEmptyCell(), _buildEmptyCell(), _buildEmptyCell()],
+          ),
         ],
       ),
       pw.SizedBox(height: 2),
-      pw.Text('# In case, country of tax residence is Indian, PAN is treated as TIN',
-          style: pw.TextStyle(fontSize: smallFontSize)),
+      pw.Text(
+        '# In case, country of tax residence is Indian, PAN is treated as TIN',
+        style: pw.TextStyle(fontSize: smallFontSize),
+      ),
       pw.SizedBox(height: 3),
       pw.Row(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text('@', style: pw.TextStyle(fontSize: regularFontSize)),
-            pw.SizedBox(width: 5),
-            pw.Expanded(
-                child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      _bulletPoint('A citizen of US including individual born in US but resident in another country (who has not given up US citizenship'),
-                      _bulletPoint('A person residing in US including US green card holder'),
-                      _bulletPoint('Certain persons who spend more than 180 days in US each year'),
-                    ]
-                )
-            )
-          ]
-      )
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text('@', style: pw.TextStyle(fontSize: regularFontSize)),
+          pw.SizedBox(width: 5),
+          pw.Expanded(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                _bulletPoint(
+                  'A citizen of US including individual born in US but resident in another country (who has not given up US citizenship',
+                ),
+                _bulletPoint(
+                  'A person residing in US including US green card holder',
+                ),
+                _bulletPoint(
+                  'Certain persons who spend more than 180 days in US each year',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     ],
   );
 }
@@ -111,27 +133,28 @@ pw.Widget _buildTaxResidencySection() {
 pw.Widget _buildFatcaDeclarationForm() {
   const double smallFontSize = 7;
 
-  return pw.Column(children: [
-    pw.Container(
-      width: double.infinity,
-      color: PdfColors.grey300,
-      padding: const pw.EdgeInsets.all(2),
-      child: pw.Center(
-        child: pw.Text(
-          'FATCA Declaration Form',
-          style: pw.TextStyle(
-              fontWeight: pw.FontWeight.bold, fontSize: 8),
+  return pw.Column(
+    children: [
+      pw.Container(
+        width: double.infinity,
+        color: PdfColors.grey300,
+        padding: const pw.EdgeInsets.all(2),
+        child: pw.Center(
+          child: pw.Text(
+            'FATCA Declaration Form',
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
+          ),
         ),
       ),
-    ),
-    pw.Container(
+      pw.Container(
         padding: const pw.EdgeInsets.fromLTRB(8, 6, 8, 6),
         decoration: pw.BoxDecoration(
-            border: pw.Border(
-              left: pw.BorderSide(),
-              right: pw.BorderSide(),
-              bottom: pw.BorderSide(),
-            )),
+          border: pw.Border(
+            left: pw.BorderSide(),
+            right: pw.BorderSide(),
+            bottom: pw.BorderSide(),
+          ),
+        ),
         child: pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
@@ -147,62 +170,80 @@ pw.Widget _buildFatcaDeclarationForm() {
             _buildFormField('Account No.:', _buildBoxes(18)),
             pw.SizedBox(height: 3),
             _buildFormField(
-                'Name*:',
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    _buildBoxes(35,
-                        placeholder:
-                        'F I R S T N A M E M I D D L E N A M E L A S T N A M E'),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.only(left: 2, top: 1),
-                      child: pw.Text('Prefix', style: pw.TextStyle(fontSize: smallFontSize)),
+              'Name*:',
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  _buildBoxes(
+                    35,
+                    placeholder:
+                        'F I R S T N A M E M I D D L E N A M E L A S T N A M E',
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.only(left: 2, top: 1),
+                    child: pw.Text(
+                      'Prefix',
+                      style: pw.TextStyle(fontSize: smallFontSize),
                     ),
-                  ],
-                )),
+                  ),
+                ],
+              ),
+            ),
             pw.SizedBox(height: 3),
             pw.Row(
               children: [
                 _buildFormField(
-                    'Citizenship*:',
-                    pw.Row(children: [
+                  'Citizenship*:',
+                  pw.Row(
+                    children: [
                       _buildCheckbox('IN-India'),
                       pw.SizedBox(width: 8),
                       _buildCheckbox('Others'),
-                    ])),
+                    ],
+                  ),
+                ),
                 pw.SizedBox(width: 15),
                 pw.Expanded(
-                    child: _buildFormField('Country Name:', _buildBoxes(15))),
+                  child: _buildFormField('Country Name:', _buildBoxes(15)),
+                ),
               ],
             ),
             pw.SizedBox(height: 3),
             pw.Row(
               children: [
                 pw.Expanded(
-                    child:
-                    _buildFormField('Place/City of Birth*:', _buildBoxes(15))),
+                  child: _buildFormField(
+                    'Place/City of Birth*:',
+                    _buildBoxes(15),
+                  ),
+                ),
                 pw.SizedBox(width: 15),
                 pw.Expanded(
-                    child:
-                    _buildFormField('Country of Birth*:', _buildBoxes(15))),
+                  child: _buildFormField('Country of Birth*:', _buildBoxes(15)),
+                ),
               ],
             ),
             pw.SizedBox(height: 3),
             _buildFormField(
-                'Address*',
-                pw.Column(children: [
+              'Address*',
+              pw.Column(
+                children: [
                   _buildBoxes(38),
                   pw.SizedBox(height: 2),
                   _buildBoxes(38),
-                ])),
+                ],
+              ),
+            ),
             pw.SizedBox(height: 3),
             pw.Row(
               children: [
                 pw.Expanded(
-                    child: _buildFormField('City/Village*:', _buildBoxes(18))),
+                  child: _buildFormField('City/Village*:', _buildBoxes(18)),
+                ),
                 pw.SizedBox(width: 15),
                 pw.Expanded(
-                    child: _buildFormField('District*:', _buildBoxes(18))),
+                  child: _buildFormField('District*:', _buildBoxes(18)),
+                ),
               ],
             ),
             pw.SizedBox(height: 3),
@@ -215,15 +256,19 @@ pw.Widget _buildFatcaDeclarationForm() {
             ),
             pw.SizedBox(height: 4),
             pw.Text(
-                'Multiple Tax Residency: Details of Country of Tax Residence in India, and/or in USA@ And /or in any other Country or Territory Outside India as Under:',
-                style: pw.TextStyle(fontSize: smallFontSize)),
+              'Multiple Tax Residency: Details of Country of Tax Residence in India, and/or in USA@ And /or in any other Country or Territory Outside India as Under:',
+              style: pw.TextStyle(fontSize: smallFontSize),
+            ),
           ],
-        )),
-  ]);
+        ),
+      ),
+    ],
+  );
 }
 
 /// Builds the entire Annexure-2 form section.
-pw.Widget _buildAnnexure2Form(FormDataModel data) { // <--- MODIFIED
+pw.Widget _buildAnnexure2Form(FormDataModel data) {
+  // <--- MODIFIED
   const double smallFontSize = 7;
 
   // Main container for the section. The outer border was removed from here.
@@ -245,8 +290,7 @@ pw.Widget _buildAnnexure2Form(FormDataModel data) { // <--- MODIFIED
         child: pw.Center(
           child: pw.Text(
             'Details of Related Person (To be filled for minor)',
-            style: pw.TextStyle(
-                fontWeight: pw.FontWeight.bold, fontSize: 8),
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
           ),
         ),
       ),
@@ -266,7 +310,11 @@ pw.Widget _buildAnnexure2Form(FormDataModel data) { // <--- MODIFIED
             pw.SizedBox(height: 3),
             _buildFormField('Account No.:', _buildBoxes(18)),
             pw.SizedBox(height: 3),
-            _buildNameRow('Name*:', data.relatedPersonPrefix, data.relatedPersonFirstName), // <--- FROM MODEL (Uses parent's name model as a stand-in)
+            _buildNameRow(
+              'Name*:',
+              data.relatedPersonPrefix,
+              data.relatedPersonFirstName,
+            ), // <--- FROM MODEL (Uses parent's name model as a stand-in)
             pw.SizedBox(height: 4),
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
@@ -277,18 +325,27 @@ pw.Widget _buildAnnexure2Form(FormDataModel data) { // <--- MODIFIED
             ),
             pw.SizedBox(height: 4),
             _buildFormField(
-                'KYC of Related Person (If Available)*:', _buildBoxes(18)),
+              'KYC of Related Person (If Available)*:',
+              _buildBoxes(18),
+            ),
             pw.SizedBox(height: 4),
             _buildRelatedPersonTypeRow(),
             pw.SizedBox(height: 3),
-            _buildNameRow('Name*:', data.relatedPersonPrefix, data.relatedPersonFirstName, isRelatedPerson: true), // <--- FROM MODEL
+            _buildNameRow(
+              'Name*:',
+              data.relatedPersonPrefix,
+              data.relatedPersonFirstName,
+              isRelatedPerson: true,
+            ), // <--- FROM MODEL
             pw.SizedBox(height: 3),
             pw.Align(
               alignment: pw.Alignment.centerLeft,
               child: pw.Text(
                 '(If KYC Number and name are provided, below details are optional)',
                 style: pw.TextStyle(
-                    fontSize: smallFontSize, fontStyle: pw.FontStyle.italic),
+                  fontSize: smallFontSize,
+                  fontStyle: pw.FontStyle.italic,
+                ),
               ),
             ),
           ],
@@ -299,7 +356,8 @@ pw.Widget _buildAnnexure2Form(FormDataModel data) { // <--- MODIFIED
 }
 
 // Builds the Proof of Identity section
-pw.Widget _buildProofOfIdentitySection(FormDataModel data) { // <--- MODIFIED
+pw.Widget _buildProofOfIdentitySection(FormDataModel data) {
+  // <--- MODIFIED
   const double regularFontSize = 9;
 
   final poiList = {
@@ -309,34 +367,43 @@ pw.Widget _buildProofOfIdentitySection(FormDataModel data) { // <--- MODIFIED
     'D-UID(AADHAR)': true,
     'E-NREGA JOB CARD': false,
     'F-LETTER ISSUED BY NATIONAL POPULATION REGISTER CONTAINING DETAILS OF NAME & ADDRESS':
-    false,
+        false,
     'G-OTHERS': false,
   };
 
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
-      pw.Text('PROOF OF IDENTITY(POI) OF RELATED PERSON*',
-          style: pw.TextStyle(
-              fontWeight: pw.FontWeight.bold, fontSize: regularFontSize)),
+      pw.Text(
+        'PROOF OF IDENTITY(POI) OF RELATED PERSON*',
+        style: pw.TextStyle(
+          fontWeight: pw.FontWeight.bold,
+          fontSize: regularFontSize,
+        ),
+      ),
       pw.SizedBox(height: 3),
       ...poiList.entries.map((entry) {
         return pw.Padding(
           padding: const pw.EdgeInsets.only(bottom: 2.0),
-          child: _buildCheckbox(entry.key,
-              isChecked: entry.value,
-              labelFontSize:
-              entry.key.startsWith('F-') ? 7.5 : regularFontSize),
+          child: _buildCheckbox(
+            entry.key,
+            isChecked: entry.value,
+            labelFontSize: entry.key.startsWith('F-') ? 7.5 : regularFontSize,
+          ),
         );
       }).toList(),
       pw.Padding(
         padding: const pw.EdgeInsets.only(left: 30),
-        child: pw.Text('(Any Document notified by the Central Government/RBI)',
-            style: const pw.TextStyle(fontSize: 7.5)),
+        child: pw.Text(
+          '(Any Document notified by the Central Government/RBI)',
+          style: const pw.TextStyle(fontSize: 7.5),
+        ),
       ),
       pw.SizedBox(height: 4),
-      _buildFormField('Document No/Identification Number*',
-          _buildBoxes(30, text: data.relatedPersonDocNo)), // <--- FROM MODEL
+      _buildFormField(
+        'Document No/Identification Number*',
+        _buildBoxes(30, text: data.relatedPersonDocNo),
+      ), // <--- FROM MODEL
       pw.SizedBox(height: 4),
       pw.Row(
         children: [
@@ -348,24 +415,28 @@ pw.Widget _buildProofOfIdentitySection(FormDataModel data) { // <--- MODIFIED
       pw.SizedBox(height: 4),
       pw.Row(
         children: [
-          pw.Text('Remarks',
-              style: const pw.TextStyle(fontSize: regularFontSize)),
+          pw.Text(
+            'Remarks',
+            style: const pw.TextStyle(fontSize: regularFontSize),
+          ),
           pw.SizedBox(width: 4),
           pw.Expanded(
             child: pw.Container(
               height: 8,
               decoration: const pw.BoxDecoration(
-                  border: pw.Border(bottom: pw.BorderSide())),
+                border: pw.Border(bottom: pw.BorderSide()),
+              ),
             ),
-          )
+          ),
         ],
-      )
+      ),
     ],
   );
 }
 
 /// Builds the Foreign Tax Address section, signature, and date.
-pw.Widget _buildForeignTaxAddressSection(FormDataModel data) { // <--- MODIFIED
+pw.Widget _buildForeignTaxAddressSection(FormDataModel data) {
+  // <--- MODIFIED
   const double regularFontSize = 9;
   const double smallFontSize = 7;
 
@@ -381,11 +452,7 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) { // <--- MODIFIED
         'Address*',
         pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            _buildBoxes(38),
-            pw.SizedBox(height: 2),
-            _buildBoxes(38),
-          ],
+          children: [_buildBoxes(38), pw.SizedBox(height: 2), _buildBoxes(38)],
         ),
       ),
       pw.SizedBox(height: 3),
@@ -396,22 +463,16 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) { // <--- MODIFIED
             child: _buildFormField('City/Village*:', _buildBoxes(18)),
           ),
           pw.SizedBox(width: 15),
-          pw.Expanded(
-            child: _buildFormField('District*:', _buildBoxes(18)),
-          ),
+          pw.Expanded(child: _buildFormField('District*:', _buildBoxes(18))),
         ],
       ),
       pw.SizedBox(height: 3),
       pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Expanded(
-            child: _buildFormField('Sub-District:', _buildBoxes(18)),
-          ),
+          pw.Expanded(child: _buildFormField('Sub-District:', _buildBoxes(18))),
           pw.SizedBox(width: 15),
-          pw.Expanded(
-            child: _buildFormField('State:*', _buildBoxes(10)),
-          ),
+          pw.Expanded(child: _buildFormField('State:*', _buildBoxes(10))),
         ],
       ),
       pw.SizedBox(height: 3),
@@ -422,9 +483,7 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) { // <--- MODIFIED
             child: _buildFormField('Country Name*:', _buildBoxes(18)),
           ),
           pw.SizedBox(width: 15),
-          pw.Expanded(
-            child: _buildFormField('ZIP/Post Code*', _buildBoxes(8)),
-          ),
+          pw.Expanded(child: _buildFormField('ZIP/Post Code*', _buildBoxes(8))),
         ],
       ),
       pw.SizedBox(height: 6),
@@ -443,7 +502,10 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) { // <--- MODIFIED
                   decoration: pw.BoxDecoration(
                     border: pw.Border(bottom: pw.BorderSide(width: 0.5)),
                   ),
-                  child: pw.Text(data.declarationPlace, style: pw.TextStyle(fontSize: regularFontSize)), // <--- FROM MODEL
+                  child: pw.Text(
+                    data.declarationPlace,
+                    style: pw.TextStyle(fontSize: regularFontSize),
+                  ), // <--- FROM MODEL
                 ),
               ),
               pw.SizedBox(height: 8),
@@ -455,7 +517,10 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) { // <--- MODIFIED
                   decoration: pw.BoxDecoration(
                     border: pw.Border(bottom: pw.BorderSide(width: 0.5)),
                   ),
-                  child: pw.Text(data.declarationDate, style: pw.TextStyle(fontSize: regularFontSize)), // <--- FROM MODEL
+                  child: pw.Text(
+                    data.declarationDate,
+                    style: pw.TextStyle(fontSize: regularFontSize),
+                  ), // <--- FROM MODEL
                 ),
               ),
             ],
@@ -478,7 +543,6 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) { // <--- MODIFIED
     ],
   );
 }
-
 
 // --- HELPER WIDGETS ---
 
@@ -524,8 +588,12 @@ pw.Widget _buildBoxes(int count, {String text = '', String placeholder = ''}) {
 }
 
 // Helper to create a name input row
-pw.Widget _buildNameRow(String label, String prefix, String name,
-    {bool isRelatedPerson = false}) {
+pw.Widget _buildNameRow(
+  String label,
+  String prefix,
+  String name, {
+  bool isRelatedPerson = false,
+}) {
   return pw.Row(
     crossAxisAlignment: pw.CrossAxisAlignment.center,
     children: [
@@ -536,10 +604,12 @@ pw.Widget _buildNameRow(String label, String prefix, String name,
           width: 50,
           padding: const pw.EdgeInsets.all(1),
           decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
-          child: pw.Column(children: [
-            pw.Text('Prefix', style: const pw.TextStyle(fontSize: 6)),
-            pw.Text(prefix, style: const pw.TextStyle(fontSize: 8)),
-          ]),
+          child: pw.Column(
+            children: [
+              pw.Text('Prefix', style: const pw.TextStyle(fontSize: 6)),
+              pw.Text(prefix, style: const pw.TextStyle(fontSize: 8)),
+            ],
+          ),
         )
       else
         pw.Container(
@@ -556,8 +626,11 @@ pw.Widget _buildNameRow(String label, String prefix, String name,
 }
 
 // Helper to create a checkbox with a label
-pw.Widget _buildCheckbox(String label,
-    {bool isChecked = false, double labelFontSize = 9.0}) {
+pw.Widget _buildCheckbox(
+  String label, {
+  bool isChecked = false,
+  double labelFontSize = 9.0,
+}) {
   return pw.Row(
     children: [
       pw.Container(
@@ -566,9 +639,14 @@ pw.Widget _buildCheckbox(String label,
         decoration: pw.BoxDecoration(border: pw.Border.all(width: 1)),
         child: isChecked
             ? pw.Center(
-            child: pw.Text('✓',
-                style:  pw.TextStyle(
-                    fontSize: 8, fontWeight: pw.FontWeight.bold)))
+                child: pw.Text(
+                  '✓',
+                  style: pw.TextStyle(
+                    fontSize: 8,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+              )
             : pw.SizedBox(),
       ),
       pw.SizedBox(width: 4),

@@ -1,6 +1,5 @@
 // lib/data/data_importer.dart
 
-import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
@@ -29,7 +28,9 @@ Future<List<FormDataModel>> importBulkData() async {
   final csvString = await file.readAsString();
 
   // 2. Parse the CSV data
-  List<List<dynamic>> rowsAsList = const CsvToListConverter().convert(csvString);
+  List<List<dynamic>> rowsAsList = const CsvToListConverter().convert(
+    csvString,
+  );
 
   if (rowsAsList.isEmpty || rowsAsList.length < 2) {
     // File is empty or has only headers
@@ -46,7 +47,8 @@ Future<List<FormDataModel>> importBulkData() async {
   for (int i = 1; i < rowsAsList.length; i++) {
     Map<String, dynamic> rowMap = {};
     for (int j = 0; j < headers.length; j++) {
-      rowMap[headers[j]] = rowsAsList[i][j].toString(); // Map header to data value
+      rowMap[headers[j]] = rowsAsList[i][j]
+          .toString(); // Map header to data value
     }
     // 5. Convert the map into your strongly-typed data model
     modelList.add(FormDataModel.fromMap(rowMap));
