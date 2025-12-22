@@ -394,6 +394,18 @@ class FormDataModel {
   final bool form60ModeOnlineTransfer;
   final bool form60ModeOther;
   final String form60AadhaarNumber;
+  // Row 17: PAN application details
+  final String form60PanApplicationDate;
+  final String form60PanAckNo;
+  // Row 18: Income details (if PAN not applied)
+  final String form60AgriculturalIncome;
+  final String form60OtherIncome;
+  // Verification section fields
+  final String form60VerifiedDay;
+  final String form60VerifiedMonth;
+  final String form60VerifiedYear;
+  final String form60VerificationPlace;
+  final String form60DeclarantSignature; // Image path for signature
 
   // --- MODIFIED: All default data is now blank ---
   FormDataModel({
@@ -742,6 +754,18 @@ class FormDataModel {
     this.form60ModeOnlineTransfer = false,
     this.form60ModeOther = false,
     this.form60AadhaarNumber = '',
+    // Row 17: PAN application details
+    this.form60PanApplicationDate = '',
+    this.form60PanAckNo = '',
+    // Row 18: Income details
+    this.form60AgriculturalIncome = '',
+    this.form60OtherIncome = '',
+    // Verification section fields
+    this.form60VerifiedDay = '',
+    this.form60VerifiedMonth = '',
+    this.form60VerifiedYear = '',
+    this.form60VerificationPlace = '',
+    this.form60DeclarantSignature = '',
   });
 
   // --- This 'fromMap' factory is already correct. ---
@@ -1756,6 +1780,18 @@ class FormDataModel {
           getValue('form60ModeOnlineTransfer', '').toLowerCase() == 'true',
       form60ModeOther: getValue('form60ModeOther', '').toLowerCase() == 'true',
       form60AadhaarNumber: getValue('form60AadhaarNumber', ''),
+      // Row 17: PAN application details
+      form60PanApplicationDate: getValue('form60PanApplicationDate', ''),
+      form60PanAckNo: getValue('form60PanAckNo', ''),
+      // Row 18: Income details
+      form60AgriculturalIncome: getValue('form60AgriculturalIncome', ''),
+      form60OtherIncome: getValue('form60OtherIncome', ''),
+      // Verification section fields
+      form60VerifiedDay: getValue('form60VerifiedDay', ''),
+      form60VerifiedMonth: getValue('form60VerifiedMonth', ''),
+      form60VerifiedYear: getValue('form60VerifiedYear', ''),
+      form60VerificationPlace: getValue('form60VerificationPlace', ''),
+      form60DeclarantSignature: getValue('form60DeclarantSignature', ''),
     );
   }
 }

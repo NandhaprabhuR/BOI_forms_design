@@ -70,77 +70,75 @@ pw.Widget _buildHeader() {
 
 // Helper function dedicated to building the main table.
 pw.Widget _buildFormTable(FormDataModel data) {
-  // <--- MODIFIED
   const PdfColor borderColor = PdfColors.black;
 
-  // ===== FIX: Add a length check for the mobile number =====
-  final safeMobile = data.mobileNo.length > 3 ? data.mobileNo.substring(3) : '';
-
-  // ===== FIX: Safely split the address to prevent RangeError =====
-  final addressParts = data.currentAddress.split(' ');
-  final flatNo = addressParts.isNotEmpty
-      ? addressParts[0]
-      : ''; // Gets first word, or '' if empty
-  final road = addressParts.length > 1
-      ? addressParts[1]
-      : ''; // Gets second word, or '' if no second word
-  // ============================================================
-
+  // Use Form 60 specific fields from the model
   final List<Map<String, String>> simpleRowsData = [
     {
       'no': '2',
       'desc': 'Date of Birth / Incorporation of declarant',
-      'value': data.dob,
-    }, // <--- FROM MODEL
+      'value': data.form60DateOfBirth.isNotEmpty ? data.form60DateOfBirth : data.dob,
+    },
     {
       'no': '3',
       'desc': 'Father\'s Name (in case of individual)',
       'value': data.form60FatherName,
-    }, // <--- FROM MODEL
+    },
     {
       'no': '4',
       'desc': 'Flat No./Floor No.',
-      'value': flatNo,
-    }, // <--- FIX APPLIED
-    {'no': '5', 'desc': 'Name of premises / Block Name & No.', 'value': ''},
+      'value': data.form60FlatNo,
+    },
+    {
+      'no': '5',
+      'desc': 'Name of premises / Block Name & No.',
+      'value': data.form60PremisesName,
+    },
     {
       'no': '6',
       'desc': 'Road / Street / Lane',
-      'value': road,
-    }, // <--- FIX APPLIED
+      'value': data.form60RoadStreet,
+    },
     {
       'no': '7',
       'desc': 'Area / Locality',
-      'value': data.currentCity,
-    }, // <--- FROM MODEL (used city)
+      'value': data.form60AreaLocality,
+    },
     {
       'no': '8',
       'desc': 'Town/District/State',
-      'value': data.currentDistrict,
-    }, // <--- FROM MODEL (used district)
+      'value': data.form60TownDistrictState,
+    },
     {
       'no': '9',
       'desc': 'Pin code',
-      'value': data.currentPin,
-    }, // <--- FROM MODEL
-    {'no': '10', 'desc': 'Telephone Number (with STD code)', 'value': ''},
+      'value': data.form60PinCode,
+    },
+    {
+      'no': '10',
+      'desc': 'Telephone Number (with STD code)',
+      'value': data.form60TelephoneSTD,
+    },
     {
       'no': '11',
       'desc': 'Mobile Number',
-      'value': safeMobile,
-    }, // <--- FROM MODEL (FIX APPLIED HERE)
-    {'no': '12', 'desc': 'Amount of Transaction (Rs.)', 'value': ''},
+      'value': data.form60MobileNumber.isNotEmpty ? data.form60MobileNumber : data.mobileNo,
+    },
+    {
+      'no': '12',
+      'desc': 'Amount of Transaction (Rs.)',
+      'value': data.form60TransactionAmount,
+    },
     {
       'no': '14',
-      'desc':
-          'In case of transaction in joint names, number of persons involved in the transaction',
-      'value': '',
+      'desc': 'In case of transaction in joint names, number of persons involved in the transaction',
+      'value': data.form60JointPersonsCount,
     },
     {
       'no': '16',
       'desc': 'Aadhaar Number issued by UIDAI (if available)',
-      'value': data.aadharDocNo,
-    }, // <--- FROM MODEL
+      'value': data.form60AadhaarNumber.isNotEmpty ? data.form60AadhaarNumber : data.aadharDocNo,
+    },
   ];
 
   return pw.Table(
@@ -172,22 +170,24 @@ pw.Widget _buildFormTable(FormDataModel data) {
           rowData['value']!,
         );
       }).toList(),
-      _buildModeRow('15', 'Mode of transaction'),
+      _buildModeRow('15', 'Mode of transaction', data),
       _buildPanAppliedRow(
         '17',
         'If applied for PAN and it is not yet generated enter date of application and acknowledgement number',
+        data,
       ),
       _buildIncomeRow(
         '18',
         'If PAN not applied, fill estimated total income (including income of spouse, minor child etc., as per section 64 of Income-tax Act, 1961) for the financial year in which the above transaction is held',
+        data,
       ),
       _buildDocumentRow(
         '19',
-        'Details of document being produced in support of identify in Column 1 (Refer Instruction overleaf)',
+        'Details of document being produced in support of identity in Column 1 (Refer Instruction overleaf)',
       ),
       _buildDocumentRow(
         '20',
-        'Details of document being produced in support of identify in Column 4 to 13 (Refer Instruction overleaf)',
+        'Details of document being produced in support of address in Column 4 to 13 (Refer Instruction overleaf)',
       ),
     ],
   );
@@ -238,7 +238,7 @@ pw.Widget _buildVerificationSection(FormDataModel data) {
           children: [
             pw.TextSpan(text: 'I, '),
             pw.TextSpan(
-              text: ' ${data.customerFirstName} ', // <--- FROM MODEL
+              text: ' ${_getFullName(data)} ',
               style: pw.TextStyle(decoration: pw.TextDecoration.underline),
             ),
             pw.TextSpan(text: ' do '),
@@ -260,11 +260,11 @@ pw.Widget _buildVerificationSection(FormDataModel data) {
             'Verified today the ',
             style: pw.TextStyle(fontSize: regularFontSize),
           ),
-          underlineWithText('', width: 50), // Date from form
+          underlineWithText(data.form60VerifiedDay.isNotEmpty ? data.form60VerifiedDay : '', width: 50),
           pw.Text(' day of ', style: pw.TextStyle(fontSize: regularFontSize)),
-          underlineWithText('', width: 100), // Month from form
+          underlineWithText(data.form60VerifiedMonth.isNotEmpty ? data.form60VerifiedMonth : '', width: 100),
           pw.Text(' 20', style: pw.TextStyle(fontSize: regularFontSize)),
-          underlineWithText('', width: 50), // Year from form
+          underlineWithText(data.form60VerifiedYear.isNotEmpty ? data.form60VerifiedYear : '', width: 50),
         ],
       ),
       pw.SizedBox(height: 25),
@@ -272,21 +272,35 @@ pw.Widget _buildVerificationSection(FormDataModel data) {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         crossAxisAlignment: pw.CrossAxisAlignment.end,
         children: [
-          pw.Text(
-            'Place : ',
-            style: pw.TextStyle(
-              fontSize: regularFontSize,
-              fontWeight: pw.FontWeight.bold,
-            ),
-          ), // Place from form
           pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text(
-                data.customerFirstName,
-                style: pw.TextStyle(fontSize: regularFontSize),
-              ), // <--- FROM MODEL
-              pw.SizedBox(height: 2),
-              pw.Container(width: 150, height: 1, color: borderColor),
+                'Place :',
+                style: pw.TextStyle(
+                  fontSize: regularFontSize,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              pw.SizedBox(height: 4),
+              underlineWithText(data.form60VerificationPlace.isNotEmpty ? data.form60VerificationPlace : '', width: 120),
+            ],
+          ),
+          pw.Column(
+            children: [
+              pw.Container(
+                width: 150,
+                height: 50,
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(color: borderColor, width: 0.5),
+                ),
+                child: pw.Center(
+                  child: pw.Text(
+                    _getFullName(data),
+                    style: pw.TextStyle(fontSize: regularFontSize),
+                  ),
+                ),
+              ),
               pw.SizedBox(height: 3),
               pw.Text(
                 '(Signature of declarant)',
@@ -390,10 +404,21 @@ pw.TableRow _buildSimpleRow(String no, String desc, String value) {
   );
 }
 
+// Helper to get full name from form60 fields
+String _getFullName(FormDataModel data) {
+  final firstName = data.form60FirstName.isNotEmpty ? data.form60FirstName : data.customerFirstName;
+  final middleName = data.form60MiddleName.isNotEmpty ? data.form60MiddleName : data.customerMiddleName;
+  final surname = data.form60Surname.isNotEmpty ? data.form60Surname : data.customerLastName;
+  return [firstName, middleName, surname].where((s) => s.isNotEmpty).join(' ');
+}
+
 // UPDATED Helper function for Row 1 to match the new style.
 pw.TableRow _buildNameRow(String no, String desc, FormDataModel data) {
-  // <--- MODIFIED
   const PdfColor borderColor = PdfColors.black;
+  final firstName = data.form60FirstName.isNotEmpty ? data.form60FirstName : data.customerFirstName;
+  final middleName = data.form60MiddleName.isNotEmpty ? data.form60MiddleName : data.customerMiddleName;
+  final surname = data.form60Surname.isNotEmpty ? data.form60Surname : data.customerLastName;
+  
   return pw.TableRow(
     children: [
       _buildCell(no, align: pw.TextAlign.center),
@@ -403,7 +428,7 @@ pw.TableRow _buildNameRow(String no, String desc, FormDataModel data) {
           pw.Expanded(
             flex: 2,
             child: _buildCell(
-              data.customerFirstName, // <--- FROM MODEL
+              firstName,
               align: pw.TextAlign.center,
               style: pw.TextStyle(
                 letterSpacing: 3,
@@ -416,7 +441,7 @@ pw.TableRow _buildNameRow(String no, String desc, FormDataModel data) {
           pw.Expanded(
             flex: 1,
             child: _buildCell(
-              'Middle\nName',
+              middleName.isNotEmpty ? middleName : 'Middle\nName',
               align: pw.TextAlign.center,
               style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
             ),
@@ -433,7 +458,7 @@ pw.TableRow _buildNameRow(String no, String desc, FormDataModel data) {
                   style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                 ),
                 _buildCell(
-                  data.form60Surname, // <--- FROM MODEL
+                  surname, // <--- FROM MODEL
                   align: pw.TextAlign.center,
                   style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                 ),
@@ -469,7 +494,19 @@ pw.TableRow _buildDateRow(String no, String desc) {
   );
 }
 
-pw.TableRow _buildModeRow(String no, String desc) {
+pw.TableRow _buildModeRow(String no, String desc, FormDataModel data) {
+  const borderColor = PdfColors.black;
+  
+  // Map modes to their checked states
+  final modeChecks = [
+    data.form60ModeCash,
+    data.form60ModeCheque,
+    data.form60ModeCard,
+    data.form60ModeDraft,
+    data.form60ModeOnlineTransfer,
+    data.form60ModeOther,
+  ];
+  
   const modes = [
     'Cash',
     'Cheque',
@@ -478,18 +515,36 @@ pw.TableRow _buildModeRow(String no, String desc) {
     'Online transfer',
     'Other',
   ];
-  const borderColor = PdfColors.black;
 
   List<pw.Widget> buildModeWidgets() {
     List<pw.Widget> widgets = [];
     for (int i = 0; i < modes.length; i++) {
       widgets.add(
         pw.Expanded(
-          child: _buildCell(
-            modes[i],
-            align: pw.TextAlign.center,
-            fontSize: 7.5,
+          child: pw.Container(
             padding: const pw.EdgeInsets.symmetric(vertical: 2),
+            child: pw.Column(
+              children: [
+                pw.Text(
+                  modes[i],
+                  textAlign: pw.TextAlign.center,
+                  style: pw.TextStyle(fontSize: 7.5),
+                ),
+                pw.SizedBox(height: 2),
+                pw.Container(
+                  width: 10,
+                  height: 10,
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(width: 0.5),
+                  ),
+                  child: modeChecks[i]
+                      ? pw.Center(
+                          child: pw.Text('✓', style: pw.TextStyle(fontSize: 8)),
+                        )
+                      : null,
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -509,7 +564,7 @@ pw.TableRow _buildModeRow(String no, String desc) {
   );
 }
 
-pw.TableRow _buildPanAppliedRow(String no, String desc) {
+pw.TableRow _buildPanAppliedRow(String no, String desc, FormDataModel data) {
   return pw.TableRow(
     children: [
       _buildCell(no, align: pw.TextAlign.center),
@@ -517,7 +572,7 @@ pw.TableRow _buildPanAppliedRow(String no, String desc) {
       pw.Padding(
         padding: const pw.EdgeInsets.all(4),
         child: pw.Text(
-          'Date : _______________ and acknowledgement number : _______________',
+          'Date : ${data.form60PanApplicationDate.isNotEmpty ? data.form60PanApplicationDate : "_______________"} and acknowledgement number : ${data.form60PanAckNo.isNotEmpty ? data.form60PanAckNo : "_______________"}',
           style: pw.TextStyle(fontSize: 8),
         ),
       ),
@@ -525,7 +580,7 @@ pw.TableRow _buildPanAppliedRow(String no, String desc) {
   );
 }
 
-pw.TableRow _buildIncomeRow(String no, String desc) {
+pw.TableRow _buildIncomeRow(String no, String desc, FormDataModel data) {
   return pw.TableRow(
     children: [
       _buildCell(no, align: pw.TextAlign.center),
@@ -533,9 +588,15 @@ pw.TableRow _buildIncomeRow(String no, String desc) {
       pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          _buildCell('(a) Agricultural income (Rs.)', fontSize: 8),
+          _buildCell(
+            '(a) Agricultural income (Rs.) ${data.form60AgriculturalIncome.isNotEmpty ? data.form60AgriculturalIncome : "_______"}',
+            fontSize: 8,
+          ),
           pw.Divider(height: 0.5),
-          _buildCell('(b) Other than Agr Income (Rs.)', fontSize: 8),
+          _buildCell(
+            '(b) Other than Agr Income (Rs.) ${data.form60OtherIncome.isNotEmpty ? data.form60OtherIncome : "_______"}',
+            fontSize: 8,
+          ),
         ],
       ),
     ],
@@ -544,6 +605,7 @@ pw.TableRow _buildIncomeRow(String no, String desc) {
 
 pw.TableRow _buildDocumentRow(String no, String desc) {
   const PdfColor borderColor = PdfColors.black;
+  
   return pw.TableRow(
     children: [
       _buildCell(no, align: pw.TextAlign.center),
