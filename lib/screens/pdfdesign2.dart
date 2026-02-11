@@ -14,51 +14,53 @@ pw.Widget buildSecondPage(
   pw.MemoryImage? applicantSignature,
   pw.MemoryImage? officialSignature,
 ) {
-  // <--- MODIFIED
+  // Address data map for the helper
   final addressData = {
-    'address': data.currentAddress, // <--- FROM MODEL
-    'city': data.currentCity, // <--- FROM MODEL
-    'district': data.currentDistrict, // <--- FROM MODEL
-    'state': data.currentState, // <--- FROM MODEL
-    'pin': data.currentPin, // <--- FROM MODEL
+    'address': data.correspondenceAddress, // Use correspondence address for this section (Section 5)
+    'city': data.correspondenceCity,
+    'district': data.correspondenceDistrict,
+    'state': data.correspondenceState,
+    'pin': data.correspondencePin,
   };
 
-  // No outer border here, it flows from page 1
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
-      // Section 4 is now in pdfdesign1.dart
-
-      // Start with Section 5
+      // Section 5: Address Details (Correspondence/Local)
       _buildAddressSection(
         title: '5. Address details',
         tabs: ['Correspondence', 'Local', 'Same as Current/Permanent Address'],
-        data: addressData,
+        model: data,
+        dataMap: addressData, // Pass the map for text fields
       ),
-      pw.SizedBox(height: 4), // Reduced from 6
+      pw.SizedBox(height: 4),
+      
       _buildProofOfAddressDeclaration(),
-      pw.SizedBox(height: 4), // Reduced from 6
-      _buildAlternateAddressProof(),
-      pw.SizedBox(height: 4), // Reduced from 6
+      pw.SizedBox(height: 4),
+      
+      _buildAlternateAddressProof(data),
+      pw.SizedBox(height: 4),
+      
       _buildFinalDeclaration(
         data,
         applicantPhoto,
         applicantSignature,
-      ), // <--- MODIFIED
-      pw.SizedBox(height: 4), // Reduced from 6
+      ),
+      pw.SizedBox(height: 4),
+      
       _buildOfficeUseSection(data, officialSignature),
-      // No page number needed here, handled by MultiPage footer
     ],
   );
 }
 
-// Reusable widget for an address block (Unchanged, uses the 'data' map)
+// Reusable widget for an address block 
+// MODIFIED to accept FormDataModel for checkboxes
 pw.Widget _buildAddressSection({
   required String title,
   required List<String> tabs,
-  required Map<String, String> data,
+  required FormDataModel model, 
+  required Map<String, String> dataMap,
 }) {
-  // This function remains unchanged, as it correctly uses the 'data' map passed in buildSecondPage(data)
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -94,15 +96,25 @@ pw.Widget _buildAddressSection({
         children: [
           pw.Text('Address type*', style: const pw.TextStyle(fontSize: 8)),
           pw.SizedBox(width: 10),
-          labeledCheckbox('Residential/Business', checked: true),
+          // Use model checkboxes (reusing same fields as page 1 or separate if they exist? 
+          // Re-checking model: 'addressTypeResidentialBusiness' etc are likely for Page 1. 
+          // Page 2 usually repeats the same address type options. 
+          // Assuming for now we reuse the same flags or if Page 2 has its own, they should be in model.
+          // Looking at model, I see only one set of 'addressType...' fields. 
+          // Usually correspondence address type matches current if "Same as" is checked, 
+          // but if it's different, we might need separate fields. 
+          // However, given the model provided, we will reuse the existing address type flags 
+          // OR default to unchecked if strictly separate fields are missing/not populated.
+          // Let's use the existing ones as a best effort fallback or if they are shared.
+          labeledCheckbox('Residential/Business', checked: model.addressTypeResidentialBusiness),
           pw.SizedBox(width: 8),
-          labeledCheckbox('Residential'),
+          labeledCheckbox('Residential', checked: model.addressTypeResidential),
           pw.SizedBox(width: 8),
-          labeledCheckbox('Business'),
+          labeledCheckbox('Business', checked: model.addressTypeBusiness),
           pw.SizedBox(width: 8),
-          labeledCheckbox('Registered Office'),
+          labeledCheckbox('Registered Office', checked: model.addressTypeRegisteredOffice),
           pw.SizedBox(width: 8),
-          labeledCheckbox('Unspecified'),
+          labeledCheckbox('Unspecified', checked: model.addressTypeUnspecified),
         ],
       ),
       pw.SizedBox(height: 3),
@@ -110,13 +122,13 @@ pw.Widget _buildAddressSection({
         children: [
           pw.Text('Address*', style: const pw.TextStyle(fontSize: 8)),
           pw.SizedBox(width: 10),
-          pw.Expanded(child: charBoxes(data['address']!, 35)),
+          pw.Expanded(child: charBoxes(dataMap['address']!, 35)),
         ],
       ),
       pw.SizedBox(height: 2),
       pw.Padding(
         padding: const pw.EdgeInsets.only(left: 60),
-        child: charBoxes('', 35),
+        child: charBoxes('', 35), // Line 2 could be added to map if needed
       ),
       pw.SizedBox(height: 3),
       pw.Row(
@@ -135,7 +147,7 @@ pw.Widget _buildAddressSection({
                         style: const pw.TextStyle(fontSize: 8),
                       ),
                     ),
-                    charBoxes(data['city']!, 15),
+                    charBoxes(dataMap['city']!, 15),
                   ],
                 ),
                 pw.SizedBox(height: 2),
@@ -148,7 +160,7 @@ pw.Widget _buildAddressSection({
                         style: const pw.TextStyle(fontSize: 8),
                       ),
                     ),
-                    charBoxes(data['state']!, 15),
+                    charBoxes(dataMap['state']!, 15),
                   ],
                 ),
               ],
@@ -168,7 +180,7 @@ pw.Widget _buildAddressSection({
                         style: const pw.TextStyle(fontSize: 8),
                       ),
                     ),
-                    charBoxes(data['district']!, 15),
+                    charBoxes(dataMap['district']!, 15),
                   ],
                 ),
                 pw.SizedBox(height: 2),
@@ -181,7 +193,7 @@ pw.Widget _buildAddressSection({
                         style: const pw.TextStyle(fontSize: 8),
                       ),
                     ),
-                    charBoxes(data['pin']!, 6),
+                    charBoxes(dataMap['pin']!, 6),
                   ],
                 ),
               ],
@@ -209,7 +221,7 @@ pw.Widget _buildProofOfAddressDeclaration() {
       ),
       pw.Container(
         width: double.infinity,
-        padding: const pw.EdgeInsets.fromLTRB(8, 3, 8, 3), // Reduced padding
+        padding: const pw.EdgeInsets.fromLTRB(8, 3, 8, 3), 
         child: pw.Text(
           'If the Proof of Address as per Aadhar provided does not contain current address, a SELF DECLARATION of current address is required as a proof of current address.',
           style: const pw.TextStyle(fontSize: 8),
@@ -219,8 +231,8 @@ pw.Widget _buildProofOfAddressDeclaration() {
   );
 }
 
-// Section 7 - Reduced internal spacing
-pw.Widget _buildAlternateAddressProof() {
+// Section 7 - Alternate Proof
+pw.Widget _buildAlternateAddressProof(FormDataModel data) {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -233,21 +245,21 @@ pw.Widget _buildAlternateAddressProof() {
           style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
         ),
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2),
       pw.Row(
         children: [
-          labeledCheckbox('Utility Bill'),
+          labeledCheckbox('Utility Bill', checked: data.altProofUtilityBill),
           pw.SizedBox(width: 15),
-          labeledCheckbox('PPO/FPPO'),
+          labeledCheckbox('PPO/FPPO', checked: data.altProofPPOFPPO),
           pw.SizedBox(width: 15),
-          labeledCheckbox('Property or Municipal tax receipt'),
+          labeledCheckbox('Property or Municipal tax receipt', checked: data.altProofPropertyTaxReceipt),
         ],
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2), 
       pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          checkBox(),
+          labeledCheckbox('', checked: data.altProofLetterOfAllotment),
           pw.SizedBox(width: 2),
           pw.Expanded(
             child: pw.Text(
@@ -257,22 +269,22 @@ pw.Widget _buildAlternateAddressProof() {
           ),
         ],
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2), 
       pw.Row(
         children: [
           pw.Text('Document No', style: const pw.TextStyle(fontSize: 8)),
           pw.SizedBox(width: 5),
-          charBoxes('', 15),
+          charBoxes(data.altProofDocumentNo, 15),
           pw.Spacer(),
           pw.Text('Date:', style: const pw.TextStyle(fontSize: 8)),
           pw.SizedBox(width: 5),
-          charBoxes('', 8),
+          charBoxes(data.altProofDate, 10),
         ],
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2),
       pw.Container(
         width: double.infinity,
-        padding: const pw.EdgeInsets.fromLTRB(8, 3, 8, 3), // Reduced padding
+        padding: const pw.EdgeInsets.fromLTRB(8, 3, 8, 3),
         child: pw.Text(
           'I hereby undertake that OVD with current address will be submitted within a period of three months from the date of opening of account failing which bank may stop / restrict operations in the account',
           style: const pw.TextStyle(fontSize: 8),
@@ -282,26 +294,16 @@ pw.Widget _buildAlternateAddressProof() {
   );
 }
 
-// Final Declaration Section - MODIFIED to use data model
+// Final Declaration Section
 pw.Widget _buildFinalDeclaration(
   FormDataModel data,
   pw.MemoryImage? applicantPhoto,
   pw.MemoryImage? applicantSignature,
 ) {
-  // <--- MODIFIED
-  // ===== FIX: Safely pad the date string to prevent substring errors =====
+  // Pad date
   final date = data.declarationDate.padRight(8, ' ');
-  // =====================================================================
-
-  // Get date components for display
-  final d1 = date.substring(0, 1);
-  final d2 = date.substring(1, 2);
-  final m1 = date.substring(2, 3);
-  final m2 = date.substring(3, 4);
-  final y1 = date.substring(4, 5);
-  final y2 = date.substring(5, 6);
-  final y3 = date.substring(6, 7);
-  final y4 = date.substring(7, 8);
+  
+  String safeChar(String s, int i) => s.length > i ? s[i] : '';
 
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -315,17 +317,17 @@ pw.Widget _buildFinalDeclaration(
           style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold),
         ),
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2),
       pw.Text(
         'I have read the copy of Terms and Conditions of the Account Opening given to me. The Terms and Conditions have been explained to me/us and having understood, I accept the same.',
         style: const pw.TextStyle(fontSize: 8),
       ),
-      pw.SizedBox(height: 1), // Reduced
+      pw.SizedBox(height: 1),
       pw.Text(
         '1. I hereby declare that I have submitted the Aadhaar Card issued by UIDAI voluntarily for identification and /or address proof towards the compliance of KYC norms under the PMLA, 2002',
         style: const pw.TextStyle(fontSize: 8),
       ),
-      pw.SizedBox(height: 1), // Reduced
+      pw.SizedBox(height: 1),
       pw.Text(
         '2. I hereby consent that the Bank may verify the same with the UIDAI and authorise the UIDAI expressly to release the identity and address through biometric authentication to the Bank',
         style: const pw.TextStyle(fontSize: 8),
@@ -338,13 +340,13 @@ pw.Widget _buildFinalDeclaration(
           labeledCheckbox('NO', checked: data.biometricConsentNo),
         ],
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2),
       pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.end,
         children: [
           pw.Container(
             width: 90,
-            height: 100, // Keep photo height
+            height: 100,
             decoration: pw.BoxDecoration(
               border: pw.Border.all(color: PdfColors.grey),
             ),
@@ -371,7 +373,7 @@ pw.Widget _buildFinalDeclaration(
           pw.SizedBox(width: 10),
           pw.Expanded(
             child: pw.Container(
-              height: 100, // Match photo height
+              height: 100, 
               decoration: pw.BoxDecoration(
                 border: pw.Border.all(color: PdfColors.black),
               ),
@@ -388,27 +390,27 @@ pw.Widget _buildFinalDeclaration(
           ),
         ],
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2),
       pw.Row(
         children: [
           pw.Text('Place:', style: const pw.TextStyle(fontSize: 8)),
           pw.SizedBox(width: 5),
-          charBoxes(data.declarationPlace, 20), // <--- FROM MODEL
+          charBoxes(data.declarationPlace, 20),
           pw.Spacer(),
           pw.Text('Date:', style: const pw.TextStyle(fontSize: 8)),
           pw.SizedBox(width: 5),
           pw.Row(
             children: [
-              charBoxWithLabel(d1, 'D'),
-              charBoxWithLabel(d2, 'D'),
+              charBoxWithLabel(safeChar(date, 0), 'D'),
+              charBoxWithLabel(safeChar(date, 1), 'D'),
               pw.SizedBox(width: 3),
-              charBoxWithLabel(m1, 'M'),
-              charBoxWithLabel(m2, 'M'),
+              charBoxWithLabel(safeChar(date, 2), 'M'),
+              charBoxWithLabel(safeChar(date, 3), 'M'),
               pw.SizedBox(width: 3),
-              charBoxWithLabel(y1, 'Y'),
-              charBoxWithLabel(y2, 'Y'),
-              charBoxWithLabel(y3, 'Y'),
-              charBoxWithLabel(y4, 'Y'),
+              charBoxWithLabel(safeChar(date, 4), 'Y'),
+              charBoxWithLabel(safeChar(date, 5), 'Y'),
+              charBoxWithLabel(safeChar(date, 6), 'Y'),
+              charBoxWithLabel(safeChar(date, 7), 'Y'),
             ],
           ),
         ],
@@ -422,16 +424,8 @@ pw.Widget _buildOfficeUseSection(
   FormDataModel data,
   pw.MemoryImage? officialSignature,
 ) {
-  // Parse date if available
   final date = data.officeUseDate.padRight(8, ' ');
-  final d1 = date.substring(0, 1);
-  final d2 = date.substring(1, 2);
-  final m1 = date.substring(2, 3);
-  final m2 = date.substring(3, 4);
-  final y1 = date.substring(4, 5);
-  final y2 = date.substring(5, 6);
-  final y3 = date.substring(6, 7);
-  final y4 = date.substring(7, 8);
+  String safeChar(String s, int i) => s.length > i ? s[i] : '';
 
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -467,7 +461,7 @@ pw.Widget _buildOfficeUseSection(
           ],
         ),
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2),
       pw.Row(
         children: [
           pw.Expanded(
@@ -482,12 +476,12 @@ pw.Widget _buildOfficeUseSection(
           labeledCheckbox('NO', checked: data.officeVerificationNo),
         ],
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2),
       pw.Text(
         'Certified that the implications and conditions for the operation of the account have been explained to the depositor (only in case of illiterate applicant)',
         style: const pw.TextStyle(fontSize: 7.5),
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2),
       pw.Row(
         children: [
           pw.Text('Depositor is', style: const pw.TextStyle(fontSize: 8)),
@@ -509,7 +503,7 @@ pw.Widget _buildOfficeUseSection(
           labeledCheckbox('Low', checked: data.riskCategoryLow),
         ],
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2),
       pw.Row(
         children: [
           pw.Text(
@@ -530,12 +524,12 @@ pw.Widget _buildOfficeUseSection(
           ),
         ],
       ),
-      pw.SizedBox(height: 2), // Reduced
+      pw.SizedBox(height: 2),
       pw.Text(
         'In person verification carried out and Signature/LTI of the applicant verified by:',
         style: const pw.TextStyle(fontSize: 7.5),
       ),
-      pw.SizedBox(height: 3), // Reduced
+      pw.SizedBox(height: 3),
       pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.end,
         children: [
@@ -574,22 +568,22 @@ pw.Widget _buildOfficeUseSection(
           ),
         ],
       ),
-      pw.SizedBox(height: 3), // Reduced
+      pw.SizedBox(height: 3),
       pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.end,
         children: [
           pw.Text('Date:', style: const pw.TextStyle(fontSize: 8)),
           pw.SizedBox(width: 5),
-          charBoxWithLabel(d1, 'd'),
-          charBoxWithLabel(d2, 'd'),
+          charBoxWithLabel(safeChar(date, 0), 'd'),
+          charBoxWithLabel(safeChar(date, 1), 'd'),
           pw.SizedBox(width: 2),
-          charBoxWithLabel(m1, 'm'),
-          charBoxWithLabel(m2, 'm'),
+          charBoxWithLabel(safeChar(date, 2), 'm'),
+          charBoxWithLabel(safeChar(date, 3), 'm'),
           pw.SizedBox(width: 2),
-          charBoxWithLabel(y1, 'y'),
-          charBoxWithLabel(y2, 'y'),
-          charBoxWithLabel(y3, 'y'),
-          charBoxWithLabel(y4, 'y'),
+          charBoxWithLabel(safeChar(date, 4), 'y'),
+          charBoxWithLabel(safeChar(date, 5), 'y'),
+          charBoxWithLabel(safeChar(date, 6), 'y'),
+          charBoxWithLabel(safeChar(date, 7), 'y'),
           pw.SizedBox(width: 10),
           pw.Text('PF No', style: const pw.TextStyle(fontSize: 8)),
           pw.SizedBox(width: 5),
@@ -617,7 +611,6 @@ pw.Widget _buildOfficeUseSection(
           ),
         ],
       ),
-      // Removed final SizedBox and Page number
     ],
   );
 }

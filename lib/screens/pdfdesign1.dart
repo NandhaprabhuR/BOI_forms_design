@@ -2,7 +2,7 @@
 
 import 'dart:typed_data';
 import 'dart:io';
-import 'dart:convert'; // <--- ADDED for Base64
+import 'dart:convert'; // For Base64
 import 'package:boiforms/screens/pdf_helpers.dart';
 import 'package:boiforms/screens/pdfdesign2.dart';
 import 'package:boiforms/screens/pdfdesign3.dart';
@@ -23,7 +23,6 @@ import 'package:printing/printing.dart';
 import 'model/data-importer.dart';
 import 'model/form_data_model.dart';
 
-// --- MODIFIED: Converted to StatefulWidget ---
 class PdfDesignPage extends StatefulWidget {
   final FormDataModel formData; // For the single preview
   final bool autoPreview; // Auto-show PDF preview when page loads
@@ -39,7 +38,7 @@ class PdfDesignPage extends StatefulWidget {
 }
 
 class _PdfDesignPageState extends State<PdfDesignPage> {
-  // --- ADDED: State variables ---
+  // State variables
   List<FormDataModel> _importedData = [];
   String _importMessage = "";
   bool _isGenerating = false;
@@ -68,7 +67,6 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
   }
 
   // --- HELPER WIDGETS (CLASS LEVEL) ---
-  // (Standard helper methods here)
   pw.Widget _formField(
     String label,
     pw.Widget child, {
@@ -150,235 +148,48 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
     pw.MemoryImage? applicantSignature;
 
     print('🔍 Attempting to load signatures...');
-    print('📝 Signature 1 Path: ${model.signature1Text}');
-    print('📝 Signature 2 Path: ${model.signature2Text}');
-    print('📝 Applicant Photo Path: ${model.applicantPhoto}');
-    print('📝 Applicant Signature Path: ${model.applicantSignatureImage}');
-
-    // --- SIGNATURE 1 ---
-    try {
-      if (model.signature1Text.isNotEmpty) {
-        print('🔎 Checking signature 1...');
-
-        // Check if it's Base64 encoded (starts with data:image or is pure base64)
-        if (model.signature1Text.startsWith('data:image')) {
-          // Handle data URL format: data:image/png;base64,iVBORw0KG...
-          final base64String = model.signature1Text.split(',')[1];
-          final bytes = base64Decode(base64String);
-          signature1Image = pw.MemoryImage(bytes);
-          print(
-            '✅ Signature 1 loaded from Base64 data URL: ${bytes.length} bytes',
-          );
-        } else if (_isBase64(model.signature1Text)) {
-          // Pure Base64 string
-          final bytes = base64Decode(model.signature1Text);
-          signature1Image = pw.MemoryImage(bytes);
-          print('✅ Signature 1 loaded from Base64: ${bytes.length} bytes');
-        } else {
-          // File path
-          final file = File(model.signature1Text);
-          final exists = await file.exists();
-          print('📁 Signature 1 file exists: $exists');
-
-          if (exists) {
-            final bytes = await file.readAsBytes();
-            print('✅ Signature 1 loaded from file: ${bytes.length} bytes');
-            signature1Image = pw.MemoryImage(bytes);
-          } else {
-            print('❌ Signature 1 file not found at: ${model.signature1Text}');
-          }
-        }
-      } else {
-        print('⚠️ Signature 1 path is empty');
-      }
-    } catch (e) {
-      print('❌ Error loading signature 1: $e');
+    
+    // Helper to load image
+    Future<pw.MemoryImage?> loadImage(String pathOrBase64, String label) async {
+       if (pathOrBase64.isEmpty) {
+         print('⚠️ $label path is empty');
+         return null;
+       }
+       try {
+         if (pathOrBase64.startsWith('data:image')) {
+           final base64String = pathOrBase64.split(',')[1];
+           final bytes = base64Decode(base64String);
+           print('✅ $label loaded from Base64 data URL: ${bytes.length} bytes');
+           return pw.MemoryImage(bytes);
+         } else if (_isBase64(pathOrBase64)) {
+           final bytes = base64Decode(pathOrBase64);
+           print('✅ $label loaded from Base64: ${bytes.length} bytes');
+           return pw.MemoryImage(bytes);
+         } else {
+           final file = File(pathOrBase64);
+           if (await file.exists()) {
+             final bytes = await file.readAsBytes();
+             print('✅ $label loaded from file: ${bytes.length} bytes');
+             return pw.MemoryImage(bytes);
+           } else {
+             print('❌ $label file not found at: $pathOrBase64');
+             return null;
+           }
+         }
+       } catch (e) {
+         print('❌ Error loading $label: $e');
+         return null;
+       }
     }
 
-    // --- SIGNATURE 2 ---
-    try {
-      if (model.signature2Text.isNotEmpty) {
-        print('🔎 Checking signature 2...');
+    signature1Image = await loadImage(model.signature1Text, "Signature 1");
+    signature2Image = await loadImage(model.signature2Text, "Signature 2");
+    applicantPhoto = await loadImage(model.applicantPhoto, "Applicant Photo");
+    applicantSignature = await loadImage(model.applicantSignatureImage, "Applicant Signature");
+    
+    // Official signature
+    pw.MemoryImage? officialSignature = await loadImage(model.officialSignature, "Official Signature");
 
-        // Check if it's Base64 encoded
-        if (model.signature2Text.startsWith('data:image')) {
-          final base64String = model.signature2Text.split(',')[1];
-          final bytes = base64Decode(base64String);
-          signature2Image = pw.MemoryImage(bytes);
-          print(
-            '✅ Signature 2 loaded from Base64 data URL: ${bytes.length} bytes',
-          );
-        } else if (_isBase64(model.signature2Text)) {
-          final bytes = base64Decode(model.signature2Text);
-          signature2Image = pw.MemoryImage(bytes);
-          print('✅ Signature 2 loaded from Base64: ${bytes.length} bytes');
-        } else {
-          // File path
-          final file = File(model.signature2Text);
-          final exists = await file.exists();
-          print('📁 Signature 2 file exists: $exists');
-
-          if (exists) {
-            final bytes = await file.readAsBytes();
-            print('✅ Signature 2 loaded from file: ${bytes.length} bytes');
-            signature2Image = pw.MemoryImage(bytes);
-          } else {
-            print('❌ Signature 2 file not found at: ${model.signature2Text}');
-          }
-        }
-      } else {
-        print('⚠️ Signature 2 path is empty');
-      }
-    } catch (e) {
-      print('❌ Error loading signature 2: $e');
-    }
-
-    // --- APPLICANT PHOTO ---
-    try {
-      if (model.applicantPhoto.isNotEmpty) {
-        print('🔎 Checking applicant photo...');
-
-        if (model.applicantPhoto.startsWith('data:image')) {
-          final base64String = model.applicantPhoto.split(',')[1];
-          final bytes = base64Decode(base64String);
-          applicantPhoto = pw.MemoryImage(bytes);
-          print(
-            '✅ Applicant photo loaded from Base64 data URL: ${bytes.length} bytes',
-          );
-        } else if (_isBase64(model.applicantPhoto)) {
-          final bytes = base64Decode(model.applicantPhoto);
-          applicantPhoto = pw.MemoryImage(bytes);
-          print('✅ Applicant photo loaded from Base64: ${bytes.length} bytes');
-        } else {
-          final file = File(model.applicantPhoto);
-          final exists = await file.exists();
-          print('📁 Applicant photo file exists: $exists');
-
-          if (exists) {
-            final bytes = await file.readAsBytes();
-            print('✅ Applicant photo loaded from file: ${bytes.length} bytes');
-            applicantPhoto = pw.MemoryImage(bytes);
-          } else {
-            print(
-              '❌ Applicant photo file not found at: ${model.applicantPhoto}',
-            );
-          }
-        }
-      } else {
-        print('⚠️ Applicant photo path is empty');
-      }
-    } catch (e) {
-      print('❌ Error loading applicant photo: $e');
-    }
-
-    // --- APPLICANT SIGNATURE ---
-    try {
-      if (model.applicantSignatureImage.isNotEmpty) {
-        print('🔎 Checking applicant signature...');
-
-        if (model.applicantSignatureImage.startsWith('data:image')) {
-          final base64String = model.applicantSignatureImage.split(',')[1];
-          final bytes = base64Decode(base64String);
-          applicantSignature = pw.MemoryImage(bytes);
-          print(
-            '✅ Applicant signature loaded from Base64 data URL: ${bytes.length} bytes',
-          );
-        } else if (_isBase64(model.applicantSignatureImage)) {
-          final bytes = base64Decode(model.applicantSignatureImage);
-          applicantSignature = pw.MemoryImage(bytes);
-          print(
-            '✅ Applicant signature loaded from Base64: ${bytes.length} bytes',
-          );
-        } else {
-          final file = File(model.applicantSignatureImage);
-          final exists = await file.exists();
-          print('📁 Applicant signature file exists: $exists');
-
-          if (exists) {
-            final bytes = await file.readAsBytes();
-            print(
-              '✅ Applicant signature loaded from file: ${bytes.length} bytes',
-            );
-            applicantSignature = pw.MemoryImage(bytes);
-          } else {
-            print(
-              '❌ Applicant signature file not found at: ${model.applicantSignatureImage}',
-            );
-          }
-        }
-      } else {
-        print('⚠️ Applicant signature path is empty');
-      }
-    } catch (e) {
-      print('❌ Error loading applicant signature: $e');
-    }
-
-    // --- OFFICIAL SIGNATURE ---
-    pw.MemoryImage? officialSignature;
-    try {
-      if (model.officialSignature.isNotEmpty) {
-        print('🔎 Checking official signature...');
-
-        if (model.officialSignature.startsWith('data:image')) {
-          final base64String = model.officialSignature.split(',')[1];
-          final bytes = base64Decode(base64String);
-          officialSignature = pw.MemoryImage(bytes);
-          print(
-            '✅ Official signature loaded from Base64 data URL: ${bytes.length} bytes',
-          );
-        } else if (_isBase64(model.officialSignature)) {
-          final bytes = base64Decode(model.officialSignature);
-          officialSignature = pw.MemoryImage(bytes);
-          print(
-            '✅ Official signature loaded from Base64: ${bytes.length} bytes',
-          );
-        } else {
-          final file = File(model.officialSignature);
-          final exists = await file.exists();
-          print('📁 Official signature file exists: $exists');
-
-          if (exists) {
-            final bytes = await file.readAsBytes();
-            print(
-              '✅ Official signature loaded from file: ${bytes.length} bytes',
-            );
-            officialSignature = pw.MemoryImage(bytes);
-          } else {
-            print(
-              '❌ Official signature file not found at: ${model.officialSignature}',
-            );
-          }
-        }
-      } else {
-        print('⚠️ Official signature path is empty');
-      }
-    } catch (e) {
-      print('❌ Error loading official signature: $e');
-    }
-
-    print(
-      '🎯 Final status - Signature 1: ${signature1Image != null ? "LOADED" : "NOT LOADED"}',
-    );
-    print(
-      '🎯 Final status - Signature 2: ${signature2Image != null ? "LOADED" : "NOT LOADED"}',
-    );
-    print(
-      '🎯 Final status - Applicant Photo: ${applicantPhoto != null ? "LOADED" : "NOT LOADED"}',
-    );
-    print(
-      '🎯 Final status - Applicant Signature: ${applicantSignature != null ? "LOADED" : "NOT LOADED"}',
-    );
-    print(
-      '🎯 Final status - Official Signature: ${officialSignature != null ? "LOADED" : "NOT LOADED"}',
-    );
-
-    final addressData = {
-      'address': model.currentAddress,
-      'city': model.currentCity,
-      'district': model.currentDistrict,
-      'state': model.currentState,
-      'pin': model.currentPin,
-    };
 
     pdf.addPage(
       pw.MultiPage(
@@ -415,7 +226,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                 _buildAddressSection(
                   title: '4. Address details',
                   tabs: ['Current', 'Permanent', 'Overseas'],
-                  data: addressData,
+                  model: model,
                 ),
               ],
             ),
@@ -492,8 +303,6 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
 
             const SizedBox(height: 20),
 
-            // --- MODIFIED: Bulk Import/Generate Section ---
-
             // Button 2: Bulk Import
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
@@ -540,7 +349,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
 
             const SizedBox(height: 20),
 
-            // --- ADDED: Conditional UI for Generation ---
+            // Conditional UI for Generation
             if (_importedData.isNotEmpty && !_isGenerating)
               Column(
                 children: [
@@ -569,7 +378,6 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                       final scaffoldMessenger = ScaffoldMessenger.of(context);
 
                       try {
-                        // --- THIS IS THE KEY CHANGE ---
                         // 1. Get the first (or only) imported model
                         final modelToPreview = _importedData.first;
 
@@ -583,7 +391,6 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                             return Uint8List.fromList(bytes);
                           },
                         );
-                        // --- END OF CHANGE ---
                       } catch (e) {
                         if (!context.mounted) return;
                         scaffoldMessenger.showSnackBar(
@@ -623,14 +430,13 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
     );
   }
 
-  // --- PDF Builder Methods (Start of helper definitions) ---
-  // (All builder methods below are unchanged)
+  // --- PDF Builder Methods ---
 
   // Builder Placeholder 1: Address Section
   pw.Widget _buildAddressSection({
     required String title,
     required List<String> tabs,
-    required Map<String, String> data,
+    required FormDataModel model,
   }) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -670,15 +476,15 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           children: [
             pw.Text('Address type*', style: const pw.TextStyle(fontSize: 8)),
             pw.SizedBox(width: 10),
-            labeledCheckbox('Residential/Business', checked: true),
+            labeledCheckbox('Residential/Business', checked: model.addressTypeResidentialBusiness),
             pw.SizedBox(width: 8),
-            labeledCheckbox('Residential'),
+            labeledCheckbox('Residential', checked: model.addressTypeResidential),
             pw.SizedBox(width: 8),
-            labeledCheckbox('Business'),
+            labeledCheckbox('Business', checked: model.addressTypeBusiness),
             pw.SizedBox(width: 8),
-            labeledCheckbox('Registered Office'),
+            labeledCheckbox('Registered Office', checked: model.addressTypeRegisteredOffice),
             pw.SizedBox(width: 8),
-            labeledCheckbox('Unspecified'),
+            labeledCheckbox('Unspecified', checked: model.addressTypeUnspecified),
           ],
         ),
         pw.SizedBox(height: 3),
@@ -686,13 +492,13 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           children: [
             pw.Text('Address*', style: const pw.TextStyle(fontSize: 8)),
             pw.SizedBox(width: 10),
-            pw.Expanded(child: charBoxes(data['address']!, 35)),
+            pw.Expanded(child: charBoxes(model.currentAddress, 35)),
           ],
         ),
         pw.SizedBox(height: 2),
         pw.Padding(
           padding: const pw.EdgeInsets.only(left: 60),
-          child: charBoxes('', 35),
+          child: charBoxes('', 35), // Line 2 can be empty or added to model if needed
         ),
         pw.SizedBox(height: 3),
         pw.Row(
@@ -711,7 +517,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ),
-                      charBoxes(data['city']!, 15),
+                      charBoxes(model.currentCity, 15),
                     ],
                   ),
                   pw.SizedBox(height: 2),
@@ -724,7 +530,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ),
-                      charBoxes(data['state']!, 15),
+                      charBoxes(model.currentState, 15),
                     ],
                   ),
                 ],
@@ -744,7 +550,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ),
-                      charBoxes(data['district']!, 15),
+                      charBoxes(model.currentDistrict, 15),
                     ],
                   ),
                   pw.SizedBox(height: 2),
@@ -757,7 +563,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ),
-                      charBoxes(data['pin']!, 6),
+                      charBoxes(model.currentPin, 6),
                     ],
                   ),
                 ],
@@ -771,6 +577,12 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
 
   // Builder Placeholder 2: Proof of Identity
   pw.Widget _buildProofOfIdentity(FormDataModel data) {
+    // Helper to safely get date chars
+    String safeDateChar(String date, int index) {
+      if (date.length > index) return date[index];
+      return '';
+    }
+
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -790,13 +602,13 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
         pw.SizedBox(height: 2),
         pw.Row(
           children: [
-            pw.Expanded(child: labeledCheckbox('A-PASSPORT')),
-            pw.Expanded(child: labeledCheckbox('B-VOTER\'S IDENTITY CARD')),
-            pw.Expanded(child: labeledCheckbox('C-DRIVING LICENCE')),
+            pw.Expanded(child: labeledCheckbox('A-PASSPORT', checked: data.docTypePassport)),
+            pw.Expanded(child: labeledCheckbox('B-VOTER\'S IDENTITY CARD', checked: data.docTypeVoterIdCard)),
+            pw.Expanded(child: labeledCheckbox('C-DRIVING LICENCE', checked: data.docTypeDrivingLicence)),
             pw.Expanded(
               child: labeledCheckbox(
                 'D-Proof of possession of AADHAAR',
-                checked: true,
+                checked: data.docTypeAadhaar,
               ),
             ),
           ],
@@ -804,11 +616,12 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
         pw.SizedBox(height: 2),
         pw.Row(
           children: [
-            pw.Expanded(child: labeledCheckbox('E-NREGA JOB CARD')),
+            pw.Expanded(child: labeledCheckbox('E-NREGA JOB CARD', checked: data.docTypeNregaJobCard)),
             pw.Expanded(
               flex: 3,
               child: labeledCheckbox(
                 'F-LETTER ISSUED BY NATIONAL POPULATION REGISTER CONTAINING DETAILS OF NAME & ADDRESS',
+                checked: data.docTypePopulationRegisterLetter,
               ),
             ),
           ],
@@ -822,7 +635,8 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
               style: const pw.TextStyle(fontSize: 7.5),
             ),
             pw.SizedBox(width: 8),
-            charBoxes(data.aadharDocNo, 12),
+            // Use documentNo field
+            charBoxes(data.documentNo, 12),
             pw.SizedBox(width: 4),
             pw.Expanded(child: charBoxes('', 10)),
           ],
@@ -832,32 +646,32 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           children: [
             pw.Text('Issue Date:*', style: const pw.TextStyle(fontSize: 7.5)),
             pw.SizedBox(width: 8),
-            _charBoxWithLabel('', 'D'),
-            _charBoxWithLabel('', 'D'),
+            _charBoxWithLabel(safeDateChar(data.issueDate, 0), 'D'),
+            _charBoxWithLabel(safeDateChar(data.issueDate, 1), 'D'),
             pw.SizedBox(width: 3),
-            _charBoxWithLabel('', 'M'),
-            _charBoxWithLabel('', 'M'),
+            _charBoxWithLabel(safeDateChar(data.issueDate, 3), 'M'),
+            _charBoxWithLabel(safeDateChar(data.issueDate, 4), 'M'),
             pw.SizedBox(width: 3),
-            _charBoxWithLabel('', 'Y'),
-            _charBoxWithLabel('', 'Y'),
-            _charBoxWithLabel('', 'Y'),
-            _charBoxWithLabel('', 'Y'),
+            _charBoxWithLabel(safeDateChar(data.issueDate, 6), 'Y'),
+            _charBoxWithLabel(safeDateChar(data.issueDate, 7), 'Y'),
+            _charBoxWithLabel(safeDateChar(data.issueDate, 8), 'Y'),
+            _charBoxWithLabel(safeDateChar(data.issueDate, 9), 'Y'),
             pw.Spacer(),
             pw.Text(
               'Expiry Date (If applicable)*',
               style: const pw.TextStyle(fontSize: 7.5),
             ),
             pw.SizedBox(width: 8),
-            _charBoxWithLabel('', 'D'),
-            _charBoxWithLabel('', 'D'),
+            _charBoxWithLabel(safeDateChar(data.expiryDate, 0), 'D'),
+            _charBoxWithLabel(safeDateChar(data.expiryDate, 1), 'D'),
             pw.SizedBox(width: 3),
-            _charBoxWithLabel('', 'M'),
-            _charBoxWithLabel('', 'M'),
+            _charBoxWithLabel(safeDateChar(data.expiryDate, 3), 'M'),
+            _charBoxWithLabel(safeDateChar(data.expiryDate, 4), 'M'),
             pw.SizedBox(width: 3),
-            _charBoxWithLabel('', 'Y'),
-            _charBoxWithLabel('', 'Y'),
-            _charBoxWithLabel('', 'Y'),
-            _charBoxWithLabel('', 'Y'),
+            _charBoxWithLabel(safeDateChar(data.expiryDate, 6), 'Y'),
+            _charBoxWithLabel(safeDateChar(data.expiryDate, 7), 'Y'),
+            _charBoxWithLabel(safeDateChar(data.expiryDate, 8), 'Y'),
+            _charBoxWithLabel(safeDateChar(data.expiryDate, 9), 'Y'),
             pw.SizedBox(width: 15),
           ],
         ),
@@ -867,9 +681,9 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
 
   // Builder Placeholder 3: Contact Details
   pw.Widget _buildContactDetails(FormDataModel data) {
-    // ===== FIX: Safely pad the mobile number to prevent substring errors =====
+    // FIX: Safely pad the mobile number to prevent substring errors
     final safeMobile = data.mobileNo.padRight(13, ' ');
-    // =======================================================================
+    final safeAltMobile = data.alternateMobileNo.padRight(13, ' ');
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -902,11 +716,10 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           children: [
             pw.Text('Mobile No.', style: const pw.TextStyle(fontSize: 7.5)),
             pw.SizedBox(width: 4),
-            // ===== FIX: Use the safeMobile string =====
+            // Use the safeMobile string
             charBoxes(safeMobile.substring(0, 3), 3),
             pw.SizedBox(width: 4),
             charBoxes(safeMobile.substring(3, 13), 10),
-            // ==========================================
             pw.SizedBox(width: 12),
             pw.Text('Email ID', style: const pw.TextStyle(fontSize: 7.5)),
             pw.SizedBox(width: 4),
@@ -922,9 +735,9 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
               style: const pw.TextStyle(fontSize: 7.5),
             ),
             pw.SizedBox(width: 4),
-            charBoxes('', 3),
+             charBoxes(safeAltMobile.substring(0, 3), 3),
             pw.SizedBox(width: 4),
-            charBoxes('', 10),
+            charBoxes(safeAltMobile.substring(3, 13), 10),
             pw.Spacer(),
             pw.Column(
               mainAxisSize: pw.MainAxisSize.min,
@@ -937,7 +750,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                       style: const pw.TextStyle(fontSize: 7.5),
                     ),
                     pw.SizedBox(width: 4),
-                    charBoxes('', 15),
+                    charBoxes(data.telOff, 15),
                   ],
                 ),
                 pw.SizedBox(height: 2),
@@ -948,7 +761,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                       style: const pw.TextStyle(fontSize: 7.5),
                     ),
                     pw.SizedBox(width: 4),
-                    charBoxes('', 15),
+                    charBoxes(data.telRes, 15),
                   ],
                 ),
               ],
@@ -987,16 +800,15 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
 
   // Builder Placeholder 5: Id and Basic Info
   pw.Widget _buildIdAndBasicInfo(FormDataModel data) {
-    // ===== FIX: Safely pad the DOB string to prevent substring errors =====
+    // FIX: Safely pad the DOB string
     final dob = data.dob.padRight(8, ' ');
-    // =====================================================================
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         _formField(
           'Existing Customer ID:',
-          charBoxes('', 15),
+          charBoxes(data.existingCustomerId, 15),
           subLabel: pw.Text(
             '(If applicable)',
             style: const pw.TextStyle(fontSize: 6.5),
@@ -1029,12 +841,12 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
             children: [
               pw.Column(
                 children: [
-                  charBoxes('', 4),
+                  charBoxes(data.maidenNamePrefix, 4),
                   pw.Text('Prefix', style: const pw.TextStyle(fontSize: 6.5)),
                 ],
               ),
               pw.SizedBox(width: 4),
-              pw.Expanded(child: charBoxes('', 25)),
+              pw.Expanded(child: charBoxes(data.maidenName, 25)),
             ],
           ),
         ),
@@ -1056,7 +868,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                 children: [
                   pw.Row(
                     children: [
-                      // ===== FIX: Use the safe 'dob' string =====
+                      // Use the safe 'dob' string
                       _charBoxWithLabel(dob.substring(0, 1), 'D'),
                       _charBoxWithLabel(dob.substring(1, 2), 'D'),
                       pw.SizedBox(width: 3),
@@ -1067,7 +879,6 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                       _charBoxWithLabel(dob.substring(5, 6), 'Y'),
                       _charBoxWithLabel(dob.substring(6, 7), 'Y'),
                       _charBoxWithLabel(dob.substring(7, 8), 'Y'),
-                      // ==========================================
                     ],
                   ),
                   pw.SizedBox(width: 8),
@@ -1079,11 +890,11 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                         style: const pw.TextStyle(fontSize: 7.5),
                       ),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Male', checked: true),
+                      labeledCheckbox('Male', checked: data.genderMale),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Female'),
+                      labeledCheckbox('Female', checked: data.genderFemale),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Transgender'),
+                      labeledCheckbox('Transgender', checked: data.genderTransgender),
                     ],
                   ),
                   pw.SizedBox(width: 8),
@@ -1095,11 +906,11 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                         style: const pw.TextStyle(fontSize: 7.5),
                       ),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Married', checked: true),
+                      labeledCheckbox('Married', checked: data.maritalStatusMarried),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Unmarried'),
+                      labeledCheckbox('Unmarried', checked: data.maritalStatusUnmarried),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Others'),
+                      labeledCheckbox('Others', checked: data.maritalStatusOthers),
                     ],
                   ),
                   pw.Spacer(),
@@ -1131,19 +942,20 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           ),
         ),
         pw.SizedBox(height: 1),
-        _formField('No. of Dependents', charBoxes('', 2)),
+        _formField('No. of Dependents', charBoxes(data.noOfDependents, 2)),
         pw.SizedBox(height: 1),
         _formField(
           'Illiterate',
           pw.Row(
             children: [
-              labeledCheckbox('YES'),
-              labeledCheckbox('NO', checked: true),
+              labeledCheckbox('YES', checked: data.illiterateYes),
+              labeledCheckbox('NO', checked: data.illiterateNo),
               pw.SizedBox(width: 8),
               pw.Text(
-                'if yes : Identification Marks : ________________________',
+                'if yes : Identification Marks : ',
                 style: const pw.TextStyle(fontSize: 7.5),
               ),
+              charBoxes(data.identificationMarks, 20),
             ],
           ),
         ),
@@ -1154,12 +966,12 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
             children: [
               pw.Column(
                 children: [
-                  charBoxes('', 4),
+                  charBoxes(data.guardianPrefix, 4),
                   pw.Text('Prefix', style: const pw.TextStyle(fontSize: 6.5)),
                 ],
               ),
               pw.SizedBox(width: 4),
-              pw.Expanded(child: charBoxes('', 25)),
+              pw.Expanded(child: charBoxes(data.guardianName, 25)),
             ],
           ),
           subLabel: pw.Text(
@@ -1168,7 +980,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           ),
         ),
         pw.SizedBox(height: 1),
-        _formField('Relationship with Guardian', charBoxes('', 25)),
+        _formField('Relationship with Guardian', charBoxes(data.relationshipWithGuardian, 25)),
       ],
     );
   }
@@ -1183,16 +995,16 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Nationality*',
           pw.Row(
             children: [
-              labeledCheckbox('In-Indian', checked: true),
+              labeledCheckbox('In-Indian', checked: data.nationalityInIndian),
               pw.SizedBox(width: 8),
-              labeledCheckbox('Others'),
+              labeledCheckbox('Others', checked: data.nationalityOthers),
               pw.SizedBox(width: 8),
               pw.Text(
                 'Country Name:',
                 style: const pw.TextStyle(fontSize: 7.5),
               ),
               pw.SizedBox(width: 4),
-              pw.Expanded(child: charBoxes('', 15)),
+              pw.Expanded(child: charBoxes(data.countryName, 15)),
             ],
           ),
         ),
@@ -1203,34 +1015,34 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
             children: [
               pw.Row(
                 children: [
-                  pw.Expanded(child: labeledCheckbox('S-Service')),
-                  pw.Expanded(child: labeledCheckbox('Private Sector')),
-                  pw.Expanded(child: labeledCheckbox('Public Sector')),
-                  pw.Expanded(child: labeledCheckbox('Government Sector')),
+                  pw.Expanded(child: labeledCheckbox('S-Service', checked: data.occupationSService)),
+                  pw.Expanded(child: labeledCheckbox('Private Sector', checked: data.occupationPrivateSector)),
+                  pw.Expanded(child: labeledCheckbox('Public Sector', checked: data.occupationPublicSector)),
+                  pw.Expanded(child: labeledCheckbox('Government Sector', checked: data.occupationGovernmentSector)),
                 ],
               ),
               pw.SizedBox(height: 1.5),
               pw.Row(
                 children: [
-                  pw.Expanded(child: labeledCheckbox('O-Others')),
-                  pw.Expanded(child: labeledCheckbox('Professional')),
-                  pw.Expanded(child: labeledCheckbox('Self employed')),
-                  pw.Expanded(child: labeledCheckbox('Retired')),
-                  pw.Expanded(child: labeledCheckbox('House Wife')),
-                  pw.Expanded(child: labeledCheckbox('Student')),
+                  pw.Expanded(child: labeledCheckbox('O-Others', checked: data.occupationOOthers)),
+                  pw.Expanded(child: labeledCheckbox('Professional', checked: data.occupationProfessional)),
+                  pw.Expanded(child: labeledCheckbox('Self employed', checked: data.occupationSelfEmployed)),
+                  pw.Expanded(child: labeledCheckbox('Retired', checked: data.occupationRetired)),
+                  pw.Expanded(child: labeledCheckbox('House Wife', checked: data.occupationHouseWife)),
+                  pw.Expanded(child: labeledCheckbox('Student', checked: data.occupationStudent)),
                 ],
               ),
               pw.SizedBox(height: 1.5),
               pw.Row(
                 children: [
-                  labeledCheckbox('B-Business'),
+                  labeledCheckbox('B-Business', checked: data.occupationBBusiness),
                   pw.SizedBox(width: 28),
                   labeledCheckbox(
                     'Agriculture',
-                    checked: data.occupationType == 'Agriculture',
+                    checked: data.occupationAgriculture,
                   ),
                   pw.SizedBox(width: 25),
-                  labeledCheckbox('X-Not categorised-Please specify...'),
+                  labeledCheckbox('X-Not categorised', checked: data.occupationXNotCategorised),
                 ],
               ),
             ],
@@ -1244,7 +1056,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
             children: [
               pw.Text('Rs.', style: const pw.TextStyle(fontSize: 7.5)),
               pw.SizedBox(width: 2),
-              _emptyRectBox(width: 80),
+              charBoxes(data.monthlyIncome, 12),
               pw.SizedBox(width: 8),
               pw.Text(
                 'Net Worth(approx)',
@@ -1253,7 +1065,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
               pw.SizedBox(width: 2),
               pw.Text('Rs.', style: const pw.TextStyle(fontSize: 7.5)),
               pw.SizedBox(width: 2),
-              _emptyRectBox(width: 60),
+              charBoxes(data.netWorth, 12),
               pw.SizedBox(width: 8),
               pw.Text(
                 'Est. Annual Turnover',
@@ -1262,7 +1074,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
               pw.SizedBox(width: 2),
               pw.Text('Rs.', style: const pw.TextStyle(fontSize: 7.5)),
               pw.SizedBox(width: 2),
-              pw.Expanded(child: _emptyRectBox(width: 0)),
+              pw.Expanded(child: charBoxes(data.estAnnualTurnover, 12)),
             ],
           ),
         ),
@@ -1271,15 +1083,15 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Religion:',
           pw.Row(
             children: [
-              labeledCheckbox('Hindu', checked: true),
+              labeledCheckbox('Hindu', checked: data.religionHindu),
               pw.SizedBox(width: 12),
-              labeledCheckbox('Muslim'),
+              labeledCheckbox('Muslim', checked: data.religionMuslim),
               pw.SizedBox(width: 12),
-              labeledCheckbox('Christian'),
+              labeledCheckbox('Christian', checked: data.religionChristian),
               pw.SizedBox(width: 12),
-              labeledCheckbox('Sikh'),
+              labeledCheckbox('Sikh', checked: data.religionSikh),
               pw.SizedBox(width: 12),
-              labeledCheckbox('Others'),
+              labeledCheckbox('Others', checked: data.religionOthers),
             ],
           ),
         ),
@@ -1288,15 +1100,15 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Category:',
           pw.Row(
             children: [
-              labeledCheckbox('General'),
+              labeledCheckbox('General', checked: data.categoryGeneral),
               pw.SizedBox(width: 12),
-              labeledCheckbox('OBC'),
+              labeledCheckbox('OBC', checked: data.categoryOBC),
               pw.SizedBox(width: 12),
-              labeledCheckbox('SC'),
+              labeledCheckbox('SC', checked: data.categorySC),
               pw.SizedBox(width: 12),
-              labeledCheckbox('ST'),
+              labeledCheckbox('ST', checked: data.categoryST),
               pw.SizedBox(width: 12),
-              labeledCheckbox('Minority'),
+              labeledCheckbox('Minority', checked: data.categoryMinority),
             ],
           ),
         ),
@@ -1305,23 +1117,25 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Customer Type',
           pw.Row(
             children: [
-              labeledCheckbox('General'),
+              labeledCheckbox('General', checked: data.customerTypeGeneral),
               pw.SizedBox(width: 8),
-              labeledCheckbox('Sr. Citizen'),
+              labeledCheckbox('Sr. Citizen', checked: data.customerTypeSrCitizen),
               pw.SizedBox(width: 8),
-              labeledCheckbox('Pensioner'),
+              labeledCheckbox('Pensioner', checked: data.customerTypePensioner),
               pw.SizedBox(width: 8),
-              labeledCheckbox('Minor'),
-              pw.SizedBox(width: 8),
-              pw.Text(
-                'Staff/Ex Staff PF No._______',
-                style: const pw.TextStyle(fontSize: 7.5),
-              ),
+              labeledCheckbox('Minor', checked: data.customerTypeMinor),
               pw.SizedBox(width: 8),
               pw.Text(
-                'Others (Specify)_______',
+                'Staff/Ex Staff PF No.',
                 style: const pw.TextStyle(fontSize: 7.5),
               ),
+              charBoxes(data.customerTypePfNo, 8),
+              pw.SizedBox(width: 8),
+              pw.Text(
+                'Others (Specify)',
+                style: const pw.TextStyle(fontSize: 7.5),
+              ),
+              charBoxes(data.customerTypeOthersSpecify, 10),
             ],
           ),
         ),
@@ -1330,15 +1144,15 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Person with disability',
           pw.Row(
             children: [
-              labeledCheckbox('Yes'),
+              labeledCheckbox('Yes', checked: data.disabilityYes),
               pw.SizedBox(width: 8),
-              labeledCheckbox('No'),
+              labeledCheckbox('No', checked: data.disabilityNo),
               pw.SizedBox(width: 8),
               pw.Text('If yes,', style: const pw.TextStyle(fontSize: 7.5)),
               pw.SizedBox(width: 8),
-              labeledCheckbox('i. Visually impaired'),
+              labeledCheckbox('i. Visually impaired', checked: data.disabilityVisuallyImpaired),
               pw.SizedBox(width: 8),
-              labeledCheckbox('ii. Differently abled'),
+              labeledCheckbox('ii. Differently abled', checked: data.disabilityDifferentlyAbled),
             ],
           ),
         ),
@@ -1347,19 +1161,19 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Educational Qualification:',
           pw.Row(
             children: [
-              labeledCheckbox('Below SSC'),
+              labeledCheckbox('Below SSC', checked: data.educationBelowSSC),
               pw.SizedBox(width: 4),
-              labeledCheckbox('SSC'),
+              labeledCheckbox('SSC', checked: data.educationSSC),
               pw.SizedBox(width: 4),
-              labeledCheckbox('HSC'),
+              labeledCheckbox('HSC', checked: data.educationHSC),
               pw.SizedBox(width: 4),
-              labeledCheckbox('Graduate'),
+              labeledCheckbox('Graduate', checked: data.educationGraduate),
               pw.SizedBox(width: 4),
-              labeledCheckbox('Post Graduate'),
+              labeledCheckbox('Post Graduate', checked: data.educationPostGraduate),
               pw.SizedBox(width: 4),
-              labeledCheckbox('Professional'),
+              labeledCheckbox('Professional', checked: data.educationProfessional),
               pw.SizedBox(width: 4),
-              labeledCheckbox('Others'),
+              labeledCheckbox('Others', checked: data.educationOthers),
             ],
           ),
         ),
@@ -1369,6 +1183,8 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
+              charBoxes(data.organizationName, 50, width: 6),
+              pw.SizedBox(height: 2),
               pw.Row(
                 children: [
                   pw.Text(
@@ -1376,14 +1192,14 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                     style: const pw.TextStyle(fontSize: 7.5),
                   ),
                   pw.SizedBox(width: 4),
-                  charBoxes('', 10),
+                  charBoxes(data.designationProfession, 15),
                   pw.SizedBox(width: 12),
                   pw.Text(
                     'Nature of Business:',
                     style: const pw.TextStyle(fontSize: 7.5),
                   ),
                   pw.SizedBox(width: 4),
-                  charBoxes('', 10),
+                  charBoxes(data.natureOfBusiness, 15),
                 ],
               ),
             ],
@@ -1394,11 +1210,11 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Please Tick the Applicable box*:',
           pw.Row(
             children: [
-              labeledCheckbox('Politically exposed Person'),
+              labeledCheckbox('Politically exposed Person', checked: data.politicallyExposedPerson),
               pw.SizedBox(width: 8),
-              labeledCheckbox('Related to politically Exposed Person'),
+              labeledCheckbox('Related to politically Exposed Person', checked: data.relatedToPoliticallyExposedPerson),
               pw.SizedBox(width: 8),
-              labeledCheckbox('None'),
+              labeledCheckbox('None', checked: data.politicallyExposedNone),
             ],
           ),
         ),
@@ -1407,7 +1223,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'ISO 3166 Country Code of Jurisdiction of Residence*',
           pw.Row(
             children: [
-              charBoxes('IN', 2),
+              charBoxes(data.isoCountryCodeJurisdiction.isNotEmpty ? data.isoCountryCodeJurisdiction : 'IN', 2),
               pw.SizedBox(width: 4),
               pw.Text(
                 '(Code for India is IN)',
@@ -1421,16 +1237,16 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Place/City of Birth*',
           pw.Row(
             children: [
-              charBoxes('', 15),
+              charBoxes(data.placeCityOfBirth, 15),
               pw.SizedBox(width: 8),
               pw.Text(
                 'ISO 3166 Country of Code of Birth* ',
                 style: const pw.TextStyle(fontSize: 7.5),
               ),
-              _underlinedText(40),
+              charBoxes(data.isoCountryCodeOfBirth, 3), // e.g. IND
               pw.SizedBox(width: 8),
               pw.Text('Citizenship ', style: const pw.TextStyle(fontSize: 7.5)),
-              pw.Expanded(child: _underlinedText(0)),
+              pw.Expanded(child: charBoxes(data.citizenship, 10)),
             ],
           ),
         ),
@@ -1439,9 +1255,9 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Country of Tax Residence in India only and not in any other country or territory outside India*',
           pw.Row(
             children: [
-              labeledCheckbox('Yes', checked: true),
+              labeledCheckbox('Yes', checked: data.taxResidenceIndiaYes),
               pw.SizedBox(width: 8),
-              labeledCheckbox('No'),
+              labeledCheckbox('No', checked: data.taxResidenceIndiaNo),
               pw.SizedBox(width: 4),
               pw.Text(
                 '(If No, please fill the FATCA details form - Annexure II)',
@@ -1471,7 +1287,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
               ),
             ),
             pw.SizedBox(width: 8),
-            charBoxes('', 10),
+            charBoxes(data.panTaxIdNumber, 15),
           ],
         ),
       ],
@@ -1617,7 +1433,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                 charBoxes(data.branchName, 20),
                 pw.SizedBox(width: 8),
                 pw.Text('Branch Code', style: const pw.TextStyle(fontSize: 8)),
-                charBoxes('', 5),
+                charBoxes(data.branchCode, 5),
               ],
             ),
             pw.Spacer(),

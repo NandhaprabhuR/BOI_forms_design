@@ -1,28 +1,24 @@
-// lib/screens/pdf_page_7.dart
+// lib/screens/pdfdesign7.dart
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'model/form_data_model.dart'; // <--- NEW: Import the data model
+import 'model/form_data_model.dart';
 
 // Main build function
 pw.Widget buildSeventhPage(FormDataModel data) {
-  // <--- MODIFIED
-  // A Container to wrap the entire page content and add a border
   return pw.Container(
     decoration: pw.BoxDecoration(
       border: pw.Border.all(color: PdfColors.black, width: 1.5),
     ),
-    padding: const pw.EdgeInsets.all(
-      10,
-    ), // Padding between the border and content
+    padding: const pw.EdgeInsets.all(10),
     child: pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.center,
       children: [
         _buildHeader(),
         pw.SizedBox(height: 8),
-        _buildFormTable(data), // <--- MODIFIED
+        _buildFormTable(data),
         pw.SizedBox(height: 15),
-        _buildVerificationSection(data), // <--- MODIFIED
+        _buildVerificationSection(data),
         pw.SizedBox(height: 15),
         _buildFinalNoteSection(),
       ],
@@ -30,7 +26,6 @@ pw.Widget buildSeventhPage(FormDataModel data) {
   );
 }
 
-// Helper function dedicated to building the header. (Unchanged)
 pw.Widget _buildHeader() {
   const double regularFontSize = 9;
   return pw.Column(
@@ -68,11 +63,9 @@ pw.Widget _buildHeader() {
   );
 }
 
-// Helper function dedicated to building the main table.
 pw.Widget _buildFormTable(FormDataModel data) {
   const PdfColor borderColor = PdfColors.black;
 
-  // Use Form 60 specific fields from the model
   final List<Map<String, String>> simpleRowsData = [
     {
       'no': '2',
@@ -82,17 +75,17 @@ pw.Widget _buildFormTable(FormDataModel data) {
     {
       'no': '3',
       'desc': 'Father\'s Name (in case of individual)',
-      'value': data.form60FatherName,
+      'value': data.form60FatherName.isNotEmpty ? data.form60FatherName : (data.fatherName + " " + (data.fatherPrefix.isNotEmpty ? data.fatherPrefix : "")),
     },
     {
       'no': '4',
       'desc': 'Flat No./Floor No.',
-      'value': data.form60FlatNo,
+      'value': data.form60FlatNo.isNotEmpty ? data.form60FlatNo : (data.currentAddress),
     },
     {
       'no': '5',
       'desc': 'Name of premises / Block Name & No.',
-      'value': data.form60PremisesName,
+      'value': data.form60PremisesName.isNotEmpty ? data.form60PremisesName : data.currentAddressLine2,
     },
     {
       'no': '6',
@@ -102,22 +95,22 @@ pw.Widget _buildFormTable(FormDataModel data) {
     {
       'no': '7',
       'desc': 'Area / Locality',
-      'value': data.form60AreaLocality,
+      'value': data.form60AreaLocality.isNotEmpty ? data.form60AreaLocality : data.currentDistrict,
     },
     {
       'no': '8',
       'desc': 'Town/District/State',
-      'value': data.form60TownDistrictState,
+      'value': data.form60TownDistrictState.isNotEmpty ? data.form60TownDistrictState : "${data.currentCity}, ${data.currentState}",
     },
     {
       'no': '9',
       'desc': 'Pin code',
-      'value': data.form60PinCode,
+      'value': data.form60PinCode.isNotEmpty ? data.form60PinCode : data.currentPin,
     },
     {
       'no': '10',
       'desc': 'Telephone Number (with STD code)',
-      'value': data.form60TelephoneSTD,
+      'value': data.form60TelephoneSTD.isNotEmpty ? data.form60TelephoneSTD : data.telRes,
     },
     {
       'no': '11',
@@ -150,7 +143,7 @@ pw.Widget _buildFormTable(FormDataModel data) {
     },
     defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
     children: [
-      _buildNameRow('1', 'First\nName', data), // <--- MODIFIED
+      _buildNameRow('1', 'First\nName', data),
       ...simpleRowsData.where((row) => int.parse(row['no']!) <= 10).map((
         rowData,
       ) {
@@ -160,7 +153,7 @@ pw.Widget _buildFormTable(FormDataModel data) {
           rowData['value']!,
         );
       }).toList(),
-      _buildDateRow('13', 'Date of transaction'),
+      _buildDateRow('13', 'Date of transaction', data),
       ...simpleRowsData.where((row) => int.parse(row['no']!) > 10).map((
         rowData,
       ) {
@@ -184,18 +177,20 @@ pw.Widget _buildFormTable(FormDataModel data) {
       _buildDocumentRow(
         '19',
         'Details of document being produced in support of identity in Column 1 (Refer Instruction overleaf)',
+        data,
+        isAddress: false,
       ),
       _buildDocumentRow(
         '20',
         'Details of document being produced in support of address in Column 4 to 13 (Refer Instruction overleaf)',
+        data,
+        isAddress: true,
       ),
     ],
   );
 }
 
-// Helper function for the Verification section
 pw.Widget _buildVerificationSection(FormDataModel data) {
-  // <--- MODIFIED
   const double regularFontSize = 9;
   const double smallFontSize = 7.5;
   const PdfColor borderColor = PdfColors.black;
@@ -239,16 +234,11 @@ pw.Widget _buildVerificationSection(FormDataModel data) {
             pw.TextSpan(text: 'I, '),
             pw.TextSpan(
               text: ' ${_getFullName(data)} ',
-              style: pw.TextStyle(decoration: pw.TextDecoration.underline),
+              style: pw.TextStyle(decoration: pw.TextDecoration.underline, fontWeight: pw.FontWeight.bold),
             ),
             pw.TextSpan(text: ' do '),
             pw.TextSpan(
-              text: ' ' * 20,
-              style: pw.TextStyle(decoration: pw.TextDecoration.underline),
-            ),
-            pw.TextSpan(
-              text:
-                  ' hereby declare that what is stated above is true to the best of my knowledge and belief. I further declare that I do not have a Permanent Account Number and my / our estimated total income (including income of spouse, minor child etc., as per section 64 of Income Tax Act, 1961) computed in accordance with the provisions of Income tax Act, 1961 for the financial year in which the above transaction is held will be less than maximum amount not chargeable to tax.',
+              text: ' hereby declare that what is stated above is true to the best of my knowledge and belief. I further declare that I do not have a Permanent Account Number and my / our estimated total income (including income of spouse, minor child etc., as per section 64 of Income Tax Act, 1961) computed in accordance with the provisions of Income tax Act, 1961 for the financial year in which the above transaction is held will be less than maximum amount not chargeable to tax.',
             ),
           ],
         ),
@@ -260,11 +250,11 @@ pw.Widget _buildVerificationSection(FormDataModel data) {
             'Verified today the ',
             style: pw.TextStyle(fontSize: regularFontSize),
           ),
-          underlineWithText(data.form60VerifiedDay.isNotEmpty ? data.form60VerifiedDay : '', width: 50),
+          underlineWithText(data.form60VerifiedDay.isNotEmpty ? data.form60VerifiedDay : data.date.split('/').first, width: 50),
           pw.Text(' day of ', style: pw.TextStyle(fontSize: regularFontSize)),
           underlineWithText(data.form60VerifiedMonth.isNotEmpty ? data.form60VerifiedMonth : '', width: 100),
           pw.Text(' 20', style: pw.TextStyle(fontSize: regularFontSize)),
-          underlineWithText(data.form60VerifiedYear.isNotEmpty ? data.form60VerifiedYear : '', width: 50),
+          underlineWithText(data.form60VerifiedYear.isNotEmpty ? data.form60VerifiedYear : data.date.split('/').last, width: 50),
         ],
       ),
       pw.SizedBox(height: 25),
@@ -283,7 +273,7 @@ pw.Widget _buildVerificationSection(FormDataModel data) {
                 ),
               ),
               pw.SizedBox(height: 4),
-              underlineWithText(data.form60VerificationPlace.isNotEmpty ? data.form60VerificationPlace : '', width: 120),
+              underlineWithText(data.form60VerificationPlace.isNotEmpty ? data.form60VerificationPlace : data.branchName, width: 120),
             ],
           ),
           pw.Column(
@@ -314,7 +304,6 @@ pw.Widget _buildVerificationSection(FormDataModel data) {
   );
 }
 
-// Helper function for the final note section. (Unchanged)
 pw.Widget _buildFinalNoteSection() {
   const double fontSize = 9;
 
@@ -369,9 +358,6 @@ pw.Widget _buildFinalNoteSection() {
   );
 }
 
-// --- EXISTING TABLE HELPER FUNCTIONS ---
-
-// UPDATED: Now accepts an optional TextStyle
 pw.Widget _buildCell(
   String text, {
   pw.TextAlign align = pw.TextAlign.left,
@@ -381,8 +367,6 @@ pw.Widget _buildCell(
 }) {
   final defaultStyle = pw.TextStyle(fontSize: fontSize);
   final effectiveStyle = style ?? defaultStyle;
-
-  // If a style is passed, we use its properties. Otherwise, we use the defaults.
   final finalStyle = effectiveStyle.fontSize == null
       ? effectiveStyle.copyWith(fontSize: fontSize)
       : effectiveStyle;
@@ -399,12 +383,11 @@ pw.TableRow _buildSimpleRow(String no, String desc, String value) {
     children: [
       _buildCell(no, align: pw.TextAlign.center),
       _buildCell(desc),
-      _buildCell(value), // Uses default style with no letter spacing
+      _buildCell(value),
     ],
   );
 }
 
-// Helper to get full name from form60 fields
 String _getFullName(FormDataModel data) {
   final firstName = data.form60FirstName.isNotEmpty ? data.form60FirstName : data.customerFirstName;
   final middleName = data.form60MiddleName.isNotEmpty ? data.form60MiddleName : data.customerMiddleName;
@@ -412,7 +395,6 @@ String _getFullName(FormDataModel data) {
   return [firstName, middleName, surname].where((s) => s.isNotEmpty).join(' ');
 }
 
-// UPDATED Helper function for Row 1 to match the new style.
 pw.TableRow _buildNameRow(String no, String desc, FormDataModel data) {
   const PdfColor borderColor = PdfColors.black;
   final firstName = data.form60FirstName.isNotEmpty ? data.form60FirstName : data.customerFirstName;
@@ -431,7 +413,7 @@ pw.TableRow _buildNameRow(String no, String desc, FormDataModel data) {
               firstName,
               align: pw.TextAlign.center,
               style: pw.TextStyle(
-                letterSpacing: 3,
+                letterSpacing: 2,
                 fontWeight: pw.FontWeight.bold,
                 fontSize: 10,
               ),
@@ -441,7 +423,7 @@ pw.TableRow _buildNameRow(String no, String desc, FormDataModel data) {
           pw.Expanded(
             flex: 1,
             child: _buildCell(
-              middleName.isNotEmpty ? middleName : 'Middle\nName',
+              middleName,
               align: pw.TextAlign.center,
               style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
             ),
@@ -455,10 +437,10 @@ pw.TableRow _buildNameRow(String no, String desc, FormDataModel data) {
                 _buildCell(
                   'Surname',
                   align: pw.TextAlign.center,
-                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
                 ),
                 _buildCell(
-                  surname, // <--- FROM MODEL
+                  surname,
                   align: pw.TextAlign.center,
                   style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                 ),
@@ -471,7 +453,14 @@ pw.TableRow _buildNameRow(String no, String desc, FormDataModel data) {
   );
 }
 
-pw.TableRow _buildDateRow(String no, String desc) {
+pw.TableRow _buildDateRow(String no, String desc, FormDataModel data) {
+    // Dynamic date or placeholders
+    String chars = data.form60TransactionDate.isNotEmpty ? data.form60TransactionDate : "";
+    if (chars.isEmpty && data.date.isNotEmpty) chars = data.date;
+    
+    // Remove slashes if present
+    chars = chars.replaceAll('/', '').replaceAll('.', '').replaceAll('-', '');
+
   return pw.TableRow(
     children: [
       _buildCell(no, align: pw.TextAlign.center),
@@ -486,6 +475,7 @@ pw.TableRow _buildDateRow(String no, String desc) {
               height: 14,
               margin: const pw.EdgeInsets.only(right: 1),
               decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
+              child: pw.Center(child: pw.Text(index < chars.length ? chars[index] : '')),
             ),
           ),
         ),
@@ -497,7 +487,6 @@ pw.TableRow _buildDateRow(String no, String desc) {
 pw.TableRow _buildModeRow(String no, String desc, FormDataModel data) {
   const borderColor = PdfColors.black;
   
-  // Map modes to their checked states
   final modeChecks = [
     data.form60ModeCash,
     data.form60ModeCheque,
@@ -603,9 +592,41 @@ pw.TableRow _buildIncomeRow(String no, String desc, FormDataModel data) {
   );
 }
 
-pw.TableRow _buildDocumentRow(String no, String desc) {
+// Updated Helper that actually populates the table
+pw.TableRow _buildDocumentRow(String no, String desc, FormDataModel data, {required bool isAddress}) {
   const PdfColor borderColor = PdfColors.black;
   
+  // Logic to determine document details
+  String code = '';
+  String name = '';
+  String identificationNo = ''; // Initialize with empty string
+  String authority = '';
+
+  if (isAddress) {
+      if (data.altProofUtilityBill) { code = '16'; name = 'Utility Bill'; identificationNo = data.altProofDocumentNo; } // Electricity
+      else if (data.altProofPPOFPPO) { code = '07'; name = 'Pension Payment Order'; identificationNo = data.altProofDocumentNo; }
+      else if (data.altProofPropertyTaxReceipt) { code = '26'; name = 'Property Tax Receipt'; identificationNo = data.altProofDocumentNo; }
+      else if (data.altProofLetterOfAllotment) { code = '24'; name = 'Allotment Letter'; identificationNo = data.altProofDocumentNo; }
+      else if (data.docTypeAadhaar) { code = '01'; name = 'Aadhaar Card'; identificationNo = data.aadharDocNo; }
+      else if (data.docTypeVoterIdCard) { code = '03'; name = 'Voter ID'; identificationNo = data.documentNo; }
+      else if (data.docTypeDrivingLicence) { code = '05'; name = 'Driving License'; identificationNo = data.documentNo; }
+      else if (data.docTypePassport) { code = '06'; name = 'Passport'; identificationNo = data.documentNo; }
+      else if (data.docTypeNregaJobCard) { code = '08'; name = 'NREGA Job Card'; identificationNo = data.documentNo; }
+  } else {
+      // Identity
+      if (data.docTypeAadhaar) { code = '01'; name = 'Aadhaar Card'; identificationNo = data.aadharDocNo; }
+      else if (data.docTypeVoterIdCard) { code = '03'; name = 'Voter ID'; identificationNo = data.documentNo; }
+      else if (data.docTypeDrivingLicence) { code = '05'; name = 'Driving License'; identificationNo = data.documentNo; }
+      else if (data.docTypePassport) { code = '06'; name = 'Passport'; identificationNo = data.documentNo; }
+      else if (data.docTypeNregaJobCard) { code = '08'; name = 'NREGA Job Card'; identificationNo = data.documentNo; }
+  }
+
+  // Fallback if ID/Address fields are populated but boolean flags are missing/false
+  if (identificationNo.isEmpty && data.documentNo.isNotEmpty && !isAddress) {
+      identificationNo = data.documentNo;
+      name = 'Identity Document';
+  }
+
   return pw.TableRow(
     children: [
       _buildCell(no, align: pw.TextAlign.center),
@@ -623,12 +644,20 @@ pw.TableRow _buildDocumentRow(String no, String desc) {
         children: [
           pw.TableRow(
             children: [
-              _buildCell('Document code', fontSize: 8),
-              _buildCell('Document identification number', fontSize: 8),
+              _buildCell('Document code', fontSize: 8, fontWeight: pw.FontWeight.bold),
+              _buildCell('Document identification number', fontSize: 8, fontWeight: pw.FontWeight.bold),
               _buildCell(
                 'Name and address of the authority issuing the document',
                 fontSize: 8,
+                fontWeight: pw.FontWeight.bold,
               ),
+            ],
+          ),
+           pw.TableRow(
+            children: [
+              _buildCell(code, fontSize: 8),
+              _buildCell(identificationNo, fontSize: 8),
+              _buildCell(name, fontSize: 8), // Using name as authority/desc for now
             ],
           ),
         ],

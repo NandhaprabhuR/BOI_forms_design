@@ -6,8 +6,6 @@ import 'model/form_data_model.dart' show FormDataModel;
 
 /// Builds the ninth page of the document with a single form border.
 pw.Widget buildNinthPage(FormDataModel data) {
-  // <--- MODIFIED
-  // NEW: A container that wraps the entire page content to add a border.
   return pw.Container(
     decoration: pw.BoxDecoration(
       border: pw.Border.all(color: PdfColors.black, width: 1),
@@ -15,21 +13,21 @@ pw.Widget buildNinthPage(FormDataModel data) {
     padding: const pw.EdgeInsets.all(10), // Adds some space inside the border
     child: pw.Column(
       children: [
-        _buildAnnexure2Form(data), // <--- MODIFIED
+        _buildAnnexure2Form(data),
         pw.SizedBox(height: 5),
-        _buildProofOfIdentitySection(data), // <--- MODIFIED
+        _buildProofOfIdentitySection(data),
         pw.SizedBox(height: 5),
-        _buildFatcaDeclarationForm(),
+        _buildFatcaDeclarationForm(data), // Modified to accept data if needed
         pw.SizedBox(height: 2),
         _buildTaxResidencySection(),
         pw.SizedBox(height: 5),
-        _buildForeignTaxAddressSection(data), // <--- MODIFIED
+        _buildForeignTaxAddressSection(data),
       ],
     ),
   );
 }
 
-/// Builds the Tax Residency details section. (Unchanged, no custom data used)
+/// Builds the Tax Residency details section. (Unchanged)
 pw.Widget _buildTaxResidencySection() {
   const double regularFontSize = 8;
   const double smallFontSize = 7;
@@ -129,8 +127,8 @@ pw.Widget _buildTaxResidencySection() {
   );
 }
 
-/// Builds the FATCA Declaration Form section. (Unchanged, no custom data used)
-pw.Widget _buildFatcaDeclarationForm() {
+/// Builds the FATCA Declaration Form section.
+pw.Widget _buildFatcaDeclarationForm(FormDataModel data) {
   const double smallFontSize = 7;
 
   return pw.Column(
@@ -162,23 +160,24 @@ pw.Widget _buildFatcaDeclarationForm() {
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                _buildFormField('Customer ID:', _buildBoxes(18)),
-                _buildFormField('CKYC No.:', _buildBoxes(14)),
+                _buildFormField('Customer ID:', _buildBoxes(18, text: data.customerId)),
+                _buildFormField('CKYC No.:', _buildBoxes(14, text: data.ckycNo)),
               ],
             ),
             pw.SizedBox(height: 3),
-            _buildFormField('Account No.:', _buildBoxes(18)),
+            _buildFormField('Account No.:', _buildBoxes(18, text: data.accountNo)),
             pw.SizedBox(height: 3),
             _buildFormField(
               'Name*:',
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  _buildBoxes(
-                    35,
-                    placeholder:
-                        'F I R S T N A M E M I D D L E N A M E L A S T N A M E',
-                  ),
+                   _buildNameRowSimple(
+                    data.customerPrefix,
+                    data.customerFirstName,
+                    data.customerMiddleName,
+                    data.customerLastName,
+                   ),
                   pw.Padding(
                     padding: const pw.EdgeInsets.only(left: 2, top: 1),
                     child: pw.Text(
@@ -196,15 +195,15 @@ pw.Widget _buildFatcaDeclarationForm() {
                   'Citizenship*:',
                   pw.Row(
                     children: [
-                      _buildCheckbox('IN-India'),
+                      _buildCheckbox('IN-India', isChecked: data.nationalityInIndian),
                       pw.SizedBox(width: 8),
-                      _buildCheckbox('Others'),
+                      _buildCheckbox('Others', isChecked: data.nationalityOthers),
                     ],
                   ),
                 ),
                 pw.SizedBox(width: 15),
                 pw.Expanded(
-                  child: _buildFormField('Country Name:', _buildBoxes(15)),
+                  child: _buildFormField('Country Name:', _buildBoxes(15, text: data.countryName)),
                 ),
               ],
             ),
@@ -214,12 +213,12 @@ pw.Widget _buildFatcaDeclarationForm() {
                 pw.Expanded(
                   child: _buildFormField(
                     'Place/City of Birth*:',
-                    _buildBoxes(15),
+                    _buildBoxes(15, text: data.placeCityOfBirth),
                   ),
                 ),
                 pw.SizedBox(width: 15),
                 pw.Expanded(
-                  child: _buildFormField('Country of Birth*:', _buildBoxes(15)),
+                  child: _buildFormField('Country of Birth*:', _buildBoxes(15, text: data.countryCodeOfBirth)),
                 ),
               ],
             ),
@@ -228,9 +227,9 @@ pw.Widget _buildFatcaDeclarationForm() {
               'Address*',
               pw.Column(
                 children: [
-                  _buildBoxes(38),
+                  _buildBoxes(38, text: data.currentAddress),
                   pw.SizedBox(height: 2),
-                  _buildBoxes(38),
+                  _buildBoxes(38, text: data.currentAddressLine2),
                 ],
               ),
             ),
@@ -238,20 +237,20 @@ pw.Widget _buildFatcaDeclarationForm() {
             pw.Row(
               children: [
                 pw.Expanded(
-                  child: _buildFormField('City/Village*:', _buildBoxes(18)),
+                  child: _buildFormField('City/Village*:', _buildBoxes(18, text: data.currentCity)),
                 ),
                 pw.SizedBox(width: 15),
                 pw.Expanded(
-                  child: _buildFormField('District*:', _buildBoxes(18)),
+                  child: _buildFormField('District*:', _buildBoxes(18, text: data.currentDistrict)),
                 ),
               ],
             ),
             pw.SizedBox(height: 3),
             pw.Row(
               children: [
-                pw.Expanded(child: _buildFormField('State:*', _buildBoxes(24))),
+                pw.Expanded(child: _buildFormField('State:*', _buildBoxes(24, text: data.currentState))),
                 pw.SizedBox(width: 15),
-                pw.Expanded(child: _buildFormField('Pin:*', _buildBoxes(8))),
+                pw.Expanded(child: _buildFormField('Pin:*', _buildBoxes(8, text: data.currentPin))),
               ],
             ),
             pw.SizedBox(height: 4),
@@ -268,13 +267,10 @@ pw.Widget _buildFatcaDeclarationForm() {
 
 /// Builds the entire Annexure-2 form section.
 pw.Widget _buildAnnexure2Form(FormDataModel data) {
-  // <--- MODIFIED
   const double smallFontSize = 7;
 
-  // Main container for the section. The outer border was removed from here.
   return pw.Column(
     children: [
-      // Top-right "Annexure-2" label
       pw.Align(
         alignment: pw.Alignment.topRight,
         child: pw.Padding(
@@ -282,7 +278,6 @@ pw.Widget _buildAnnexure2Form(FormDataModel data) {
           child: pw.Text('Annexure-2', style: pw.TextStyle(fontSize: 10)),
         ),
       ),
-      // Grey title bar
       pw.Container(
         width: double.infinity,
         color: PdfColors.grey300,
@@ -294,27 +289,25 @@ pw.Widget _buildAnnexure2Form(FormDataModel data) {
           ),
         ),
       ),
-      // Form body
       pw.Container(
         padding: const pw.EdgeInsets.fromLTRB(8, 6, 8, 6),
         child: pw.Column(
           children: [
-            // Customer ID and CKYC No. Row
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
-                _buildFormField('Customer ID:', _buildBoxes(18)),
-                _buildFormField('CKYC No.:', _buildBoxes(12)),
+                _buildFormField('Customer ID:', _buildBoxes(18, text: data.customerId)),
+                _buildFormField('CKYC No.:', _buildBoxes(12, text: data.ckycNo)),
               ],
             ),
             pw.SizedBox(height: 3),
-            _buildFormField('Account No.:', _buildBoxes(18)),
+            _buildFormField('Account No.:', _buildBoxes(18, text: data.accountNo)),
             pw.SizedBox(height: 3),
             _buildNameRow(
               'Name*:',
               data.relatedPersonPrefix,
               data.relatedPersonFirstName,
-            ), // <--- FROM MODEL (Uses parent's name model as a stand-in)
+            ),
             pw.SizedBox(height: 4),
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
@@ -326,7 +319,7 @@ pw.Widget _buildAnnexure2Form(FormDataModel data) {
             pw.SizedBox(height: 4),
             _buildFormField(
               'KYC of Related Person (If Available)*:',
-              _buildBoxes(18),
+              _buildBoxes(18, text: data.relatedPersonDocNo),
             ),
             pw.SizedBox(height: 4),
             _buildRelatedPersonTypeRow(),
@@ -336,7 +329,7 @@ pw.Widget _buildAnnexure2Form(FormDataModel data) {
               data.relatedPersonPrefix,
               data.relatedPersonFirstName,
               isRelatedPerson: true,
-            ), // <--- FROM MODEL
+            ),
             pw.SizedBox(height: 3),
             pw.Align(
               alignment: pw.Alignment.centerLeft,
@@ -357,14 +350,13 @@ pw.Widget _buildAnnexure2Form(FormDataModel data) {
 
 // Builds the Proof of Identity section
 pw.Widget _buildProofOfIdentitySection(FormDataModel data) {
-  // <--- MODIFIED
   const double regularFontSize = 9;
 
   final poiList = {
     'A-PASSPORT': false,
     'B-VOTER\'S IDENTITY CARD': false,
     'C-DRIVING LICENCE': false,
-    'D-UID(AADHAR)': true,
+    'D-UID(AADHAR)': true, // Defaulting for visual consistency in sample, logic needed if related person type supported
     'E-NREGA JOB CARD': false,
     'F-LETTER ISSUED BY NATIONAL POPULATION REGISTER CONTAINING DETAILS OF NAME & ADDRESS':
         false,
@@ -403,13 +395,13 @@ pw.Widget _buildProofOfIdentitySection(FormDataModel data) {
       _buildFormField(
         'Document No/Identification Number*',
         _buildBoxes(30, text: data.relatedPersonDocNo),
-      ), // <--- FROM MODEL
+      ),
       pw.SizedBox(height: 4),
       pw.Row(
         children: [
-          _buildDateField('Issue date:*'),
+          _buildDateField('Issue date:*', "00000000"), // No data for related person dates
           pw.SizedBox(width: 20),
-          _buildDateField('Expiry Date(If Applicable):*'),
+          _buildDateField('Expiry Date(If Applicable):*', "00000000"), // No data for related person dates
         ],
       ),
       pw.SizedBox(height: 4),
@@ -436,7 +428,6 @@ pw.Widget _buildProofOfIdentitySection(FormDataModel data) {
 
 /// Builds the Foreign Tax Address section, signature, and date.
 pw.Widget _buildForeignTaxAddressSection(FormDataModel data) {
-  // <--- MODIFIED
   const double regularFontSize = 9;
   const double smallFontSize = 7;
 
@@ -452,7 +443,11 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) {
         'Address*',
         pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [_buildBoxes(38), pw.SizedBox(height: 2), _buildBoxes(38)],
+          children: [
+            _buildBoxes(38, text: data.overseasAddress),
+            pw.SizedBox(height: 2),
+            _buildBoxes(38, text: data.overseasAddressLine2)
+          ],
         ),
       ),
       pw.SizedBox(height: 3),
@@ -460,19 +455,19 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) {
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Expanded(
-            child: _buildFormField('City/Village*:', _buildBoxes(18)),
+            child: _buildFormField('City/Village*:', _buildBoxes(18, text: data.overseasCity)),
           ),
           pw.SizedBox(width: 15),
-          pw.Expanded(child: _buildFormField('District*:', _buildBoxes(18))),
+          pw.Expanded(child: _buildFormField('District*:', _buildBoxes(18, text: data.overseasDistrict))),
         ],
       ),
       pw.SizedBox(height: 3),
       pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Expanded(child: _buildFormField('Sub-District:', _buildBoxes(18))),
+          pw.Expanded(child: _buildFormField('Sub-District:', _buildBoxes(18))), // No field
           pw.SizedBox(width: 15),
-          pw.Expanded(child: _buildFormField('State:*', _buildBoxes(10))),
+          pw.Expanded(child: _buildFormField('State:*', _buildBoxes(10, text: data.overseasState))),
         ],
       ),
       pw.SizedBox(height: 3),
@@ -480,10 +475,10 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) {
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Expanded(
-            child: _buildFormField('Country Name*:', _buildBoxes(18)),
+            child: _buildFormField('Country Name*:', _buildBoxes(18, text: data.alternateCountry.isNotEmpty ? data.alternateCountry : data.countryName)),
           ),
           pw.SizedBox(width: 15),
-          pw.Expanded(child: _buildFormField('ZIP/Post Code*', _buildBoxes(8))),
+          pw.Expanded(child: _buildFormField('ZIP/Post Code*', _buildBoxes(8, text: data.overseasPin))),
         ],
       ),
       pw.SizedBox(height: 6),
@@ -505,7 +500,7 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) {
                   child: pw.Text(
                     data.declarationPlace,
                     style: pw.TextStyle(fontSize: regularFontSize),
-                  ), // <--- FROM MODEL
+                  ),
                 ),
               ),
               pw.SizedBox(height: 8),
@@ -520,7 +515,7 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) {
                   child: pw.Text(
                     data.declarationDate,
                     style: pw.TextStyle(fontSize: regularFontSize),
-                  ), // <--- FROM MODEL
+                  ),
                 ),
               ),
             ],
@@ -546,7 +541,6 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) {
 
 // --- HELPER WIDGETS ---
 
-// Helper to create a row with a label and its field
 pw.Widget _buildFormField(String label, pw.Widget field) {
   return pw.Row(
     crossAxisAlignment: pw.CrossAxisAlignment.center,
@@ -558,7 +552,6 @@ pw.Widget _buildFormField(String label, pw.Widget field) {
   );
 }
 
-// Helper to create a row of boxes for input
 pw.Widget _buildBoxes(int count, {String text = '', String placeholder = ''}) {
   List<pw.Widget> boxes = [];
   List<String> chars = text.split('');
@@ -587,7 +580,6 @@ pw.Widget _buildBoxes(int count, {String text = '', String placeholder = ''}) {
   return pw.Row(children: boxes);
 }
 
-// Helper to create a name input row
 pw.Widget _buildNameRow(
   String label,
   String prefix,
@@ -625,7 +617,10 @@ pw.Widget _buildNameRow(
   );
 }
 
-// Helper to create a checkbox with a label
+pw.Widget _buildNameRowSimple(String prefix, String first, String middle, String last) {
+    return _buildBoxes(35, text: "${prefix} ${first} ${middle} ${last}");
+}
+
 pw.Widget _buildCheckbox(
   String label, {
   bool isChecked = false,
@@ -655,7 +650,6 @@ pw.Widget _buildCheckbox(
   );
 }
 
-// Helper to create the 'Related Person Type' row
 pw.Widget _buildRelatedPersonTypeRow() {
   return pw.Row(
     children: [
@@ -670,8 +664,12 @@ pw.Widget _buildRelatedPersonTypeRow() {
   );
 }
 
-// Helper for date input fields
-pw.Widget _buildDateField(String label) {
+pw.Widget _buildDateField(String label, String date) {
+  // Simple date formatter or placeholder
+  String dateStr = date.isNotEmpty ? date : "";
+  // Remove separators
+  dateStr = dateStr.replaceAll('/', '').replaceAll('-', '').replaceAll('.', '');
+    
   const chars = ['d', 'd', 'm', 'm', 'y', 'y', 'y', 'y'];
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -680,13 +678,21 @@ pw.Widget _buildDateField(String label) {
       pw.SizedBox(height: 2),
       pw.Row(
         children: List.generate(8, (i) {
+          String content = i < dateStr.length ? dateStr[i] : (i < chars.length ? chars[i] : '');
+          // If using placeholder chars, make them smaller/grey? Or just use as text. 
+          // For now, if no date, show dd/mm/yyyy
+          bool isPlaceholder = i >= dateStr.length;
+          
           return pw.Container(
             width: 12,
             height: 12,
             alignment: pw.Alignment.center,
             margin: const pw.EdgeInsets.only(right: 1),
             decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
-            child: pw.Text(chars[i], style: const pw.TextStyle(fontSize: 7)),
+            child: pw.Text(
+                isPlaceholder ? chars[i] : content, 
+                style: pw.TextStyle(fontSize: isPlaceholder ? 6 : 8, color: isPlaceholder ? PdfColors.grey : PdfColors.black)
+            ),
           );
         }),
       ),

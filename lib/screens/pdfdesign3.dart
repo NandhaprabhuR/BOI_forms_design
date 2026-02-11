@@ -1,4 +1,4 @@
-// lib/screens/pdf_page_three.dart
+// lib/screens/pdfdesign3.dart
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -7,30 +7,28 @@ import 'pdf_helpers.dart';
 
 // This function will build the entire third page
 pw.Widget buildThirdPage(FormDataModel data) {
-  // <--- MODIFIED
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
-      _buildPageThreeHeader(data), // <--- MODIFIED
-      pw.SizedBox(height: 3), // Reduced space
+      _buildPageThreeHeader(data),
+      pw.SizedBox(height: 3),
       _buildAccountTypeSection(data),
-      pw.SizedBox(height: 3), // Reduced space
+      pw.SizedBox(height: 3),
       _buildModeOfOperationSection(data),
-      pw.SizedBox(height: 3), // Reduced space
-      _buildServicesRequiredSection(data), // <--- MODIFIED
-      pw.SizedBox(height: 3), // Reduced space
-      _buildFixedDepositSection(data), // <--- MODIFIED
-      pw.SizedBox(height: 3), // Reduced space
-      _buildMultiOptionDepositSection(data), // <--- MODIFIED
-      pw.SizedBox(height: 3), // Reduced space
-      _buildRecurringDepositSection(data), // <--- MODIFIED
+      pw.SizedBox(height: 3),
+      _buildServicesRequiredSection(data),
+      pw.SizedBox(height: 3),
+      _buildFixedDepositSection(data),
+      pw.SizedBox(height: 3),
+      _buildMultiOptionDepositSection(data),
+      pw.SizedBox(height: 3),
+      _buildRecurringDepositSection(data),
     ],
   );
 }
 
 // Builds the header section for the third page
 pw.Widget _buildPageThreeHeader(FormDataModel data) {
-  // <--- MODIFIED
   // Get date components for display
   final date = data.date;
   final dateBoxes = date.isNotEmpty ? charBoxes(date, 8) : charBoxes('', 8);
@@ -50,7 +48,7 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) {
             pw.Expanded(
               child: pw.Column(
                 children: [
-                  pw.SizedBox(height: 4), // Vertical alignment adjustment
+                  pw.SizedBox(height: 4),
                   pw.Text(
                     'ACCOUNT OPENING FORM FOR INDIVIDUAL (PART -II)',
                     textAlign: pw.TextAlign.center,
@@ -70,13 +68,13 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) {
                 ],
               ),
             ),
-            pw.SizedBox(width: 10), // Spacer
+            pw.SizedBox(width: 10),
             pw.Row(
               mainAxisSize: pw.MainAxisSize.min,
               children: [
                 pw.Text('Date:', style: const pw.TextStyle(fontSize: 8)),
                 pw.SizedBox(width: 4),
-                dateBoxes, // <--- FROM MODEL
+                dateBoxes,
               ],
             ),
           ],
@@ -85,8 +83,7 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) {
 
         // --- Middle Row: Instructions, IDs, and Stamp Box ---
         pw.Row(
-          crossAxisAlignment:
-              pw.CrossAxisAlignment.end, // Align items to the bottom
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
           children: [
             pw.Expanded(
               child: pw.Column(
@@ -112,7 +109,7 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) {
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ),
-                      charBoxes('', 18), // 18 boxes for ID
+                      charBoxes(data.firstApplicantCustomerId, 18),
                     ],
                   ),
                   pw.SizedBox(height: 4),
@@ -125,7 +122,7 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) {
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ),
-                      charBoxes('', 18), // 18 boxes for ID
+                      charBoxes(data.secondApplicantCustomerId, 18),
                     ],
                   ),
                   pw.SizedBox(height: 4),
@@ -138,13 +135,13 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) {
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ),
-                      charBoxes('', 12), // 12 boxes for Account No.
+                      charBoxes(data.accountNo, 12),
                     ],
                   ),
                 ],
               ),
             ),
-            pw.SizedBox(width: 10), // Spacer between left column and stamp
+            pw.SizedBox(width: 10),
             // Stamp Box
             pw.Container(
               width: 130,
@@ -177,7 +174,7 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) {
   );
 }
 
-// BUILDS THE ACCOUNT TYPE SECTION (Unchanged as it uses checkboxes only)
+// BUILDS THE ACCOUNT TYPE SECTION
 pw.Widget _buildAccountTypeSection(FormDataModel data) {
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -280,7 +277,6 @@ pw.Widget _buildModeOfOperationSection(FormDataModel data) {
 
 // Main builder for the entire section 3
 pw.Widget _buildServicesRequiredSection(FormDataModel data) {
-  // <--- MODIFIED
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -303,7 +299,7 @@ pw.Widget _buildServicesRequiredSection(FormDataModel data) {
           pw.SizedBox(width: 15),
           pw.Expanded(
             flex: 6,
-            child: _buildRightServicesColumn(data), // <--- MODIFIED
+            child: _buildRightServicesColumn(data),
           ),
         ],
       ),
@@ -367,7 +363,7 @@ pw.Widget _buildLeftServicesColumn(FormDataModel data) {
         isYesChecked: data.netBankingYes,
       ),
       pw.SizedBox(height: 2),
-      _buildUnboxedApplicantRow('2nd Applicant'),
+      _buildUnboxedApplicantRow('2nd Applicant', isYesChecked: false), // Default or add field
       pw.SizedBox(height: 2),
       pw.Text(
         '(Available only for singly operated accounts and joint accounts operated by Either or Survivor mode. In case of accounts operated as Former or Survivor mode INB facility is available to1st applicant only)',
@@ -379,7 +375,6 @@ pw.Widget _buildLeftServicesColumn(FormDataModel data) {
 
 // Builds the right column of the services section
 pw.Widget _buildRightServicesColumn(FormDataModel data) {
-  // <--- MODIFIED
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -394,9 +389,9 @@ pw.Widget _buildRightServicesColumn(FormDataModel data) {
           children: [
             pw.Text('Name on Card:', style: const pw.TextStyle(fontSize: 8)),
             pw.SizedBox(height: 3),
-            charBoxes(data.atmCardName, 22), // <--- FROM MODEL
+            charBoxes(data.atmCardName.isNotEmpty ? data.atmCardName : data.atmCardName1stApplicant, 22),
             pw.SizedBox(height: 3),
-            charBoxes('', 22),
+            charBoxes(data.atmCardName2ndApplicant, 22), 
           ],
         ),
       ),
@@ -416,7 +411,7 @@ pw.Widget _buildRightServicesColumn(FormDataModel data) {
         ),
       ),
       pw.SizedBox(height: 6),
-      _buildSimpleServiceRow('5. PHONE BANKING SERVICES:', false, false),
+      _buildSimpleServiceRow('5. PHONE BANKING SERVICES:', data.phoneBankingYes, data.phoneBankingNo),
       pw.SizedBox(height: 6),
       _buildSimpleServiceRow(
         '6. MOBILE BANKING:',
@@ -424,7 +419,7 @@ pw.Widget _buildRightServicesColumn(FormDataModel data) {
         data.mobileBankingNo,
       ),
       pw.SizedBox(height: 6),
-      _buildSimpleServiceRow('7. PASSBOOK REQUIRED:', false, false),
+      _buildSimpleServiceRow('7. PASSBOOK REQUIRED:', data.passbookYes, data.passbookNo),
       pw.Padding(
         padding: const pw.EdgeInsets.only(left: 8),
         child: pw.Text(
@@ -442,7 +437,7 @@ pw.Widget _buildRightServicesColumn(FormDataModel data) {
   );
 }
 
-// Helper for applicant rows with a BOXED label (Unchanged)
+// Helpers
 pw.Widget _buildBoxedApplicantRow(String label, {bool isYesChecked = false}) {
   return pw.Row(
     children: [
@@ -457,12 +452,11 @@ pw.Widget _buildBoxedApplicantRow(String label, {bool isYesChecked = false}) {
       pw.SizedBox(width: 8),
       labeledCheckbox('Yes', checked: isYesChecked),
       pw.SizedBox(width: 8),
-      labeledCheckbox('No'),
+      labeledCheckbox('No', checked: !isYesChecked),
     ],
   );
 }
 
-// Helper for applicant rows with an UNBOXED label
 pw.Widget _buildUnboxedApplicantRow(String label, {bool isYesChecked = false}) {
   return pw.Row(
     children: [
@@ -478,7 +472,6 @@ pw.Widget _buildUnboxedApplicantRow(String label, {bool isYesChecked = false}) {
   );
 }
 
-// Helper for simple "Title: [ ] YES [ ] NO" rows
 pw.Widget _buildSimpleServiceRow(
   String title,
   bool yesChecked,
@@ -496,7 +489,6 @@ pw.Widget _buildSimpleServiceRow(
   );
 }
 
-// Helper for custom option labels
 pw.Widget _buildSimpleServiceRowCustom(
   String title,
   List<String> options,
@@ -522,7 +514,6 @@ pw.Widget _buildSimpleServiceRowCustom(
 // == FIXED DEPOSIT SECTION
 // =========================================================================
 pw.Widget _buildFixedDepositSection(FormDataModel data) {
-  // <--- MODIFIED
   pw.Widget underlinedText(double width) {
     return pw.Container(
       width: width,
@@ -668,7 +659,7 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) {
                     pw.Text(
                       data.fdAmount,
                       style: const pw.TextStyle(fontSize: 8),
-                    ), // <--- FROM MODEL (Value)
+                    ),
                     underlinedText(60),
                     pw.SizedBox(width: 8),
                     pw.Text(
@@ -737,9 +728,9 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) {
       ),
       pw.Row(
         children: [
-          labeledCheckbox('By credit to my Bank Account No.'),
+          labeledCheckbox('By credit to my Bank Account No.', checked: data.accountNo.isNotEmpty),
           pw.SizedBox(width: 8),
-          charBoxes('', 15),
+          charBoxes(data.accountNo, 15),
         ],
       ),
     ],
@@ -750,7 +741,6 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) {
 // == MULTI-OPTION DEPOSIT SECTION
 // =========================================================================
 pw.Widget _buildMultiOptionDepositSection(FormDataModel data) {
-  // <--- MODIFIED
   pw.Widget dottedText(double width) {
     return pw.Container(
       width: width,
@@ -783,9 +773,9 @@ pw.Widget _buildMultiOptionDepositSection(FormDataModel data) {
         children: [
           pw.Text('Type of Deposit', style: const pw.TextStyle(fontSize: 8)),
           pw.SizedBox(width: 8),
-          labeledCheckbox('Term Deposit'),
+          labeledCheckbox('Term Deposit', checked: false), // Todo: add field
           pw.SizedBox(width: 8),
-          labeledCheckbox('Term Deposit (Reinvestment)'),
+          labeledCheckbox('Term Deposit (Reinvestment)', checked: false), // Todo: add field
           pw.SizedBox(width: 20),
           pw.Text('Period of Deposit', style: const pw.TextStyle(fontSize: 8)),
           dottedText(50),
@@ -816,7 +806,7 @@ pw.Widget _buildMultiOptionDepositSection(FormDataModel data) {
             style: const pw.TextStyle(fontSize: 8),
           ),
           pw.SizedBox(width: 8),
-          charBoxes(data.debitAccountNo, 15), // <--- FROM MODEL
+          charBoxes(data.debitAccountNo, 15),
         ],
       ),
       pw.SizedBox(height: 4),
@@ -837,10 +827,9 @@ pw.Widget _buildMultiOptionDepositSection(FormDataModel data) {
 }
 
 // =========================================================================
-// == NEW RECURRING DEPOSIT SECTION (UPDATED)
+// == NEW RECURRING DEPOSIT SECTION
 // =========================================================================
 pw.Widget _buildRecurringDepositSection(FormDataModel data) {
-  // <--- MODIFIED
   pw.Widget dottedText(double width) {
     return pw.Container(
       width: width,
@@ -873,9 +862,10 @@ pw.Widget _buildRecurringDepositSection(FormDataModel data) {
               // Installment Row
               pw.Row(
                 children: [
-                  labeledCheckbox('Monthly / Core Monthly installment:'),
+                  labeledCheckbox('Monthly / Core Monthly installment:', checked: data.rdMonthly),
                   pw.SizedBox(width: 4),
                   pw.Text('Rs.', style: const pw.TextStyle(fontSize: 8)),
+                  pw.Text(data.rdInstallment, style: const pw.TextStyle(fontSize: 8)),
                   dottedText(40),
                   pw.SizedBox(width: 4),
                   pw.Text(
@@ -899,7 +889,7 @@ pw.Widget _buildRecurringDepositSection(FormDataModel data) {
                 children: [
                   pw.SizedBox(
                     width: 180,
-                    child: labeledCheckbox('Standing instruction (if any)'),
+                    child: labeledCheckbox('Standing instruction (if any)', checked: data.debitAccountNo.isNotEmpty),
                   ),
                   pw.Text(
                     'Debit Account No.',
@@ -908,7 +898,7 @@ pw.Widget _buildRecurringDepositSection(FormDataModel data) {
                   pw.SizedBox(width: 8),
                   pw.Expanded(
                     child: charBoxes(data.debitAccountNo, 18),
-                  ), // <--- FROM MODEL
+                  ),
                 ],
               ),
               pw.SizedBox(height: 3),
@@ -920,12 +910,13 @@ pw.Widget _buildRecurringDepositSection(FormDataModel data) {
                     width: 180,
                     child: labeledCheckbox(
                       'On Maturity, credit proceeds to Account No.',
+                      checked: true,
                     ),
                   ),
                   pw.SizedBox(width: 70), // Manual alignment
                   pw.Expanded(
                     child: charBoxes(data.debitAccountNo, 14),
-                  ), // <--- FROM MODEL
+                  ),
                 ],
               ),
               pw.SizedBox(height: 6),
@@ -945,7 +936,7 @@ pw.Widget _buildRecurringDepositSection(FormDataModel data) {
                   pw.SizedBox(width: 4),
                   pw.Expanded(
                     child: charBoxes(data.debitAccountNo, 18),
-                  ), // <--- FROM MODEL
+                  ),
                 ],
               ),
             ],
