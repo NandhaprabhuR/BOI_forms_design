@@ -363,9 +363,10 @@ pw.Widget _buildCell(
   pw.TextAlign align = pw.TextAlign.left,
   pw.TextStyle? style,
   double fontSize = 9,
+  pw.FontWeight? fontWeight,
   pw.EdgeInsets? padding,
 }) {
-  final defaultStyle = pw.TextStyle(fontSize: fontSize);
+  final defaultStyle = pw.TextStyle(fontSize: fontSize, fontWeight: fontWeight);
   final effectiveStyle = style ?? defaultStyle;
   final finalStyle = effectiveStyle.fontSize == null
       ? effectiveStyle.copyWith(fontSize: fontSize)
