@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import '../model/form_data_model.dart';
 import 'form_helper.dart';
 
@@ -620,10 +621,15 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                   ? Stack(
                       children: [
                         Center(
-                          child: Image.file(
-                            File(_rubberStampImagePath!),
-                            fit: BoxFit.contain,
-                          ),
+                          child: kIsWeb
+                              ? Image.network(
+                                  _rubberStampImagePath!,
+                                  fit: BoxFit.contain,
+                                )
+                              : Image.file(
+                                  File(_rubberStampImagePath!),
+                                  fit: BoxFit.contain,
+                                ),
                         ),
                         Positioned(
                           top: 0,
@@ -687,7 +693,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'Savings Bank Account',
               'value': _accountTypeSavings,
               'onChanged': (val) {
-                _accountTypeSavings = val;
+                if (val == true) {
+                  _accountTypeSavings = true;
+                  _accountTypeBSBDA = false;
+                  _accountTypeSmall = false;
+                  _accountTypeCurrent = false;
+                  _accountTypeFixedDeposit = false;
+                  _accountTypeCapsGain = false;
+                } else {
+                  _accountTypeSavings = false;
+                }
                 _notifyChange();
               },
             },
@@ -695,7 +710,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'BSBDA',
               'value': _accountTypeBSBDA,
               'onChanged': (val) {
-                _accountTypeBSBDA = val;
+                if (val == true) {
+                  _accountTypeBSBDA = true;
+                  _accountTypeSavings = false;
+                  _accountTypeSmall = false;
+                  _accountTypeCurrent = false;
+                  _accountTypeFixedDeposit = false;
+                  _accountTypeCapsGain = false;
+                } else {
+                  _accountTypeBSBDA = false;
+                }
                 _notifyChange();
               },
             },
@@ -703,7 +727,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'Small Account',
               'value': _accountTypeSmall,
               'onChanged': (val) {
-                _accountTypeSmall = val;
+                if (val == true) {
+                  _accountTypeSmall = true;
+                  _accountTypeSavings = false;
+                  _accountTypeBSBDA = false;
+                  _accountTypeCurrent = false;
+                  _accountTypeFixedDeposit = false;
+                  _accountTypeCapsGain = false;
+                } else {
+                  _accountTypeSmall = false;
+                }
                 _notifyChange();
               },
             },
@@ -711,7 +744,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'Current Account',
               'value': _accountTypeCurrent,
               'onChanged': (val) {
-                _accountTypeCurrent = val;
+                if (val == true) {
+                  _accountTypeCurrent = true;
+                  _accountTypeSavings = false;
+                  _accountTypeBSBDA = false;
+                  _accountTypeSmall = false;
+                  _accountTypeFixedDeposit = false;
+                  _accountTypeCapsGain = false;
+                } else {
+                  _accountTypeCurrent = false;
+                }
                 _notifyChange();
               },
             },
@@ -719,7 +761,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'Fixed Deposit/RD',
               'value': _accountTypeFixedDeposit,
               'onChanged': (val) {
-                _accountTypeFixedDeposit = val;
+                if (val == true) {
+                  _accountTypeFixedDeposit = true;
+                  _accountTypeSavings = false;
+                  _accountTypeBSBDA = false;
+                  _accountTypeSmall = false;
+                  _accountTypeCurrent = false;
+                  _accountTypeCapsGain = false;
+                } else {
+                  _accountTypeFixedDeposit = false;
+                }
                 _notifyChange();
               },
             },
@@ -727,7 +778,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'CAPS GAIN (SB)',
               'value': _accountTypeCapsGain,
               'onChanged': (val) {
-                _accountTypeCapsGain = val;
+                if (val == true) {
+                  _accountTypeCapsGain = true;
+                  _accountTypeSavings = false;
+                  _accountTypeBSBDA = false;
+                  _accountTypeSmall = false;
+                  _accountTypeCurrent = false;
+                  _accountTypeFixedDeposit = false;
+                } else {
+                  _accountTypeCapsGain = false;
+                }
                 _notifyChange();
               },
             },
@@ -740,7 +800,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'Self',
               'value': _modeOfOperationSelf,
               'onChanged': (val) {
-                _modeOfOperationSelf = val;
+                if (val == true) {
+                  _modeOfOperationSelf = true;
+                  _modeOfOperationEitherOrSurvivor = false;
+                  _modeOfOperationFormerOrSurvivor = false;
+                  _modeOfOperationAnyOneOrSurvivor = false;
+                  _modeOfOperationJointly = false;
+                  _modeOfOperationOtherChecked = false;
+                } else {
+                  _modeOfOperationSelf = false;
+                }
                 _notifyChange();
               },
             },
@@ -748,7 +817,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'Either or Survivor',
               'value': _modeOfOperationEitherOrSurvivor,
               'onChanged': (val) {
-                _modeOfOperationEitherOrSurvivor = val;
+                if (val == true) {
+                  _modeOfOperationEitherOrSurvivor = true;
+                  _modeOfOperationSelf = false;
+                  _modeOfOperationFormerOrSurvivor = false;
+                  _modeOfOperationAnyOneOrSurvivor = false;
+                  _modeOfOperationJointly = false;
+                  _modeOfOperationOtherChecked = false;
+                } else {
+                  _modeOfOperationEitherOrSurvivor = false;
+                }
                 _notifyChange();
               },
             },
@@ -756,7 +834,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'Former or Survivor',
               'value': _modeOfOperationFormerOrSurvivor,
               'onChanged': (val) {
-                _modeOfOperationFormerOrSurvivor = val;
+                if (val == true) {
+                  _modeOfOperationFormerOrSurvivor = true;
+                  _modeOfOperationSelf = false;
+                  _modeOfOperationEitherOrSurvivor = false;
+                  _modeOfOperationAnyOneOrSurvivor = false;
+                  _modeOfOperationJointly = false;
+                  _modeOfOperationOtherChecked = false;
+                } else {
+                  _modeOfOperationFormerOrSurvivor = false;
+                }
                 _notifyChange();
               },
             },
@@ -764,7 +851,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'Any one or Survivor',
               'value': _modeOfOperationAnyOneOrSurvivor,
               'onChanged': (val) {
-                _modeOfOperationAnyOneOrSurvivor = val;
+                if (val == true) {
+                  _modeOfOperationAnyOneOrSurvivor = true;
+                  _modeOfOperationSelf = false;
+                  _modeOfOperationEitherOrSurvivor = false;
+                  _modeOfOperationFormerOrSurvivor = false;
+                  _modeOfOperationJointly = false;
+                  _modeOfOperationOtherChecked = false;
+                } else {
+                  _modeOfOperationAnyOneOrSurvivor = false;
+                }
                 _notifyChange();
               },
             },
@@ -772,7 +868,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'Jointly Operated',
               'value': _modeOfOperationJointly,
               'onChanged': (val) {
-                _modeOfOperationJointly = val;
+                if (val == true) {
+                  _modeOfOperationJointly = true;
+                  _modeOfOperationSelf = false;
+                  _modeOfOperationEitherOrSurvivor = false;
+                  _modeOfOperationFormerOrSurvivor = false;
+                  _modeOfOperationAnyOneOrSurvivor = false;
+                  _modeOfOperationOtherChecked = false;
+                } else {
+                  _modeOfOperationJointly = false;
+                }
                 _notifyChange();
               },
             },
@@ -780,7 +885,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
               'label': 'Other',
               'value': _modeOfOperationOtherChecked,
               'onChanged': (val) {
-                _modeOfOperationOtherChecked = val;
+                if (val == true) {
+                  _modeOfOperationOtherChecked = true;
+                  _modeOfOperationSelf = false;
+                  _modeOfOperationEitherOrSurvivor = false;
+                  _modeOfOperationFormerOrSurvivor = false;
+                  _modeOfOperationAnyOneOrSurvivor = false;
+                  _modeOfOperationJointly = false;
+                } else {
+                  _modeOfOperationOtherChecked = false;
+                }
                 _notifyChange();
               },
             },
@@ -1247,7 +1361,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                     value: _modRecurringDeposit,
                     onChanged: (val) {
                       setState(() {
-                        _modRecurringDeposit = val ?? false;
+                        if (val == true) {
+                          _modRecurringDeposit = true;
+                          _modDoubleBenefit = false;
+                          _modMICQIC = false;
+                          _modShortFixedDeposit = false;
+                          _modTaxSaving = false;
+                          _modCapitalGain = false;
+                        } else {
+                          _modRecurringDeposit = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1265,7 +1388,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                     value: _modDoubleBenefit,
                     onChanged: (val) {
                       setState(() {
-                        _modDoubleBenefit = val ?? false;
+                        if (val == true) {
+                          _modDoubleBenefit = true;
+                          _modRecurringDeposit = false;
+                          _modMICQIC = false;
+                          _modShortFixedDeposit = false;
+                          _modTaxSaving = false;
+                          _modCapitalGain = false;
+                        } else {
+                          _modDoubleBenefit = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1283,7 +1415,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                     value: _modMICQIC,
                     onChanged: (val) {
                       setState(() {
-                        _modMICQIC = val ?? false;
+                        if (val == true) {
+                          _modMICQIC = true;
+                          _modRecurringDeposit = false;
+                          _modDoubleBenefit = false;
+                          _modShortFixedDeposit = false;
+                          _modTaxSaving = false;
+                          _modCapitalGain = false;
+                        } else {
+                          _modMICQIC = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1298,7 +1439,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                     value: _modShortFixedDeposit,
                     onChanged: (val) {
                       setState(() {
-                        _modShortFixedDeposit = val ?? false;
+                        if (val == true) {
+                          _modShortFixedDeposit = true;
+                          _modRecurringDeposit = false;
+                          _modDoubleBenefit = false;
+                          _modMICQIC = false;
+                          _modTaxSaving = false;
+                          _modCapitalGain = false;
+                        } else {
+                          _modShortFixedDeposit = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1316,7 +1466,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                     value: _modTaxSaving,
                     onChanged: (val) {
                       setState(() {
-                        _modTaxSaving = val ?? false;
+                        if (val == true) {
+                          _modTaxSaving = true;
+                          _modRecurringDeposit = false;
+                          _modDoubleBenefit = false;
+                          _modMICQIC = false;
+                          _modShortFixedDeposit = false;
+                          _modCapitalGain = false;
+                        } else {
+                          _modTaxSaving = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1334,7 +1493,16 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                     value: _modCapitalGain,
                     onChanged: (val) {
                       setState(() {
-                        _modCapitalGain = val ?? false;
+                        if (val == true) {
+                          _modCapitalGain = true;
+                          _modRecurringDeposit = false;
+                          _modDoubleBenefit = false;
+                          _modMICQIC = false;
+                          _modShortFixedDeposit = false;
+                          _modTaxSaving = false;
+                        } else {
+                          _modCapitalGain = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1550,7 +1718,14 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                     value: _fdAutoRenewPrincipalPaybackInterest,
                     onChanged: (val) {
                       setState(() {
-                        _fdAutoRenewPrincipalPaybackInterest = val ?? false;
+                        if (val == true) {
+                          _fdAutoRenewPrincipalPaybackInterest = true;
+                          _fdAutoRenewBoth = false;
+                          _fdPayPrincipalAndInterest = false;
+                          _fdAutoRenewPartAmount = false;
+                        } else {
+                          _fdAutoRenewPrincipalPaybackInterest = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1568,7 +1743,14 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                     value: _fdAutoRenewBoth,
                     onChanged: (val) {
                       setState(() {
-                        _fdAutoRenewBoth = val ?? false;
+                        if (val == true) {
+                          _fdAutoRenewBoth = true;
+                          _fdAutoRenewPrincipalPaybackInterest = false;
+                          _fdPayPrincipalAndInterest = false;
+                          _fdAutoRenewPartAmount = false;
+                        } else {
+                          _fdAutoRenewBoth = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1586,7 +1768,14 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                     value: _fdPayPrincipalAndInterest,
                     onChanged: (val) {
                       setState(() {
-                        _fdPayPrincipalAndInterest = val ?? false;
+                        if (val == true) {
+                          _fdPayPrincipalAndInterest = true;
+                          _fdAutoRenewPrincipalPaybackInterest = false;
+                          _fdAutoRenewBoth = false;
+                          _fdAutoRenewPartAmount = false;
+                        } else {
+                          _fdPayPrincipalAndInterest = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1604,7 +1793,14 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                     value: _fdAutoRenewPartAmount,
                     onChanged: (val) {
                       setState(() {
-                        _fdAutoRenewPartAmount = val ?? false;
+                        if (val == true) {
+                          _fdAutoRenewPartAmount = true;
+                          _fdAutoRenewPrincipalPaybackInterest = false;
+                          _fdAutoRenewBoth = false;
+                          _fdPayPrincipalAndInterest = false;
+                        } else {
+                          _fdAutoRenewPartAmount = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1693,7 +1889,12 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                 value: _modTermDeposit,
                 onChanged: (val) {
                   setState(() {
-                    _modTermDeposit = val ?? false;
+                    if (val == true) {
+                      _modTermDeposit = true;
+                      _modTermDepositReinvestment = false;
+                    } else {
+                      _modTermDeposit = false;
+                    }
                     _notifyChange();
                   });
                 },
@@ -1707,7 +1908,12 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
                 value: _modTermDepositReinvestment,
                 onChanged: (val) {
                   setState(() {
-                    _modTermDepositReinvestment = val ?? false;
+                    if (val == true) {
+                      _modTermDepositReinvestment = true;
+                      _modTermDeposit = false;
+                    } else {
+                      _modTermDepositReinvestment = false;
+                    }
                     _notifyChange();
                   });
                 },

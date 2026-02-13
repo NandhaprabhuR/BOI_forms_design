@@ -1,6 +1,7 @@
 // lib/screens/forms/page9_form.dart
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../model/form_data_model.dart';
@@ -573,12 +574,26 @@ class _Page9FormState extends State<Page9Form> {
             children: [
               Expanded(
                 child: _buildCheckbox('Addition of Related Person', _additionOfRelatedPerson, (val) {
-                  setState(() => _additionOfRelatedPerson = val ?? false);
+                  setState(() {
+                    if (val == true) {
+                      _additionOfRelatedPerson = true;
+                      _deletionOfRelatedPerson = false;
+                    } else {
+                      _additionOfRelatedPerson = false;
+                    }
+                  });
                 }),
               ),
               Expanded(
                 child: _buildCheckbox('Deletion of Related Person', _deletionOfRelatedPerson, (val) {
-                  setState(() => _deletionOfRelatedPerson = val ?? false);
+                  setState(() {
+                    if (val == true) {
+                      _deletionOfRelatedPerson = true;
+                      _additionOfRelatedPerson = false;
+                    } else {
+                      _deletionOfRelatedPerson = false;
+                    }
+                  });
                 }),
               ),
             ],
@@ -601,13 +616,37 @@ class _Page9FormState extends State<Page9Form> {
             runSpacing: 8,
             children: [
               _buildCheckbox('Guardian of Minor', _guardianOfMinor, (val) {
-                setState(() => _guardianOfMinor = val ?? false);
+                setState(() {
+                  if (val == true) {
+                    _guardianOfMinor = true;
+                    _assignee = false;
+                    _authorisedRepresentative = false;
+                  } else {
+                    _guardianOfMinor = false;
+                  }
+                });
               }),
               _buildCheckbox('Assignee', _assignee, (val) {
-                setState(() => _assignee = val ?? false);
+                setState(() {
+                  if (val == true) {
+                    _assignee = true;
+                    _guardianOfMinor = false;
+                    _authorisedRepresentative = false;
+                  } else {
+                    _assignee = false;
+                  }
+                });
               }),
               _buildCheckbox('Authorised Representative', _authorisedRepresentative, (val) {
-                setState(() => _authorisedRepresentative = val ?? false);
+                setState(() {
+                  if (val == true) {
+                    _authorisedRepresentative = true;
+                    _guardianOfMinor = false;
+                    _assignee = false;
+                  } else {
+                    _authorisedRepresentative = false;
+                  }
+                });
               }),
             ],
           ),
@@ -682,22 +721,88 @@ class _Page9FormState extends State<Page9Form> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildPOICheckbox('A-PASSPORT', _poiPassport, (val) {
-                  setState(() => _poiPassport = val ?? false);
+                  setState(() {
+                    if (val == true) {
+                      _poiPassport = true;
+                      _poiVotersCard = false;
+                      _poiDrivingLicence = false;
+                      _poiAadhaar = false;
+                      _poiNregaJobCard = false;
+                      _poiNprLetter = false;
+                    } else {
+                      _poiPassport = false;
+                    }
+                  });
                 }),
                 _buildPOICheckbox('B-VOTER\'S IDENTITY CARD', _poiVotersCard, (val) {
-                  setState(() => _poiVotersCard = val ?? false);
+                  setState(() {
+                    if (val == true) {
+                      _poiVotersCard = true;
+                      _poiPassport = false;
+                      _poiDrivingLicence = false;
+                      _poiAadhaar = false;
+                      _poiNregaJobCard = false;
+                      _poiNprLetter = false;
+                    } else {
+                      _poiVotersCard = false;
+                    }
+                  });
                 }),
                 _buildPOICheckbox('C-DRIVING LICENCE', _poiDrivingLicence, (val) {
-                  setState(() => _poiDrivingLicence = val ?? false);
+                  setState(() {
+                    if (val == true) {
+                      _poiDrivingLicence = true;
+                      _poiPassport = false;
+                      _poiVotersCard = false;
+                      _poiAadhaar = false;
+                      _poiNregaJobCard = false;
+                      _poiNprLetter = false;
+                    } else {
+                      _poiDrivingLicence = false;
+                    }
+                  });
                 }),
                 _buildPOICheckbox('D-PROOF OF POSSESSION OF AADHAAR', _poiAadhaar, (val) {
-                  setState(() => _poiAadhaar = val ?? false);
+                  setState(() {
+                    if (val == true) {
+                      _poiAadhaar = true;
+                      _poiPassport = false;
+                      _poiVotersCard = false;
+                      _poiDrivingLicence = false;
+                      _poiNregaJobCard = false;
+                      _poiNprLetter = false;
+                    } else {
+                      _poiAadhaar = false;
+                    }
+                  });
                 }),
                 _buildPOICheckbox('E-NREGA JOB CARD', _poiNregaJobCard, (val) {
-                  setState(() => _poiNregaJobCard = val ?? false);
+                  setState(() {
+                    if (val == true) {
+                      _poiNregaJobCard = true;
+                      _poiPassport = false;
+                      _poiVotersCard = false;
+                      _poiDrivingLicence = false;
+                      _poiAadhaar = false;
+                      _poiNprLetter = false;
+                    } else {
+                      _poiNregaJobCard = false;
+                    }
+                  });
                 }),
                 _buildPOICheckbox('F-LETTER ISSUED BY NATIONAL POPULATION REGISTER CONTAINING DETAILS OF NAME & ADDRESS', _poiNprLetter, (val) {
-                  setState(() => _poiNprLetter = val ?? false);
+                  setState(() {
+                    if (val == true) {
+                      _poiNprLetter = true;
+                      _poiPassport = false;
+                      _poiVotersCard = false;
+                      _poiDrivingLicence = false;
+                      _poiAadhaar = false;
+                      _poiNregaJobCard = false;
+                    } else {
+                      _poiNprLetter = false;
+                    }
+                  });
                 }),
               ],
             ),
@@ -1250,10 +1355,15 @@ class _Page9FormState extends State<Page9Form> {
             ? Stack(
                 children: [
                   Center(
-                    child: Image.file(
-                      File(_outsideIndiaSignaturePath!),
-                      fit: BoxFit.contain,
-                    ),
+                    child: kIsWeb
+                        ? Image.network(
+                            _outsideIndiaSignaturePath!,
+                            fit: BoxFit.contain,
+                          )
+                        : Image.file(
+                            File(_outsideIndiaSignaturePath!),
+                            fit: BoxFit.contain,
+                          ),
                   ),
                   Positioned(
                     top: 4,

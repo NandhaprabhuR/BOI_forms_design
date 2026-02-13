@@ -1,6 +1,7 @@
 // lib/screens/forms/page2_form.dart
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../model/form_data_model.dart';
@@ -493,8 +494,6 @@ class _Page2FormState extends State<Page2Form> {
     _ovdDocumentNoController.dispose();
     _ovdDocumentDateController.dispose();
     _applicantSignatureNameController.dispose();
-    _declarationPlaceController.dispose();
-    _declarationDateController.dispose();
     _officialNameController.dispose();
     _pfNoController.dispose();
     _designationController.dispose();
@@ -579,7 +578,15 @@ class _Page2FormState extends State<Page2Form> {
                     value: _addressTypeResidentialBusiness,
                     onChanged: (value) {
                       setState(() {
-                        _addressTypeResidentialBusiness = value ?? false;
+                        if (value == true) {
+                          _addressTypeResidentialBusiness = true;
+                          _addressTypeResidential = false;
+                          _addressTypeBusiness = false;
+                          _addressTypeRegisteredOffice = false;
+                          _addressTypeUnspecified = false;
+                        } else {
+                          _addressTypeResidentialBusiness = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -594,7 +601,15 @@ class _Page2FormState extends State<Page2Form> {
                     value: _addressTypeResidential,
                     onChanged: (value) {
                       setState(() {
-                        _addressTypeResidential = value ?? false;
+                        if (value == true) {
+                          _addressTypeResidential = true;
+                          _addressTypeResidentialBusiness = false;
+                          _addressTypeBusiness = false;
+                          _addressTypeRegisteredOffice = false;
+                          _addressTypeUnspecified = false;
+                        } else {
+                          _addressTypeResidential = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -609,7 +624,15 @@ class _Page2FormState extends State<Page2Form> {
                     value: _addressTypeBusiness,
                     onChanged: (value) {
                       setState(() {
-                        _addressTypeBusiness = value ?? false;
+                        if (value == true) {
+                          _addressTypeBusiness = true;
+                          _addressTypeResidentialBusiness = false;
+                          _addressTypeResidential = false;
+                          _addressTypeRegisteredOffice = false;
+                          _addressTypeUnspecified = false;
+                        } else {
+                          _addressTypeBusiness = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -624,7 +647,15 @@ class _Page2FormState extends State<Page2Form> {
                     value: _addressTypeRegisteredOffice,
                     onChanged: (value) {
                       setState(() {
-                        _addressTypeRegisteredOffice = value ?? false;
+                        if (value == true) {
+                          _addressTypeRegisteredOffice = true;
+                          _addressTypeResidentialBusiness = false;
+                          _addressTypeResidential = false;
+                          _addressTypeBusiness = false;
+                          _addressTypeUnspecified = false;
+                        } else {
+                          _addressTypeRegisteredOffice = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -639,7 +670,15 @@ class _Page2FormState extends State<Page2Form> {
                     value: _addressTypeUnspecified,
                     onChanged: (value) {
                       setState(() {
-                        _addressTypeUnspecified = value ?? false;
+                        if (value == true) {
+                          _addressTypeUnspecified = true;
+                          _addressTypeResidentialBusiness = false;
+                          _addressTypeResidential = false;
+                          _addressTypeBusiness = false;
+                          _addressTypeRegisteredOffice = false;
+                        } else {
+                          _addressTypeUnspecified = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -785,7 +824,14 @@ class _Page2FormState extends State<Page2Form> {
                 value: _altProofUtilityBill,
                 onChanged: (val) {
                   setState(() {
-                    _altProofUtilityBill = val ?? false;
+                    if (val == true) {
+                      _altProofUtilityBill = true;
+                      _altProofPPOFPPO = false;
+                      _altProofPropertyTaxReceipt = false;
+                      _altProofLetterOfAllotment = false;
+                    } else {
+                      _altProofUtilityBill = false;
+                    }
                     _notifyChange();
                   });
                 },
@@ -797,7 +843,14 @@ class _Page2FormState extends State<Page2Form> {
                 value: _altProofPPOFPPO,
                 onChanged: (val) {
                   setState(() {
-                    _altProofPPOFPPO = val ?? false;
+                    if (val == true) {
+                      _altProofPPOFPPO = true;
+                      _altProofUtilityBill = false;
+                      _altProofPropertyTaxReceipt = false;
+                      _altProofLetterOfAllotment = false;
+                    } else {
+                      _altProofPPOFPPO = false;
+                    }
                     _notifyChange();
                   });
                 },
@@ -812,7 +865,14 @@ class _Page2FormState extends State<Page2Form> {
                 value: _altProofPropertyTaxReceipt,
                 onChanged: (val) {
                   setState(() {
-                    _altProofPropertyTaxReceipt = val ?? false;
+                    if (val == true) {
+                      _altProofPropertyTaxReceipt = true;
+                      _altProofUtilityBill = false;
+                      _altProofPPOFPPO = false;
+                      _altProofLetterOfAllotment = false;
+                    } else {
+                      _altProofPropertyTaxReceipt = false;
+                    }
                     _notifyChange();
                   });
                 },
@@ -827,7 +887,14 @@ class _Page2FormState extends State<Page2Form> {
                 value: _altProofLetterOfAllotment,
                 onChanged: (val) {
                   setState(() {
-                    _altProofLetterOfAllotment = val ?? false;
+                    if (val == true) {
+                      _altProofLetterOfAllotment = true;
+                      _altProofUtilityBill = false;
+                      _altProofPPOFPPO = false;
+                      _altProofPropertyTaxReceipt = false;
+                    } else {
+                      _altProofLetterOfAllotment = false;
+                    }
                     _notifyChange();
                   });
                 },
@@ -1292,7 +1359,9 @@ class _Page2FormState extends State<Page2Form> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.file(File(imagePath), fit: BoxFit.contain),
+                child: kIsWeb
+                    ? Image.network(imagePath, fit: BoxFit.contain)
+                    : Image.file(File(imagePath), fit: BoxFit.contain),
               ),
             ),
           const SizedBox(height: 12),

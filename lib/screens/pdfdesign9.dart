@@ -552,6 +552,32 @@ pw.Widget _buildFormField(String label, pw.Widget field) {
   );
 }
 
+// Helper to format date to DDMMYYYY
+String _formatDate(String date) {
+  if (date.isEmpty) return '';
+  try {
+    DateTime? parsed;
+    if (date.contains('/')) {
+      final parts = date.split('/');
+      if (parts.length == 3) {
+        parsed = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+      }
+    } else if (date.contains('-')) {
+      final parts = date.split('-');
+      if (parts.length == 3) {
+        parsed = DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
+      }
+    }
+    if (parsed != null) {
+      final d = parsed.day.toString().padLeft(2, '0');
+      final m = parsed.month.toString().padLeft(2, '0');
+      final y = parsed.year.toString();
+      return '$d$m$y';
+    }
+  } catch (e) {}
+  return date.replaceAll(RegExp(r'[^0-9]'), '');
+}
+
 pw.Widget _buildBoxes(int count, {String text = '', String placeholder = ''}) {
   List<pw.Widget> boxes = [];
   List<String> chars = text.split('');
@@ -572,13 +598,15 @@ pw.Widget _buildBoxes(int count, {String text = '', String placeholder = ''}) {
         height: 12,
         alignment: pw.Alignment.center,
         margin: const pw.EdgeInsets.only(right: 1),
-        decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
-        child: pw.Text(content, style: pw.TextStyle(fontSize: fontSize)),
+        decoration: pw.BoxDecoration(border: pw.Border.all(width: 1)),
+        child: pw.Text(content, style: pw.TextStyle(fontSize: fontSize, fontWeight: pw.FontWeight.bold)),
       ),
     );
   }
   return pw.Row(children: boxes);
 }
+
+// ... _buildNameRow, _buildNameRowSimple, _buildCheckbox ...
 
 pw.Widget _buildNameRow(
   String label,
@@ -665,12 +693,9 @@ pw.Widget _buildRelatedPersonTypeRow() {
 }
 
 pw.Widget _buildDateField(String label, String date) {
-  // Simple date formatter or placeholder
-  String dateStr = date.isNotEmpty ? date : "";
-  // Remove separators
-  dateStr = dateStr.replaceAll('/', '').replaceAll('-', '').replaceAll('.', '');
-    
+  final dateStr = _formatDate(date);
   const chars = ['d', 'd', 'm', 'm', 'y', 'y', 'y', 'y'];
+  
   return pw.Column(
     crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
@@ -678,9 +703,7 @@ pw.Widget _buildDateField(String label, String date) {
       pw.SizedBox(height: 2),
       pw.Row(
         children: List.generate(8, (i) {
-          String content = i < dateStr.length ? dateStr[i] : (i < chars.length ? chars[i] : '');
-          // If using placeholder chars, make them smaller/grey? Or just use as text. 
-          // For now, if no date, show dd/mm/yyyy
+          String content = i < dateStr.length ? dateStr[i] : '';
           bool isPlaceholder = i >= dateStr.length;
           
           return pw.Container(
@@ -688,10 +711,14 @@ pw.Widget _buildDateField(String label, String date) {
             height: 12,
             alignment: pw.Alignment.center,
             margin: const pw.EdgeInsets.only(right: 1),
-            decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
+            decoration: pw.BoxDecoration(border: pw.Border.all(width: 1)),
             child: pw.Text(
                 isPlaceholder ? chars[i] : content, 
-                style: pw.TextStyle(fontSize: isPlaceholder ? 6 : 8, color: isPlaceholder ? PdfColors.grey : PdfColors.black)
+                style: pw.TextStyle(
+                  fontSize: isPlaceholder ? 6 : 9, 
+                  color: isPlaceholder ? PdfColors.grey : PdfColors.black,
+                  fontWeight: isPlaceholder ? null : pw.FontWeight.bold
+                )
             ),
           );
         }),

@@ -1,6 +1,7 @@
 // lib/screens/forms/page10_form.dart
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../model/form_data_model.dart';
@@ -265,10 +266,15 @@ class _Page10FormState extends State<Page10Form> {
                 ? Stack(
                     children: [
                       Center(
-                        child: Image.file(
-                          File(signaturePath),
-                          fit: BoxFit.contain,
-                        ),
+                    child: kIsWeb
+                        ? Image.network(
+                            signaturePath,
+                            fit: BoxFit.contain,
+                          )
+                        : Image.file(
+                            File(signaturePath),
+                            fit: BoxFit.contain,
+                          ),
                       ),
                       Positioned(
                         top: 4,

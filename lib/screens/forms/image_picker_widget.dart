@@ -1,5 +1,6 @@
 // lib/screens/forms/image_picker_widget.dart
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
@@ -151,7 +152,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                                 base64Decode(_imagePath!.split(',')[1]),
                                 fit: BoxFit.cover,
                               )
-                            : Image.file(File(_imagePath!), fit: BoxFit.cover),
+                            : kIsWeb
+                                ? Image.network(_imagePath!, fit: BoxFit.cover)
+                                : Image.file(File(_imagePath!), fit: BoxFit.cover),
                       ),
                       Positioned(
                         top: 4,

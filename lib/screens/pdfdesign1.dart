@@ -110,7 +110,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
       width: width,
       height: 8,
       decoration: const pw.BoxDecoration(
-        border: pw.Border(bottom: pw.BorderSide(width: 0.5)),
+        border: pw.Border(bottom: pw.BorderSide(width: 0.8)),
       ),
     );
   }
@@ -119,7 +119,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
     return pw.Container(
       width: width,
       height: height,
-      decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
+      decoration: pw.BoxDecoration(border: pw.Border.all(width: 1)),
     );
   }
 
@@ -476,15 +476,15 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           children: [
             pw.Text('Address type*', style: const pw.TextStyle(fontSize: 8)),
             pw.SizedBox(width: 10),
-            labeledCheckbox('Residential/Business', checked: model.addressTypeResidentialBusiness),
+            labeledRadio('Residential/Business', checked: model.addressTypeResidentialBusiness),
             pw.SizedBox(width: 8),
-            labeledCheckbox('Residential', checked: model.addressTypeResidential),
+            labeledRadio('Residential', checked: model.addressTypeResidential),
             pw.SizedBox(width: 8),
-            labeledCheckbox('Business', checked: model.addressTypeBusiness),
+            labeledRadio('Business', checked: model.addressTypeBusiness),
             pw.SizedBox(width: 8),
-            labeledCheckbox('Registered Office', checked: model.addressTypeRegisteredOffice),
+            labeledRadio('Registered Office', checked: model.addressTypeRegisteredOffice),
             pw.SizedBox(width: 8),
-            labeledCheckbox('Unspecified', checked: model.addressTypeUnspecified),
+            labeledRadio('Unspecified', checked: model.addressTypeUnspecified),
           ],
         ),
         pw.SizedBox(height: 3),
@@ -602,11 +602,11 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
         pw.SizedBox(height: 2),
         pw.Row(
           children: [
-            pw.Expanded(child: labeledCheckbox('A-PASSPORT', checked: data.docTypePassport)),
-            pw.Expanded(child: labeledCheckbox('B-VOTER\'S IDENTITY CARD', checked: data.docTypeVoterIdCard)),
-            pw.Expanded(child: labeledCheckbox('C-DRIVING LICENCE', checked: data.docTypeDrivingLicence)),
+            pw.Expanded(child: labeledRadio('A-PASSPORT', checked: data.docTypePassport)),
+            pw.Expanded(child: labeledRadio('B-VOTER\'S IDENTITY CARD', checked: data.docTypeVoterIdCard)),
+            pw.Expanded(child: labeledRadio('C-DRIVING LICENCE', checked: data.docTypeDrivingLicence)),
             pw.Expanded(
-              child: labeledCheckbox(
+              child: labeledRadio(
                 'D-Proof of possession of AADHAAR',
                 checked: data.docTypeAadhaar,
               ),
@@ -616,10 +616,10 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
         pw.SizedBox(height: 2),
         pw.Row(
           children: [
-            pw.Expanded(child: labeledCheckbox('E-NREGA JOB CARD', checked: data.docTypeNregaJobCard)),
+            pw.Expanded(child: labeledRadio('E-NREGA JOB CARD', checked: data.docTypeNregaJobCard)),
             pw.Expanded(
               flex: 3,
-              child: labeledCheckbox(
+              child: labeledRadio(
                 'F-LETTER ISSUED BY NATIONAL POPULATION REGISTER CONTAINING DETAILS OF NAME & ADDRESS',
                 checked: data.docTypePopulationRegisterLetter,
               ),
@@ -821,7 +821,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
             children: [
               pw.Column(
                 children: [
-                  charBoxes(data.customerPrefix, 4),
+                  charBoxes(data.customerPrefix, 2),
                   pw.Text('Prefix', style: const pw.TextStyle(fontSize: 6.5)),
                 ],
               ),
@@ -890,11 +890,11 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                         style: const pw.TextStyle(fontSize: 7.5),
                       ),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Male', checked: data.genderMale),
+                      labeledRadio('Male', checked: data.genderMale),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Female', checked: data.genderFemale),
+                      labeledRadio('Female', checked: data.genderFemale),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Transgender', checked: data.genderTransgender),
+                      labeledRadio('Transgender', checked: data.genderTransgender),
                     ],
                   ),
                   pw.SizedBox(width: 8),
@@ -906,11 +906,11 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                         style: const pw.TextStyle(fontSize: 7.5),
                       ),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Married', checked: data.maritalStatusMarried),
+                      labeledRadio('Married', checked: data.maritalStatusMarried),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Unmarried', checked: data.maritalStatusUnmarried),
+                      labeledRadio('Unmarried', checked: data.maritalStatusUnmarried),
                       pw.SizedBox(width: 3),
-                      labeledCheckbox('Others', checked: data.maritalStatusOthers),
+                      labeledRadio('Others', checked: data.maritalStatusOthers),
                     ],
                   ),
                   pw.Spacer(),
@@ -948,8 +948,8 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Illiterate',
           pw.Row(
             children: [
-              labeledCheckbox('YES', checked: data.illiterateYes),
-              labeledCheckbox('NO', checked: data.illiterateNo),
+              labeledRadio('YES', checked: data.illiterateYes),
+              labeledRadio('NO', checked: data.illiterateNo),
               pw.SizedBox(width: 8),
               pw.Text(
                 'if yes : Identification Marks : ',
@@ -995,9 +995,9 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Nationality*',
           pw.Row(
             children: [
-              labeledCheckbox('In-Indian', checked: data.nationalityInIndian),
+              labeledRadio('In-Indian', checked: data.nationalityInIndian),
               pw.SizedBox(width: 8),
-              labeledCheckbox('Others', checked: data.nationalityOthers),
+              labeledRadio('Others', checked: data.nationalityOthers),
               pw.SizedBox(width: 8),
               pw.Text(
                 'Country Name:',
@@ -1015,34 +1015,34 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
             children: [
               pw.Row(
                 children: [
-                  pw.Expanded(child: labeledCheckbox('S-Service', checked: data.occupationSService)),
-                  pw.Expanded(child: labeledCheckbox('Private Sector', checked: data.occupationPrivateSector)),
-                  pw.Expanded(child: labeledCheckbox('Public Sector', checked: data.occupationPublicSector)),
-                  pw.Expanded(child: labeledCheckbox('Government Sector', checked: data.occupationGovernmentSector)),
+                  pw.Expanded(child: labeledRadio('S-Service', checked: data.occupationSService)),
+                  pw.Expanded(child: labeledRadio('Private Sector', checked: data.occupationPrivateSector)),
+                  pw.Expanded(child: labeledRadio('Public Sector', checked: data.occupationPublicSector)),
+                  pw.Expanded(child: labeledRadio('Government Sector', checked: data.occupationGovernmentSector)),
                 ],
               ),
               pw.SizedBox(height: 1.5),
               pw.Row(
                 children: [
-                  pw.Expanded(child: labeledCheckbox('O-Others', checked: data.occupationOOthers)),
-                  pw.Expanded(child: labeledCheckbox('Professional', checked: data.occupationProfessional)),
-                  pw.Expanded(child: labeledCheckbox('Self employed', checked: data.occupationSelfEmployed)),
-                  pw.Expanded(child: labeledCheckbox('Retired', checked: data.occupationRetired)),
-                  pw.Expanded(child: labeledCheckbox('House Wife', checked: data.occupationHouseWife)),
-                  pw.Expanded(child: labeledCheckbox('Student', checked: data.occupationStudent)),
+                  pw.Expanded(child: labeledRadio('O-Others', checked: data.occupationOOthers)),
+                  pw.Expanded(child: labeledRadio('Professional', checked: data.occupationProfessional)),
+                  pw.Expanded(child: labeledRadio('Self employed', checked: data.occupationSelfEmployed)),
+                  pw.Expanded(child: labeledRadio('Retired', checked: data.occupationRetired)),
+                  pw.Expanded(child: labeledRadio('House Wife', checked: data.occupationHouseWife)),
+                  pw.Expanded(child: labeledRadio('Student', checked: data.occupationStudent)),
                 ],
               ),
               pw.SizedBox(height: 1.5),
               pw.Row(
                 children: [
-                  labeledCheckbox('B-Business', checked: data.occupationBBusiness),
+                  labeledRadio('B-Business', checked: data.occupationBBusiness),
                   pw.SizedBox(width: 28),
-                  labeledCheckbox(
+                  labeledRadio(
                     'Agriculture',
                     checked: data.occupationAgriculture,
                   ),
                   pw.SizedBox(width: 25),
-                  labeledCheckbox('X-Not categorised', checked: data.occupationXNotCategorised),
+                  labeledRadio('X-Not categorised', checked: data.occupationXNotCategorised),
                 ],
               ),
             ],
@@ -1083,15 +1083,15 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Religion:',
           pw.Row(
             children: [
-              labeledCheckbox('Hindu', checked: data.religionHindu),
+              labeledRadio('Hindu', checked: data.religionHindu),
               pw.SizedBox(width: 12),
-              labeledCheckbox('Muslim', checked: data.religionMuslim),
+              labeledRadio('Muslim', checked: data.religionMuslim),
               pw.SizedBox(width: 12),
-              labeledCheckbox('Christian', checked: data.religionChristian),
+              labeledRadio('Christian', checked: data.religionChristian),
               pw.SizedBox(width: 12),
-              labeledCheckbox('Sikh', checked: data.religionSikh),
+              labeledRadio('Sikh', checked: data.religionSikh),
               pw.SizedBox(width: 12),
-              labeledCheckbox('Others', checked: data.religionOthers),
+              labeledRadio('Others', checked: data.religionOthers),
             ],
           ),
         ),
@@ -1100,15 +1100,15 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Category:',
           pw.Row(
             children: [
-              labeledCheckbox('General', checked: data.categoryGeneral),
+              labeledRadio('General', checked: data.categoryGeneral),
               pw.SizedBox(width: 12),
-              labeledCheckbox('OBC', checked: data.categoryOBC),
+              labeledRadio('OBC', checked: data.categoryOBC),
               pw.SizedBox(width: 12),
-              labeledCheckbox('SC', checked: data.categorySC),
+              labeledRadio('SC', checked: data.categorySC),
               pw.SizedBox(width: 12),
-              labeledCheckbox('ST', checked: data.categoryST),
+              labeledRadio('ST', checked: data.categoryST),
               pw.SizedBox(width: 12),
-              labeledCheckbox('Minority', checked: data.categoryMinority),
+              labeledRadio('Minority', checked: data.categoryMinority),
             ],
           ),
         ),
@@ -1117,13 +1117,13 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Customer Type',
           pw.Row(
             children: [
-              labeledCheckbox('General', checked: data.customerTypeGeneral),
+              labeledRadio('General', checked: data.customerTypeGeneral),
               pw.SizedBox(width: 8),
-              labeledCheckbox('Sr. Citizen', checked: data.customerTypeSrCitizen),
+              labeledRadio('Sr. Citizen', checked: data.customerTypeSrCitizen),
               pw.SizedBox(width: 8),
-              labeledCheckbox('Pensioner', checked: data.customerTypePensioner),
+              labeledRadio('Pensioner', checked: data.customerTypePensioner),
               pw.SizedBox(width: 8),
-              labeledCheckbox('Minor', checked: data.customerTypeMinor),
+              labeledRadio('Minor', checked: data.customerTypeMinor),
               pw.SizedBox(width: 8),
               pw.Text(
                 'Staff/Ex Staff PF No.',
@@ -1144,15 +1144,15 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Person with disability',
           pw.Row(
             children: [
-              labeledCheckbox('Yes', checked: data.disabilityYes),
+              labeledRadio('Yes', checked: data.disabilityYes),
               pw.SizedBox(width: 8),
-              labeledCheckbox('No', checked: data.disabilityNo),
+              labeledRadio('No', checked: data.disabilityNo),
               pw.SizedBox(width: 8),
               pw.Text('If yes,', style: const pw.TextStyle(fontSize: 7.5)),
               pw.SizedBox(width: 8),
-              labeledCheckbox('i. Visually impaired', checked: data.disabilityVisuallyImpaired),
+              labeledRadio('i. Visually impaired', checked: data.disabilityVisuallyImpaired),
               pw.SizedBox(width: 8),
-              labeledCheckbox('ii. Differently abled', checked: data.disabilityDifferentlyAbled),
+              labeledRadio('ii. Differently abled', checked: data.disabilityDifferentlyAbled),
             ],
           ),
         ),
@@ -1161,19 +1161,19 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Educational Qualification:',
           pw.Row(
             children: [
-              labeledCheckbox('Below SSC', checked: data.educationBelowSSC),
+              labeledRadio('Below SSC', checked: data.educationBelowSSC),
               pw.SizedBox(width: 4),
-              labeledCheckbox('SSC', checked: data.educationSSC),
+              labeledRadio('SSC', checked: data.educationSSC),
               pw.SizedBox(width: 4),
-              labeledCheckbox('HSC', checked: data.educationHSC),
+              labeledRadio('HSC', checked: data.educationHSC),
               pw.SizedBox(width: 4),
-              labeledCheckbox('Graduate', checked: data.educationGraduate),
+              labeledRadio('Graduate', checked: data.educationGraduate),
               pw.SizedBox(width: 4),
-              labeledCheckbox('Post Graduate', checked: data.educationPostGraduate),
+              labeledRadio('Post Graduate', checked: data.educationPostGraduate),
               pw.SizedBox(width: 4),
-              labeledCheckbox('Professional', checked: data.educationProfessional),
+              labeledRadio('Professional', checked: data.educationProfessional),
               pw.SizedBox(width: 4),
-              labeledCheckbox('Others', checked: data.educationOthers),
+              labeledRadio('Others', checked: data.educationOthers),
             ],
           ),
         ),
@@ -1210,11 +1210,11 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Please Tick the Applicable box*:',
           pw.Row(
             children: [
-              labeledCheckbox('Politically exposed Person', checked: data.politicallyExposedPerson),
+              labeledRadio('Politically exposed Person', checked: data.politicallyExposedPerson),
               pw.SizedBox(width: 8),
-              labeledCheckbox('Related to politically Exposed Person', checked: data.relatedToPoliticallyExposedPerson),
+              labeledRadio('Related to politically Exposed Person', checked: data.relatedToPoliticallyExposedPerson),
               pw.SizedBox(width: 8),
-              labeledCheckbox('None', checked: data.politicallyExposedNone),
+              labeledRadio('None', checked: data.politicallyExposedNone),
             ],
           ),
         ),
@@ -1255,9 +1255,9 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
           'Country of Tax Residence in India only and not in any other country or territory outside India*',
           pw.Row(
             children: [
-              labeledCheckbox('Yes', checked: data.taxResidenceIndiaYes),
+              labeledRadio('Yes', checked: data.taxResidenceIndiaYes),
               pw.SizedBox(width: 8),
-              labeledCheckbox('No', checked: data.taxResidenceIndiaNo),
+              labeledRadio('No', checked: data.taxResidenceIndiaNo),
               pw.SizedBox(width: 4),
               pw.Text(
                 '(If No, please fill the FATCA details form - Annexure II)',
@@ -1413,7 +1413,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                           'Date:',
                           style: const pw.TextStyle(fontSize: 8),
                         ),
-                        charBoxes(data.date, 8),
+                        charBoxes(data.date.replaceAll(RegExp(r'[^0-9]'), ''), 8),
                       ],
                     ),
                   ),
@@ -1433,7 +1433,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                 charBoxes(data.branchName, 20),
                 pw.SizedBox(width: 8),
                 pw.Text('Branch Code', style: const pw.TextStyle(fontSize: 8)),
-                charBoxes(data.branchCode, 5),
+                charBoxes(data.branchCode, 6),
               ],
             ),
             pw.Spacer(),
@@ -1477,9 +1477,9 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                   'Application type:',
                   style: const pw.TextStyle(fontSize: 8),
                 ),
-                labeledCheckbox('New', checked: data.applicationTypeNew),
+                labeledRadio('New', checked: data.applicationTypeNew),
                 pw.SizedBox(width: 4),
-                labeledCheckbox('Update', checked: data.applicationTypeUpdate),
+                labeledRadio('Update', checked: data.applicationTypeUpdate),
               ],
             ),
             pw.SizedBox(height: 1),
@@ -1529,9 +1529,9 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
                   'Account type:',
                   style: const pw.TextStyle(fontSize: 8),
                 ),
-                labeledCheckbox('Normal', checked: data.accountTypeNormal),
+                labeledRadio('Normal', checked: data.accountTypeNormal),
                 pw.SizedBox(width: 8),
-                labeledCheckbox(
+                labeledRadio(
                   'Small (For low risk customers)',
                   checked: data.accountTypeSmallRisk,
                 ),

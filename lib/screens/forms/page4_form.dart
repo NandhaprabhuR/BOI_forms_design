@@ -1,5 +1,6 @@
 // lib/screens/forms/page4_form.dart
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -439,7 +440,9 @@ class _Page4FormState extends State<Page4Form> {
             ? Stack(
                 children: [
                   Center(
-                    child: Image.file(File(imagePath), fit: BoxFit.contain),
+                    child: kIsWeb
+                        ? Image.network(imagePath!, fit: BoxFit.contain)
+                        : Image.file(File(imagePath!), fit: BoxFit.contain),
                   ),
                   Positioned(
                     top: 0,
@@ -1147,7 +1150,13 @@ class _Page4FormState extends State<Page4Form> {
                   value: _officeRiskLow,
                   onChanged: (val) {
                     setState(() {
-                      _officeRiskLow = val ?? false;
+                      if (val == true) {
+                        _officeRiskLow = true;
+                        _officeRiskMedium = false;
+                        _officeRiskHigh = false;
+                      } else {
+                        _officeRiskLow = false;
+                      }
                       _notifyChange();
                     });
                   },
@@ -1164,7 +1173,13 @@ class _Page4FormState extends State<Page4Form> {
                   value: _officeRiskMedium,
                   onChanged: (val) {
                     setState(() {
-                      _officeRiskMedium = val ?? false;
+                      if (val == true) {
+                        _officeRiskMedium = true;
+                        _officeRiskLow = false;
+                        _officeRiskHigh = false;
+                      } else {
+                        _officeRiskMedium = false;
+                      }
                       _notifyChange();
                     });
                   },
@@ -1181,7 +1196,13 @@ class _Page4FormState extends State<Page4Form> {
                   value: _officeRiskHigh,
                   onChanged: (val) {
                     setState(() {
-                      _officeRiskHigh = val ?? false;
+                      if (val == true) {
+                        _officeRiskHigh = true;
+                        _officeRiskLow = false;
+                        _officeRiskMedium = false;
+                      } else {
+                        _officeRiskHigh = false;
+                      }
                       _notifyChange();
                     });
                   },

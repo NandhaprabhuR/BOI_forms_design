@@ -1,5 +1,6 @@
 // lib/screens/forms/page5_form.dart
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -53,10 +54,15 @@ class _Page5FormState extends State<Page5Form> {
             ? Stack(
                 children: [
                   Center(
-                    child: Image.file(
-                      File(_termsSignaturePath!),
-                      fit: BoxFit.contain,
-                    ),
+                    child: kIsWeb
+                        ? Image.network(
+                            _termsSignaturePath!,
+                            fit: BoxFit.contain,
+                          )
+                        : Image.file(
+                            File(_termsSignaturePath!),
+                            fit: BoxFit.contain,
+                          ),
                   ),
                   Positioned(
                     top: 0,

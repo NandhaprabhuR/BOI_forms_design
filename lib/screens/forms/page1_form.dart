@@ -910,8 +910,6 @@ class _Page1FormState extends State<Page1Form> {
     _overseasDistrictController.dispose();
     _overseasStateController.dispose();
     _overseasPinController.dispose();
-    _issueDateController.dispose();
-    _expiryDateController.dispose();
     super.dispose();
   }
 
@@ -954,7 +952,12 @@ class _Page1FormState extends State<Page1Form> {
                   value: _applicationTypeNew,
                   onChanged: (val) {
                     setState(() {
-                      _applicationTypeNew = val ?? false;
+                      if (val == true) {
+                        _applicationTypeNew = true;
+                        _applicationTypeUpdate = false;
+                      } else {
+                        _applicationTypeNew = false;
+                      }
                       _notifyChange();
                     });
                   },
@@ -967,7 +970,12 @@ class _Page1FormState extends State<Page1Form> {
                   value: _applicationTypeUpdate,
                   onChanged: (val) {
                     setState(() {
-                      _applicationTypeUpdate = val ?? false;
+                      if (val == true) {
+                        _applicationTypeUpdate = true;
+                        _applicationTypeNew = false;
+                      } else {
+                        _applicationTypeUpdate = false;
+                      }
                       _notifyChange();
                     });
                   },
@@ -988,7 +996,12 @@ class _Page1FormState extends State<Page1Form> {
                   value: _accountTypeNormal,
                   onChanged: (val) {
                     setState(() {
-                      _accountTypeNormal = val ?? false;
+                      if (val == true) {
+                        _accountTypeNormal = true;
+                        _accountTypeSmallRisk = false;
+                      } else {
+                        _accountTypeNormal = false;
+                      }
                       _notifyChange();
                     });
                   },
@@ -1001,7 +1014,12 @@ class _Page1FormState extends State<Page1Form> {
                   value: _accountTypeSmallRisk,
                   onChanged: (val) {
                     setState(() {
-                      _accountTypeSmallRisk = val ?? false;
+                      if (val == true) {
+                        _accountTypeSmallRisk = true;
+                        _accountTypeNormal = false;
+                      } else {
+                        _accountTypeSmallRisk = false;
+                      }
                       _notifyChange();
                     });
                   },
@@ -1130,7 +1148,13 @@ class _Page1FormState extends State<Page1Form> {
                       value: _genderMale,
                       onChanged: (val) {
                         setState(() {
-                          _genderMale = val ?? false;
+                          if (val == true) {
+                            _genderMale = true;
+                            _genderFemale = false;
+                            _genderTransgender = false;
+                          } else {
+                            _genderMale = false;
+                          }
                           _notifyChange();
                         });
                       },
@@ -1146,7 +1170,13 @@ class _Page1FormState extends State<Page1Form> {
                       value: _genderFemale,
                       onChanged: (val) {
                         setState(() {
-                          _genderFemale = val ?? false;
+                          if (val == true) {
+                            _genderFemale = true;
+                            _genderMale = false;
+                            _genderTransgender = false;
+                          } else {
+                            _genderFemale = false;
+                          }
                           _notifyChange();
                         });
                       },
@@ -1162,7 +1192,13 @@ class _Page1FormState extends State<Page1Form> {
                       value: _genderTransgender,
                       onChanged: (val) {
                         setState(() {
-                          _genderTransgender = val ?? false;
+                          if (val == true) {
+                            _genderTransgender = true;
+                            _genderMale = false;
+                            _genderFemale = false;
+                          } else {
+                            _genderTransgender = false;
+                          }
                           _notifyChange();
                         });
                       },
@@ -1196,7 +1232,13 @@ class _Page1FormState extends State<Page1Form> {
                       value: _maritalStatusMarried,
                       onChanged: (val) {
                         setState(() {
-                          _maritalStatusMarried = val ?? false;
+                          if (val == true) {
+                            _maritalStatusMarried = true;
+                            _maritalStatusUnmarried = false;
+                            _maritalStatusOthers = false;
+                          } else {
+                            _maritalStatusMarried = false;
+                          }
                           _notifyChange();
                         });
                       },
@@ -1212,7 +1254,13 @@ class _Page1FormState extends State<Page1Form> {
                       value: _maritalStatusUnmarried,
                       onChanged: (val) {
                         setState(() {
-                          _maritalStatusUnmarried = val ?? false;
+                          if (val == true) {
+                            _maritalStatusUnmarried = true;
+                            _maritalStatusMarried = false;
+                            _maritalStatusOthers = false;
+                          } else {
+                            _maritalStatusUnmarried = false;
+                          }
                           _notifyChange();
                         });
                       },
@@ -1228,7 +1276,13 @@ class _Page1FormState extends State<Page1Form> {
                       value: _maritalStatusOthers,
                       onChanged: (val) {
                         setState(() {
-                          _maritalStatusOthers = val ?? false;
+                          if (val == true) {
+                            _maritalStatusOthers = true;
+                            _maritalStatusMarried = false;
+                            _maritalStatusUnmarried = false;
+                          } else {
+                            _maritalStatusOthers = false;
+                          }
                           _notifyChange();
                         });
                       },
@@ -1450,8 +1504,12 @@ class _Page1FormState extends State<Page1Form> {
                 value: _nationalityInIndian,
                 onChanged: (val) {
                   setState(() {
-                    _nationalityInIndian = val ?? false;
-                    if (_nationalityInIndian) _nationalityOthers = false;
+                    if (val == true) {
+                      _nationalityInIndian = true;
+                      _nationalityOthers = false;
+                    } else {
+                      _nationalityInIndian = false;
+                    }
                     _notifyChange();
                   });
                 },
@@ -1464,8 +1522,12 @@ class _Page1FormState extends State<Page1Form> {
                 value: _nationalityOthers,
                 onChanged: (val) {
                   setState(() {
-                    _nationalityOthers = val ?? false;
-                    if (_nationalityOthers) _nationalityInIndian = false;
+                    if (val == true) {
+                      _nationalityOthers = true;
+                      _nationalityInIndian = false;
+                    } else {
+                      _nationalityOthers = false;
+                    }
                     _notifyChange();
                   });
                 },
@@ -1504,7 +1566,14 @@ class _Page1FormState extends State<Page1Form> {
                 value: _residentIndividual,
                 onChanged: (val) {
                   setState(() {
-                    _residentIndividual = val ?? false;
+                    if (val == true) {
+                      _residentIndividual = true;
+                      _nonResidentIndian = false;
+                      _foreignNational = false;
+                      _pio = false;
+                    } else {
+                      _residentIndividual = false;
+                    }
                     _notifyChange();
                   });
                 },
@@ -1520,7 +1589,14 @@ class _Page1FormState extends State<Page1Form> {
                 value: _nonResidentIndian,
                 onChanged: (val) {
                   setState(() {
-                    _nonResidentIndian = val ?? false;
+                    if (val == true) {
+                      _nonResidentIndian = true;
+                      _residentIndividual = false;
+                      _foreignNational = false;
+                      _pio = false;
+                    } else {
+                      _nonResidentIndian = false;
+                    }
                     _notifyChange();
                   });
                 },
@@ -1536,7 +1612,14 @@ class _Page1FormState extends State<Page1Form> {
                 value: _foreignNational,
                 onChanged: (val) {
                   setState(() {
-                    _foreignNational = val ?? false;
+                    if (val == true) {
+                      _foreignNational = true;
+                      _residentIndividual = false;
+                      _nonResidentIndian = false;
+                      _pio = false;
+                    } else {
+                      _foreignNational = false;
+                    }
                     _notifyChange();
                   });
                 },
@@ -1549,7 +1632,14 @@ class _Page1FormState extends State<Page1Form> {
                 value: _pio,
                 onChanged: (val) {
                   setState(() {
-                    _pio = val ?? false;
+                    if (val == true) {
+                      _pio = true;
+                      _residentIndividual = false;
+                      _nonResidentIndian = false;
+                      _foreignNational = false;
+                    } else {
+                      _pio = false;
+                    }
                     _notifyChange();
                   });
                 },
@@ -1581,7 +1671,23 @@ class _Page1FormState extends State<Page1Form> {
                     val,
                   ) {
                     setState(() {
-                      _occupationSService = val ?? false;
+                      if (val == true) {
+                        _occupationSService = true;
+                        _occupationPrivateSector = false;
+                        _occupationPublicSector = false;
+                        _occupationGovernmentSector = false;
+                        _occupationOOthers = false;
+                        _occupationProfessional = false;
+                        _occupationSelfEmployed = false;
+                        _occupationRetired = false;
+                        _occupationHouseWife = false;
+                        _occupationStudent = false;
+                        _occupationBBusiness = false;
+                        _occupationAgriculture = false;
+                        _occupationXNotCategorised = false;
+                      } else {
+                        _occupationSService = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -1590,7 +1696,23 @@ class _Page1FormState extends State<Page1Form> {
                     _occupationPrivateSector,
                     (val) {
                       setState(() {
-                        _occupationPrivateSector = val ?? false;
+                        if (val == true) {
+                          _occupationPrivateSector = true;
+                          _occupationSService = false;
+                          _occupationPublicSector = false;
+                          _occupationGovernmentSector = false;
+                          _occupationOOthers = false;
+                          _occupationProfessional = false;
+                          _occupationSelfEmployed = false;
+                          _occupationRetired = false;
+                          _occupationHouseWife = false;
+                          _occupationStudent = false;
+                          _occupationBBusiness = false;
+                          _occupationAgriculture = false;
+                          _occupationXNotCategorised = false;
+                        } else {
+                          _occupationPrivateSector = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1600,7 +1722,23 @@ class _Page1FormState extends State<Page1Form> {
                     _occupationPublicSector,
                     (val) {
                       setState(() {
-                        _occupationPublicSector = val ?? false;
+                        if (val == true) {
+                          _occupationPublicSector = true;
+                          _occupationSService = false;
+                          _occupationPrivateSector = false;
+                          _occupationGovernmentSector = false;
+                          _occupationOOthers = false;
+                          _occupationProfessional = false;
+                          _occupationSelfEmployed = false;
+                          _occupationRetired = false;
+                          _occupationHouseWife = false;
+                          _occupationStudent = false;
+                          _occupationBBusiness = false;
+                          _occupationAgriculture = false;
+                          _occupationXNotCategorised = false;
+                        } else {
+                          _occupationPublicSector = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1610,14 +1748,46 @@ class _Page1FormState extends State<Page1Form> {
                     _occupationGovernmentSector,
                     (val) {
                       setState(() {
-                        _occupationGovernmentSector = val ?? false;
+                        if (val == true) {
+                          _occupationGovernmentSector = true;
+                          _occupationSService = false;
+                          _occupationPrivateSector = false;
+                          _occupationPublicSector = false;
+                          _occupationOOthers = false;
+                          _occupationProfessional = false;
+                          _occupationSelfEmployed = false;
+                          _occupationRetired = false;
+                          _occupationHouseWife = false;
+                          _occupationStudent = false;
+                          _occupationBBusiness = false;
+                          _occupationAgriculture = false;
+                          _occupationXNotCategorised = false;
+                        } else {
+                          _occupationGovernmentSector = false;
+                        }
                         _notifyChange();
                       });
                     },
                   ),
                   _buildCompactCheckbox('O-Others', _occupationOOthers, (val) {
                     setState(() {
-                      _occupationOOthers = val ?? false;
+                      if (val == true) {
+                        _occupationOOthers = true;
+                        _occupationSService = false;
+                        _occupationPrivateSector = false;
+                        _occupationPublicSector = false;
+                        _occupationGovernmentSector = false;
+                        _occupationProfessional = false;
+                        _occupationSelfEmployed = false;
+                        _occupationRetired = false;
+                        _occupationHouseWife = false;
+                        _occupationStudent = false;
+                        _occupationBBusiness = false;
+                        _occupationAgriculture = false;
+                        _occupationXNotCategorised = false;
+                      } else {
+                        _occupationOOthers = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -1626,7 +1796,23 @@ class _Page1FormState extends State<Page1Form> {
                     _occupationProfessional,
                     (val) {
                       setState(() {
-                        _occupationProfessional = val ?? false;
+                        if (val == true) {
+                          _occupationProfessional = true;
+                          _occupationSService = false;
+                          _occupationPrivateSector = false;
+                          _occupationPublicSector = false;
+                          _occupationGovernmentSector = false;
+                          _occupationOOthers = false;
+                          _occupationSelfEmployed = false;
+                          _occupationRetired = false;
+                          _occupationHouseWife = false;
+                          _occupationStudent = false;
+                          _occupationBBusiness = false;
+                          _occupationAgriculture = false;
+                          _occupationXNotCategorised = false;
+                        } else {
+                          _occupationProfessional = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1636,14 +1822,46 @@ class _Page1FormState extends State<Page1Form> {
                     _occupationSelfEmployed,
                     (val) {
                       setState(() {
-                        _occupationSelfEmployed = val ?? false;
+                        if (val == true) {
+                          _occupationSelfEmployed = true;
+                          _occupationSService = false;
+                          _occupationPrivateSector = false;
+                          _occupationPublicSector = false;
+                          _occupationGovernmentSector = false;
+                          _occupationOOthers = false;
+                          _occupationProfessional = false;
+                          _occupationRetired = false;
+                          _occupationHouseWife = false;
+                          _occupationStudent = false;
+                          _occupationBBusiness = false;
+                          _occupationAgriculture = false;
+                          _occupationXNotCategorised = false;
+                        } else {
+                          _occupationSelfEmployed = false;
+                        }
                         _notifyChange();
                       });
                     },
                   ),
                   _buildCompactCheckbox('Retired', _occupationRetired, (val) {
                     setState(() {
-                      _occupationRetired = val ?? false;
+                      if (val == true) {
+                        _occupationRetired = true;
+                        _occupationSService = false;
+                        _occupationPrivateSector = false;
+                        _occupationPublicSector = false;
+                        _occupationGovernmentSector = false;
+                        _occupationOOthers = false;
+                        _occupationProfessional = false;
+                        _occupationSelfEmployed = false;
+                        _occupationHouseWife = false;
+                        _occupationStudent = false;
+                        _occupationBBusiness = false;
+                        _occupationAgriculture = false;
+                        _occupationXNotCategorised = false;
+                      } else {
+                        _occupationRetired = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -1651,13 +1869,45 @@ class _Page1FormState extends State<Page1Form> {
                     val,
                   ) {
                     setState(() {
-                      _occupationHouseWife = val ?? false;
+                      if (val == true) {
+                        _occupationHouseWife = true;
+                        _occupationSService = false;
+                        _occupationPrivateSector = false;
+                        _occupationPublicSector = false;
+                        _occupationGovernmentSector = false;
+                        _occupationOOthers = false;
+                        _occupationProfessional = false;
+                        _occupationSelfEmployed = false;
+                        _occupationRetired = false;
+                        _occupationStudent = false;
+                        _occupationBBusiness = false;
+                        _occupationAgriculture = false;
+                        _occupationXNotCategorised = false;
+                      } else {
+                        _occupationHouseWife = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('Student', _occupationStudent, (val) {
                     setState(() {
-                      _occupationStudent = val ?? false;
+                      if (val == true) {
+                        _occupationStudent = true;
+                        _occupationSService = false;
+                        _occupationPrivateSector = false;
+                        _occupationPublicSector = false;
+                        _occupationGovernmentSector = false;
+                        _occupationOOthers = false;
+                        _occupationProfessional = false;
+                        _occupationSelfEmployed = false;
+                        _occupationRetired = false;
+                        _occupationHouseWife = false;
+                        _occupationBBusiness = false;
+                        _occupationAgriculture = false;
+                        _occupationXNotCategorised = false;
+                      } else {
+                        _occupationStudent = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -1665,7 +1915,23 @@ class _Page1FormState extends State<Page1Form> {
                     val,
                   ) {
                     setState(() {
-                      _occupationBBusiness = val ?? false;
+                      if (val == true) {
+                        _occupationBBusiness = true;
+                        _occupationSService = false;
+                        _occupationPrivateSector = false;
+                        _occupationPublicSector = false;
+                        _occupationGovernmentSector = false;
+                        _occupationOOthers = false;
+                        _occupationProfessional = false;
+                        _occupationSelfEmployed = false;
+                        _occupationRetired = false;
+                        _occupationHouseWife = false;
+                        _occupationStudent = false;
+                        _occupationAgriculture = false;
+                        _occupationXNotCategorised = false;
+                      } else {
+                        _occupationBBusiness = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -1673,7 +1939,23 @@ class _Page1FormState extends State<Page1Form> {
                     val,
                   ) {
                     setState(() {
-                      _occupationAgriculture = val ?? false;
+                      if (val == true) {
+                        _occupationAgriculture = true;
+                        _occupationSService = false;
+                        _occupationPrivateSector = false;
+                        _occupationPublicSector = false;
+                        _occupationGovernmentSector = false;
+                        _occupationOOthers = false;
+                        _occupationProfessional = false;
+                        _occupationSelfEmployed = false;
+                        _occupationRetired = false;
+                        _occupationHouseWife = false;
+                        _occupationStudent = false;
+                        _occupationBBusiness = false;
+                        _occupationXNotCategorised = false;
+                      } else {
+                        _occupationAgriculture = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -1682,7 +1964,23 @@ class _Page1FormState extends State<Page1Form> {
                     _occupationXNotCategorised,
                     (val) {
                       setState(() {
-                        _occupationXNotCategorised = val ?? false;
+                        if (val == true) {
+                          _occupationXNotCategorised = true;
+                          _occupationSService = false;
+                          _occupationPrivateSector = false;
+                          _occupationPublicSector = false;
+                          _occupationGovernmentSector = false;
+                          _occupationOOthers = false;
+                          _occupationProfessional = false;
+                          _occupationSelfEmployed = false;
+                          _occupationRetired = false;
+                          _occupationHouseWife = false;
+                          _occupationStudent = false;
+                          _occupationBBusiness = false;
+                          _occupationAgriculture = false;
+                        } else {
+                          _occupationXNotCategorised = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1739,31 +2037,71 @@ class _Page1FormState extends State<Page1Form> {
                 children: [
                   _buildCompactCheckbox('Hindu', _religionHindu, (val) {
                     setState(() {
-                      _religionHindu = val ?? false;
+                      if (val == true) {
+                        _religionHindu = true;
+                        _religionMuslim = false;
+                        _religionChristian = false;
+                        _religionSikh = false;
+                        _religionOthers = false;
+                      } else {
+                        _religionHindu = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('Muslim', _religionMuslim, (val) {
                     setState(() {
-                      _religionMuslim = val ?? false;
+                      if (val == true) {
+                        _religionMuslim = true;
+                        _religionHindu = false;
+                        _religionChristian = false;
+                        _religionSikh = false;
+                        _religionOthers = false;
+                      } else {
+                        _religionMuslim = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('Christian', _religionChristian, (val) {
                     setState(() {
-                      _religionChristian = val ?? false;
+                      if (val == true) {
+                        _religionChristian = true;
+                        _religionHindu = false;
+                        _religionMuslim = false;
+                        _religionSikh = false;
+                        _religionOthers = false;
+                      } else {
+                        _religionChristian = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('Sikh', _religionSikh, (val) {
                     setState(() {
-                      _religionSikh = val ?? false;
+                      if (val == true) {
+                        _religionSikh = true;
+                        _religionHindu = false;
+                        _religionMuslim = false;
+                        _religionChristian = false;
+                        _religionOthers = false;
+                      } else {
+                        _religionSikh = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('Others', _religionOthers, (val) {
                     setState(() {
-                      _religionOthers = val ?? false;
+                      if (val == true) {
+                        _religionOthers = true;
+                        _religionHindu = false;
+                        _religionMuslim = false;
+                        _religionChristian = false;
+                        _religionSikh = false;
+                      } else {
+                        _religionOthers = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -1788,31 +2126,71 @@ class _Page1FormState extends State<Page1Form> {
                 children: [
                   _buildCompactCheckbox('General', _categoryGeneral, (val) {
                     setState(() {
-                      _categoryGeneral = val ?? false;
+                      if (val == true) {
+                        _categoryGeneral = true;
+                        _categoryOBC = false;
+                        _categorySC = false;
+                        _categoryST = false;
+                        _categoryMinority = false;
+                      } else {
+                        _categoryGeneral = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('OBC', _categoryOBC, (val) {
                     setState(() {
-                      _categoryOBC = val ?? false;
+                      if (val == true) {
+                        _categoryOBC = true;
+                        _categoryGeneral = false;
+                        _categorySC = false;
+                        _categoryST = false;
+                        _categoryMinority = false;
+                      } else {
+                        _categoryOBC = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('SC', _categorySC, (val) {
                     setState(() {
-                      _categorySC = val ?? false;
+                      if (val == true) {
+                        _categorySC = true;
+                        _categoryGeneral = false;
+                        _categoryOBC = false;
+                        _categoryST = false;
+                        _categoryMinority = false;
+                      } else {
+                        _categorySC = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('ST', _categoryST, (val) {
                     setState(() {
-                      _categoryST = val ?? false;
+                      if (val == true) {
+                        _categoryST = true;
+                        _categoryGeneral = false;
+                        _categoryOBC = false;
+                        _categorySC = false;
+                        _categoryMinority = false;
+                      } else {
+                        _categoryST = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('Minority', _categoryMinority, (val) {
                     setState(() {
-                      _categoryMinority = val ?? false;
+                      if (val == true) {
+                        _categoryMinority = true;
+                        _categoryGeneral = false;
+                        _categoryOBC = false;
+                        _categorySC = false;
+                        _categoryST = false;
+                      } else {
+                        _categoryMinority = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -1837,7 +2215,16 @@ class _Page1FormState extends State<Page1Form> {
                 children: [
                   _buildCompactCheckbox('General', _customerTypeGeneral, (val) {
                     setState(() {
-                      _customerTypeGeneral = val ?? false;
+                      if (val == true) {
+                        _customerTypeGeneral = true;
+                        _customerTypeSrCitizen = false;
+                        _customerTypePensioner = false;
+                        _customerTypeMinor = false;
+                        _customerTypeStaffExStaff = false;
+                        _customerTypeOthers = false;
+                      } else {
+                        _customerTypeGeneral = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -1845,7 +2232,16 @@ class _Page1FormState extends State<Page1Form> {
                     val,
                   ) {
                     setState(() {
-                      _customerTypeSrCitizen = val ?? false;
+                      if (val == true) {
+                        _customerTypeSrCitizen = true;
+                        _customerTypeGeneral = false;
+                        _customerTypePensioner = false;
+                        _customerTypeMinor = false;
+                        _customerTypeStaffExStaff = false;
+                        _customerTypeOthers = false;
+                      } else {
+                        _customerTypeSrCitizen = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -1853,13 +2249,31 @@ class _Page1FormState extends State<Page1Form> {
                     val,
                   ) {
                     setState(() {
-                      _customerTypePensioner = val ?? false;
+                      if (val == true) {
+                        _customerTypePensioner = true;
+                        _customerTypeGeneral = false;
+                        _customerTypeSrCitizen = false;
+                        _customerTypeMinor = false;
+                        _customerTypeStaffExStaff = false;
+                        _customerTypeOthers = false;
+                      } else {
+                        _customerTypePensioner = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('Minor', _customerTypeMinor, (val) {
                     setState(() {
-                      _customerTypeMinor = val ?? false;
+                      if (val == true) {
+                        _customerTypeMinor = true;
+                        _customerTypeGeneral = false;
+                        _customerTypeSrCitizen = false;
+                        _customerTypePensioner = false;
+                        _customerTypeStaffExStaff = false;
+                        _customerTypeOthers = false;
+                      } else {
+                        _customerTypeMinor = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -1868,7 +2282,16 @@ class _Page1FormState extends State<Page1Form> {
                     _customerTypeStaffExStaff,
                     (val) {
                       setState(() {
-                        _customerTypeStaffExStaff = val ?? false;
+                        if (val == true) {
+                          _customerTypeStaffExStaff = true;
+                          _customerTypeGeneral = false;
+                          _customerTypeSrCitizen = false;
+                          _customerTypePensioner = false;
+                          _customerTypeMinor = false;
+                          _customerTypeOthers = false;
+                        } else {
+                          _customerTypeStaffExStaff = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1878,7 +2301,16 @@ class _Page1FormState extends State<Page1Form> {
                     _customerTypeOthers,
                     (val) {
                       setState(() {
-                        _customerTypeOthers = val ?? false;
+                        if (val == true) {
+                          _customerTypeOthers = true;
+                          _customerTypeGeneral = false;
+                          _customerTypeSrCitizen = false;
+                          _customerTypePensioner = false;
+                          _customerTypeMinor = false;
+                          _customerTypeStaffExStaff = false;
+                        } else {
+                          _customerTypeOthers = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -1958,7 +2390,12 @@ class _Page1FormState extends State<Page1Form> {
                       _disabilityVisuallyImpaired,
                       (val) {
                         setState(() {
-                          _disabilityVisuallyImpaired = val ?? false;
+                          if (val == true) {
+                            _disabilityVisuallyImpaired = true;
+                            _disabilityDifferentlyAbled = false;
+                          } else {
+                            _disabilityVisuallyImpaired = false;
+                          }
                           _notifyChange();
                         });
                       },
@@ -1968,7 +2405,12 @@ class _Page1FormState extends State<Page1Form> {
                       _disabilityDifferentlyAbled,
                       (val) {
                         setState(() {
-                          _disabilityDifferentlyAbled = val ?? false;
+                          if (val == true) {
+                            _disabilityDifferentlyAbled = true;
+                            _disabilityVisuallyImpaired = false;
+                          } else {
+                            _disabilityDifferentlyAbled = false;
+                          }
                           _notifyChange();
                         });
                       },
@@ -1995,25 +2437,65 @@ class _Page1FormState extends State<Page1Form> {
                 children: [
                   _buildCompactCheckbox('Below SSC', _educationBelowSSC, (val) {
                     setState(() {
-                      _educationBelowSSC = val ?? false;
+                      if (val == true) {
+                        _educationBelowSSC = true;
+                        _educationSSC = false;
+                        _educationHSC = false;
+                        _educationGraduate = false;
+                        _educationPostGraduate = false;
+                        _educationProfessional = false;
+                        _educationOthers = false;
+                      } else {
+                        _educationBelowSSC = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('SSC', _educationSSC, (val) {
                     setState(() {
-                      _educationSSC = val ?? false;
+                      if (val == true) {
+                        _educationSSC = true;
+                        _educationBelowSSC = false;
+                        _educationHSC = false;
+                        _educationGraduate = false;
+                        _educationPostGraduate = false;
+                        _educationProfessional = false;
+                        _educationOthers = false;
+                      } else {
+                        _educationSSC = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('HSC', _educationHSC, (val) {
                     setState(() {
-                      _educationHSC = val ?? false;
+                      if (val == true) {
+                        _educationHSC = true;
+                        _educationBelowSSC = false;
+                        _educationSSC = false;
+                        _educationGraduate = false;
+                        _educationPostGraduate = false;
+                        _educationProfessional = false;
+                        _educationOthers = false;
+                      } else {
+                        _educationHSC = false;
+                      }
                       _notifyChange();
                     });
                   }),
                   _buildCompactCheckbox('Graduate', _educationGraduate, (val) {
                     setState(() {
-                      _educationGraduate = val ?? false;
+                      if (val == true) {
+                        _educationGraduate = true;
+                        _educationBelowSSC = false;
+                        _educationSSC = false;
+                        _educationHSC = false;
+                        _educationPostGraduate = false;
+                        _educationProfessional = false;
+                        _educationOthers = false;
+                      } else {
+                        _educationGraduate = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -2022,7 +2504,17 @@ class _Page1FormState extends State<Page1Form> {
                     _educationPostGraduate,
                     (val) {
                       setState(() {
-                        _educationPostGraduate = val ?? false;
+                        if (val == true) {
+                          _educationPostGraduate = true;
+                          _educationBelowSSC = false;
+                          _educationSSC = false;
+                          _educationHSC = false;
+                          _educationGraduate = false;
+                          _educationProfessional = false;
+                          _educationOthers = false;
+                        } else {
+                          _educationPostGraduate = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -2032,14 +2524,34 @@ class _Page1FormState extends State<Page1Form> {
                     _educationProfessional,
                     (val) {
                       setState(() {
-                        _educationProfessional = val ?? false;
+                        if (val == true) {
+                          _educationProfessional = true;
+                          _educationBelowSSC = false;
+                          _educationSSC = false;
+                          _educationHSC = false;
+                          _educationGraduate = false;
+                          _educationPostGraduate = false;
+                          _educationOthers = false;
+                        } else {
+                          _educationProfessional = false;
+                        }
                         _notifyChange();
                       });
                     },
                   ),
                   _buildCompactCheckbox('Others', _educationOthers, (val) {
                     setState(() {
-                      _educationOthers = val ?? false;
+                      if (val == true) {
+                        _educationOthers = true;
+                        _educationBelowSSC = false;
+                        _educationSSC = false;
+                        _educationHSC = false;
+                        _educationGraduate = false;
+                        _educationPostGraduate = false;
+                        _educationProfessional = false;
+                      } else {
+                        _educationOthers = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -2087,7 +2599,13 @@ class _Page1FormState extends State<Page1Form> {
                     _politicallyExposedPerson,
                     (val) {
                       setState(() {
-                        _politicallyExposedPerson = val ?? false;
+                        if (val == true) {
+                          _politicallyExposedPerson = true;
+                          _relatedToPoliticallyExposedPerson = false;
+                          _politicallyExposedNone = false;
+                        } else {
+                          _politicallyExposedPerson = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -2097,14 +2615,26 @@ class _Page1FormState extends State<Page1Form> {
                     _relatedToPoliticallyExposedPerson,
                     (val) {
                       setState(() {
-                        _relatedToPoliticallyExposedPerson = val ?? false;
+                        if (val == true) {
+                          _relatedToPoliticallyExposedPerson = true;
+                          _politicallyExposedPerson = false;
+                          _politicallyExposedNone = false;
+                        } else {
+                          _relatedToPoliticallyExposedPerson = false;
+                        }
                         _notifyChange();
                       });
                     },
                   ),
                   _buildCompactCheckbox('None', _politicallyExposedNone, (val) {
                     setState(() {
-                      _politicallyExposedNone = val ?? false;
+                      if (val == true) {
+                        _politicallyExposedNone = true;
+                        _politicallyExposedPerson = false;
+                        _relatedToPoliticallyExposedPerson = false;
+                      } else {
+                        _politicallyExposedNone = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -2192,8 +2722,12 @@ class _Page1FormState extends State<Page1Form> {
                     value: _taxResidenceIndiaYes,
                     onChanged: (val) {
                       setState(() {
-                        _taxResidenceIndiaYes = val ?? false;
-                        if (_taxResidenceIndiaYes) _taxResidenceIndiaNo = false;
+                        if (val == true) {
+                          _taxResidenceIndiaYes = true;
+                          _taxResidenceIndiaNo = false;
+                        } else {
+                          _taxResidenceIndiaYes = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -2208,8 +2742,12 @@ class _Page1FormState extends State<Page1Form> {
                     value: _taxResidenceIndiaNo,
                     onChanged: (val) {
                       setState(() {
-                        _taxResidenceIndiaNo = val ?? false;
-                        if (_taxResidenceIndiaNo) _taxResidenceIndiaYes = false;
+                        if (val == true) {
+                          _taxResidenceIndiaNo = true;
+                          _taxResidenceIndiaYes = false;
+                        } else {
+                          _taxResidenceIndiaNo = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -2277,7 +2815,16 @@ class _Page1FormState extends State<Page1Form> {
                 children: [
                   _buildCompactCheckbox('Passport', _docTypePassport, (val) {
                     setState(() {
-                      _docTypePassport = val ?? false;
+                      if (val == true) {
+                        _docTypePassport = true;
+                        _docTypeVoterIdCard = false;
+                        _docTypeDrivingLicence = false;
+                        _docTypeAadhaar = false;
+                        _docTypeNregaJobCard = false;
+                        _docTypePopulationRegisterLetter = false;
+                      } else {
+                        _docTypePassport = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -2285,7 +2832,16 @@ class _Page1FormState extends State<Page1Form> {
                     val,
                   ) {
                     setState(() {
-                      _docTypeVoterIdCard = val ?? false;
+                      if (val == true) {
+                        _docTypeVoterIdCard = true;
+                        _docTypePassport = false;
+                        _docTypeDrivingLicence = false;
+                        _docTypeAadhaar = false;
+                        _docTypeNregaJobCard = false;
+                        _docTypePopulationRegisterLetter = false;
+                      } else {
+                        _docTypeVoterIdCard = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -2294,14 +2850,32 @@ class _Page1FormState extends State<Page1Form> {
                     _docTypeDrivingLicence,
                     (val) {
                       setState(() {
-                        _docTypeDrivingLicence = val ?? false;
+                        if (val == true) {
+                          _docTypeDrivingLicence = true;
+                          _docTypePassport = false;
+                          _docTypeVoterIdCard = false;
+                          _docTypeAadhaar = false;
+                          _docTypeNregaJobCard = false;
+                          _docTypePopulationRegisterLetter = false;
+                        } else {
+                          _docTypeDrivingLicence = false;
+                        }
                         _notifyChange();
                       });
                     },
                   ),
                   _buildCompactCheckbox('AADHAAR', _docTypeAadhaar, (val) {
                     setState(() {
-                      _docTypeAadhaar = val ?? false;
+                      if (val == true) {
+                        _docTypeAadhaar = true;
+                        _docTypePassport = false;
+                        _docTypeVoterIdCard = false;
+                        _docTypeDrivingLicence = false;
+                        _docTypeNregaJobCard = false;
+                        _docTypePopulationRegisterLetter = false;
+                      } else {
+                        _docTypeAadhaar = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -2310,7 +2884,16 @@ class _Page1FormState extends State<Page1Form> {
                     _docTypeNregaJobCard,
                     (val) {
                       setState(() {
-                        _docTypeNregaJobCard = val ?? false;
+                        if (val == true) {
+                          _docTypeNregaJobCard = true;
+                          _docTypePassport = false;
+                          _docTypeVoterIdCard = false;
+                          _docTypeDrivingLicence = false;
+                          _docTypeAadhaar = false;
+                          _docTypePopulationRegisterLetter = false;
+                        } else {
+                          _docTypeNregaJobCard = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -2320,7 +2903,16 @@ class _Page1FormState extends State<Page1Form> {
                     _docTypePopulationRegisterLetter,
                     (val) {
                       setState(() {
-                        _docTypePopulationRegisterLetter = val ?? false;
+                        if (val == true) {
+                          _docTypePopulationRegisterLetter = true;
+                          _docTypePassport = false;
+                          _docTypeVoterIdCard = false;
+                          _docTypeDrivingLicence = false;
+                          _docTypeAadhaar = false;
+                          _docTypeNregaJobCard = false;
+                        } else {
+                          _docTypePopulationRegisterLetter = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -2509,7 +3101,15 @@ class _Page1FormState extends State<Page1Form> {
                     _addressTypeResidentialBusiness,
                     (val) {
                       setState(() {
-                        _addressTypeResidentialBusiness = val ?? false;
+                        if (val == true) {
+                          _addressTypeResidentialBusiness = true;
+                          _addressTypeResidential = false;
+                          _addressTypeBusiness = false;
+                          _addressTypeRegisteredOffice = false;
+                          _addressTypeUnspecified = false;
+                        } else {
+                          _addressTypeResidentialBusiness = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -2519,7 +3119,15 @@ class _Page1FormState extends State<Page1Form> {
                     _addressTypeResidential,
                     (val) {
                       setState(() {
-                        _addressTypeResidential = val ?? false;
+                        if (val == true) {
+                          _addressTypeResidential = true;
+                          _addressTypeResidentialBusiness = false;
+                          _addressTypeBusiness = false;
+                          _addressTypeRegisteredOffice = false;
+                          _addressTypeUnspecified = false;
+                        } else {
+                          _addressTypeResidential = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -2528,7 +3136,15 @@ class _Page1FormState extends State<Page1Form> {
                     val,
                   ) {
                     setState(() {
-                      _addressTypeBusiness = val ?? false;
+                      if (val == true) {
+                        _addressTypeBusiness = true;
+                        _addressTypeResidentialBusiness = false;
+                        _addressTypeResidential = false;
+                        _addressTypeRegisteredOffice = false;
+                        _addressTypeUnspecified = false;
+                      } else {
+                        _addressTypeBusiness = false;
+                      }
                       _notifyChange();
                     });
                   }),
@@ -2537,7 +3153,15 @@ class _Page1FormState extends State<Page1Form> {
                     _addressTypeRegisteredOffice,
                     (val) {
                       setState(() {
-                        _addressTypeRegisteredOffice = val ?? false;
+                        if (val == true) {
+                          _addressTypeRegisteredOffice = true;
+                          _addressTypeResidentialBusiness = false;
+                          _addressTypeResidential = false;
+                          _addressTypeBusiness = false;
+                          _addressTypeUnspecified = false;
+                        } else {
+                          _addressTypeRegisteredOffice = false;
+                        }
                         _notifyChange();
                       });
                     },
@@ -2547,7 +3171,15 @@ class _Page1FormState extends State<Page1Form> {
                     _addressTypeUnspecified,
                     (val) {
                       setState(() {
-                        _addressTypeUnspecified = val ?? false;
+                        if (val == true) {
+                          _addressTypeUnspecified = true;
+                          _addressTypeResidentialBusiness = false;
+                          _addressTypeResidential = false;
+                          _addressTypeBusiness = false;
+                          _addressTypeRegisteredOffice = false;
+                        } else {
+                          _addressTypeUnspecified = false;
+                        }
                         _notifyChange();
                       });
                     },

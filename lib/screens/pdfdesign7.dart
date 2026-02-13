@@ -68,11 +68,6 @@ pw.Widget _buildFormTable(FormDataModel data) {
 
   final List<Map<String, String>> simpleRowsData = [
     {
-      'no': '2',
-      'desc': 'Date of Birth / Incorporation of declarant',
-      'value': data.form60DateOfBirth.isNotEmpty ? data.form60DateOfBirth : data.dob,
-    },
-    {
       'no': '3',
       'desc': 'Father\'s Name (in case of individual)',
       'value': data.form60FatherName.isNotEmpty ? data.form60FatherName : (data.fatherName + " " + (data.fatherPrefix.isNotEmpty ? data.fatherPrefix : "")),
@@ -144,6 +139,11 @@ pw.Widget _buildFormTable(FormDataModel data) {
     defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
     children: [
       _buildNameRow('1', 'First\nName', data),
+      _buildDateRow(
+        '2',
+        'Date of Birth / Incorporation of declarant',
+        data.form60DateOfBirth.isNotEmpty ? data.form60DateOfBirth : data.dob,
+      ),
       ...simpleRowsData.where((row) => int.parse(row['no']!) <= 10).map((
         rowData,
       ) {
@@ -153,7 +153,7 @@ pw.Widget _buildFormTable(FormDataModel data) {
           rowData['value']!,
         );
       }).toList(),
-      _buildDateRow('13', 'Date of transaction', data),
+      _buildDateRow('13', 'Date of transaction', data.form60TransactionDate.isNotEmpty ? data.form60TransactionDate : data.date),
       ...simpleRowsData.where((row) => int.parse(row['no']!) > 10).map((
         rowData,
       ) {
@@ -454,36 +454,39 @@ pw.TableRow _buildNameRow(String no, String desc, FormDataModel data) {
   );
 }
 
-pw.TableRow _buildDateRow(String no, String desc, FormDataModel data) {
-    // Dynamic date or placeholders
-    String chars = data.form60TransactionDate.isNotEmpty ? data.form60TransactionDate : "";
-    if (chars.isEmpty && data.date.isNotEmpty) chars = data.date;
+// Helper to format date to DDMMYYYY
+String _formatDate(String date) {
+  if (date.isEmpty) return '';
+  // Try parsing recognized formats
+  try {
+    DateTime? parsed;
+    if (date.contains('/')) {
+      final parts = date.split('/');
+      if (parts.length == 3) {
+        // Assume dd/mm/yyyy
+        parsed = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+      }
+    } else if (date.contains('-')) {
+      final parts = date.split('-');
+      if (parts.length == 3) {
+        // Assume yyyy-mm-dd
+        parsed = DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
+      }
+    }
     
-    // Remove slashes if present
-    chars = chars.replaceAll('/', '').replaceAll('.', '').replaceAll('-', '');
-
-  return pw.TableRow(
-    children: [
-      _buildCell(no, align: pw.TextAlign.center),
-      _buildCell(desc),
-      pw.Padding(
-        padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-        child: pw.Row(
-          children: List.generate(
-            8,
-            (index) => pw.Container(
-              width: 14,
-              height: 14,
-              margin: const pw.EdgeInsets.only(right: 1),
-              decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
-              child: pw.Center(child: pw.Text(index < chars.length ? chars[index] : '')),
-            ),
-          ),
-        ),
-      ),
-    ],
-  );
+    if (parsed != null) {
+      final d = parsed.day.toString().padLeft(2, '0');
+      final m = parsed.month.toString().padLeft(2, '0');
+      final y = parsed.year.toString();
+      return '$d$m$y';
+    }
+  } catch (e) {
+    // Fallback: just remove non-digits
+  }
+  return date.replaceAll(RegExp(r'[^0-9]'), '');
 }
+
+// Restoration of missing methods
 
 pw.TableRow _buildModeRow(String no, String desc, FormDataModel data) {
   const borderColor = PdfColors.black;
@@ -525,7 +528,7 @@ pw.TableRow _buildModeRow(String no, String desc, FormDataModel data) {
                   width: 10,
                   height: 10,
                   decoration: pw.BoxDecoration(
-                    border: pw.Border.all(width: 0.5),
+                    border: pw.Border.all(width: 1),
                   ),
                   child: modeChecks[i]
                       ? pw.Center(
@@ -593,18 +596,48 @@ pw.TableRow _buildIncomeRow(String no, String desc, FormDataModel data) {
   );
 }
 
-// Updated Helper that actually populates the table
+// Updated _buildDateRow to be generic and use formatter
+pw.TableRow _buildDateRow(String no, String desc, String dateValue) {
+  final chars = _formatDate(dateValue);
+  
+  return pw.TableRow(
+    children: [
+      _buildCell(no, align: pw.TextAlign.center),
+      _buildCell(desc),
+      pw.Padding(
+        padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        child: pw.Row(
+          children: List.generate(
+            8,
+            (index) => pw.Container(
+              width: 14,
+              height: 14,
+              margin: const pw.EdgeInsets.only(right: 1),
+              decoration: pw.BoxDecoration(border: pw.Border.all(width: 1)),
+              child: pw.Center(
+                  child: pw.Text(
+                      index < chars.length ? chars[index] : '',
+                      style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold)
+                  )
+              ),
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+// Updated Document Row (already fixed fontWeight param in previous step, ensuring logic persists)
 pw.TableRow _buildDocumentRow(String no, String desc, FormDataModel data, {required bool isAddress}) {
   const PdfColor borderColor = PdfColors.black;
   
-  // Logic to determine document details
   String code = '';
   String name = '';
-  String identificationNo = ''; // Initialize with empty string
-  String authority = '';
+  String identificationNo = ''; 
 
   if (isAddress) {
-      if (data.altProofUtilityBill) { code = '16'; name = 'Utility Bill'; identificationNo = data.altProofDocumentNo; } // Electricity
+      if (data.altProofUtilityBill) { code = '16'; name = 'Utility Bill'; identificationNo = data.altProofDocumentNo; }
       else if (data.altProofPPOFPPO) { code = '07'; name = 'Pension Payment Order'; identificationNo = data.altProofDocumentNo; }
       else if (data.altProofPropertyTaxReceipt) { code = '26'; name = 'Property Tax Receipt'; identificationNo = data.altProofDocumentNo; }
       else if (data.altProofLetterOfAllotment) { code = '24'; name = 'Allotment Letter'; identificationNo = data.altProofDocumentNo; }
@@ -614,7 +647,6 @@ pw.TableRow _buildDocumentRow(String no, String desc, FormDataModel data, {requi
       else if (data.docTypePassport) { code = '06'; name = 'Passport'; identificationNo = data.documentNo; }
       else if (data.docTypeNregaJobCard) { code = '08'; name = 'NREGA Job Card'; identificationNo = data.documentNo; }
   } else {
-      // Identity
       if (data.docTypeAadhaar) { code = '01'; name = 'Aadhaar Card'; identificationNo = data.aadharDocNo; }
       else if (data.docTypeVoterIdCard) { code = '03'; name = 'Voter ID'; identificationNo = data.documentNo; }
       else if (data.docTypeDrivingLicence) { code = '05'; name = 'Driving License'; identificationNo = data.documentNo; }
@@ -622,7 +654,6 @@ pw.TableRow _buildDocumentRow(String no, String desc, FormDataModel data, {requi
       else if (data.docTypeNregaJobCard) { code = '08'; name = 'NREGA Job Card'; identificationNo = data.documentNo; }
   }
 
-  // Fallback if ID/Address fields are populated but boolean flags are missing/false
   if (identificationNo.isEmpty && data.documentNo.isNotEmpty && !isAddress) {
       identificationNo = data.documentNo;
       name = 'Identity Document';
@@ -658,7 +689,7 @@ pw.TableRow _buildDocumentRow(String no, String desc, FormDataModel data, {requi
             children: [
               _buildCell(code, fontSize: 8),
               _buildCell(identificationNo, fontSize: 8),
-              _buildCell(name, fontSize: 8), // Using name as authority/desc for now
+              _buildCell(name, fontSize: 8), 
             ],
           ),
         ],

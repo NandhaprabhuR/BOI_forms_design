@@ -1,6 +1,7 @@
 // lib/screens/forms/page7_form.dart
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../model/form_data_model.dart';
@@ -370,10 +371,15 @@ class _Page7FormState extends State<Page7Form> {
             ? Stack(
                 children: [
                   Center(
-                    child: Image.file(
-                      File(_declarantSignaturePath!),
-                      fit: BoxFit.contain,
-                    ),
+                    child: kIsWeb
+                        ? Image.network(
+                            _declarantSignaturePath!,
+                            fit: BoxFit.contain,
+                          )
+                        : Image.file(
+                            File(_declarantSignaturePath!),
+                            fit: BoxFit.contain,
+                          ),
                   ),
                   Positioned(
                     top: 4,
@@ -713,17 +719,50 @@ class _Page7FormState extends State<Page7Form> {
                   children: [
                     Expanded(
                       child: _buildCheckbox('Cash', _modeCash, (val) {
-                        setState(() => _modeCash = val ?? false);
+                        setState(() {
+                          if (val == true) {
+                            _modeCash = true;
+                            _modeCheque = false;
+                            _modeCard = false;
+                            _modeDraft = false;
+                            _modeOnlineTransfer = false;
+                            _modeOther = false;
+                          } else {
+                            _modeCash = false;
+                          }
+                        });
                       }),
                     ),
                     Expanded(
                       child: _buildCheckbox('Cheque', _modeCheque, (val) {
-                        setState(() => _modeCheque = val ?? false);
+                        setState(() {
+                          if (val == true) {
+                            _modeCheque = true;
+                            _modeCash = false;
+                            _modeCard = false;
+                            _modeDraft = false;
+                            _modeOnlineTransfer = false;
+                            _modeOther = false;
+                          } else {
+                            _modeCheque = false;
+                          }
+                        });
                       }),
                     ),
                     Expanded(
                       child: _buildCheckbox('Card', _modeCard, (val) {
-                        setState(() => _modeCard = val ?? false);
+                        setState(() {
+                          if (val == true) {
+                            _modeCard = true;
+                            _modeCash = false;
+                            _modeCheque = false;
+                            _modeDraft = false;
+                            _modeOnlineTransfer = false;
+                            _modeOther = false;
+                          } else {
+                            _modeCard = false;
+                          }
+                        });
                       }),
                     ),
                   ],
@@ -732,17 +771,50 @@ class _Page7FormState extends State<Page7Form> {
                   children: [
                     Expanded(
                       child: _buildCheckbox('Draft/Banker\'s Cheque', _modeDraft, (val) {
-                        setState(() => _modeDraft = val ?? false);
+                        setState(() {
+                          if (val == true) {
+                            _modeDraft = true;
+                            _modeCash = false;
+                            _modeCheque = false;
+                            _modeCard = false;
+                            _modeOnlineTransfer = false;
+                            _modeOther = false;
+                          } else {
+                            _modeDraft = false;
+                          }
+                        });
                       }),
                     ),
                     Expanded(
                       child: _buildCheckbox('Online transfer', _modeOnlineTransfer, (val) {
-                        setState(() => _modeOnlineTransfer = val ?? false);
+                        setState(() {
+                          if (val == true) {
+                            _modeOnlineTransfer = true;
+                            _modeCash = false;
+                            _modeCheque = false;
+                            _modeCard = false;
+                            _modeDraft = false;
+                            _modeOther = false;
+                          } else {
+                            _modeOnlineTransfer = false;
+                          }
+                        });
                       }),
                     ),
                     Expanded(
                       child: _buildCheckbox('Other', _modeOther, (val) {
-                        setState(() => _modeOther = val ?? false);
+                        setState(() {
+                          if (val == true) {
+                            _modeOther = true;
+                            _modeCash = false;
+                            _modeCheque = false;
+                            _modeCard = false;
+                            _modeDraft = false;
+                            _modeOnlineTransfer = false;
+                          } else {
+                            _modeOther = false;
+                          }
+                        });
                       }),
                     ),
                   ],
