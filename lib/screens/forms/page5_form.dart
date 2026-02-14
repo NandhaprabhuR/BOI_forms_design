@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'dart:convert';
 import '../model/form_data_model.dart';
 
 class Page5Form extends StatefulWidget {
@@ -24,7 +25,17 @@ class _Page5FormState extends State<Page5Form> {
   // Image path for signature
   String? _termsSignaturePath;
 
+  @override
+  void initState() {
+    super.initState();
+    // Initialize signature from model if declared
+    _termsSignaturePath = widget.initialData.bsbdSignature.isNotEmpty 
+        ? widget.initialData.bsbdSignature 
+        : null;
+  }
+
   void _notifyChange() {
+    widget.initialData.bsbdSignature = _termsSignaturePath ?? '';
     widget.onDataChanged(widget.initialData);
   }
 
@@ -32,8 +43,10 @@ class _Page5FormState extends State<Page5Form> {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
+      final bytes = await image.readAsBytes();
+      final base64String = 'data:image/png;base64,${base64Encode(bytes)}';
       setState(() {
-        _termsSignaturePath = image.path;
+        _termsSignaturePath = base64String;
         _notifyChange();
       });
     }

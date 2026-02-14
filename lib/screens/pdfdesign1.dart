@@ -3,6 +3,8 @@
 import 'dart:typed_data';
 import 'dart:io';
 import 'dart:convert'; // For Base64
+import 'package:flutter/services.dart'; // For NetworkAssetBundle
+import 'package:flutter/foundation.dart'; // For kIsWeb
 import 'package:boiforms/screens/pdf_helpers.dart';
 import 'package:boiforms/screens/pdfdesign2.dart';
 import 'package:boiforms/screens/pdfdesign3.dart';
@@ -142,10 +144,16 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
     final pdf = pw.Document();
 
     // --- LOAD SIGNATURE IMAGES ---
+    pw.MemoryImage? applicantSignature;
+    pw.MemoryImage? applicantPhoto;
     pw.MemoryImage? signature1Image;
     pw.MemoryImage? signature2Image;
-    pw.MemoryImage? applicantPhoto;
-    pw.MemoryImage? applicantSignature;
+    pw.MemoryImage? signature3Image;
+    pw.MemoryImage? officialSignature;
+    // NEW: Page 6/7 Signatures
+    pw.MemoryImage? bsbdSignature;
+    pw.MemoryImage? ackBankOfficialSignature;
+    pw.MemoryImage? form60DeclarantSignature;
 
     print('🔍 Attempting to load signatures...');
     
@@ -165,7 +173,19 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
            final bytes = base64Decode(pathOrBase64);
            print('✅ $label loaded from Base64: ${bytes.length} bytes');
            return pw.MemoryImage(bytes);
+         } else if (pathOrBase64.startsWith('http') || pathOrBase64.startsWith('blob:')) {
+           // Handle Web Blob URLs or Network URLs
+           final bundle = NetworkAssetBundle(Uri.parse(pathOrBase64));
+           final data = await bundle.load("");
+           final bytes = data.buffer.asUint8List();
+           print('✅ $label loaded from URL: ${bytes.length} bytes');
+           return pw.MemoryImage(bytes);
          } else {
+           // Handle Local File (Mobile)
+           if (kIsWeb) {
+             print('⚠️ $label skipped: File path not supported on Web ($pathOrBase64)');
+             return null;
+           }
            final file = File(pathOrBase64);
            if (await file.exists()) {
              final bytes = await file.readAsBytes();
@@ -183,12 +203,32 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
     }
 
     signature1Image = await loadImage(model.signature1Text, "Signature 1");
-    signature2Image = await loadImage(model.signature2Text, "Signature 2");
+    if (model.signature2Text.isNotEmpty) {
+      signature2Image = await loadImage(model.signature2Text, 'Applicant 2 Signature (Page 2/4/10)');
+    }
+    
+    // NEW: Load Signature 3
+    if (model.signature3Text.isNotEmpty) {
+      signature3Image = await loadImage(model.signature3Text, 'Applicant 3 Signature (Page 10)');
+    }
+
     applicantPhoto = await loadImage(model.applicantPhoto, "Applicant Photo");
-    applicantSignature = await loadImage(model.applicantSignatureImage, "Applicant Signature");
+    if (model.applicantSignatureImage.isNotEmpty) {
+      applicantSignature = await loadImage(model.applicantSignatureImage, "Applicant Signature");
+    }
     
     // Official signature
-    pw.MemoryImage? officialSignature = await loadImage(model.officialSignature, "Official Signature");
+    officialSignature = await loadImage(model.officialSignature, "Official Signature");
+    
+    // NEW: Load Page 6/7 Signatures
+    bsbdSignature = await loadImage(model.bsbdSignature, "BSBD Signature");
+    ackBankOfficialSignature = await loadImage(model.ackBankOfficialSignature, "Ack Bank Official Signature");
+    form60DeclarantSignature = await loadImage(model.form60DeclarantSignature, "Form 60 Declarant Signature");
+    
+    // NEW: Load Page 4 (Witness) and Page 9 (FATCA) Signatures
+    pw.MemoryImage? witnessSignature1 = await loadImage(model.witnessSignature1, "Witness 1 Signature");
+    pw.MemoryImage? witnessSignature2 = await loadImage(model.witnessSignature2, "Witness 2 Signature");
+    pw.MemoryImage? fatcaDeclarantSignature = await loadImage(model.fatcaDeclarantSignature, "FATCA Declarant Signature");
 
 
     pdf.addPage(
@@ -241,17 +281,24 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
             officialSignature,
           ),
           buildThirdPage(model),
-          buildFourthPage(model, signature1Image, signature2Image),
-          buildFifthPage(model, signature1Image: signature1Image),
-          buildSixthPage(model),
-          buildSeventhPage(model),
-          buildEighthPage(model),
-          buildNinthPage(model),
-          buildTenthPage(
-            model,
-            signature1Image: signature1Image,
-            signature2Image: signature2Image,
+          buildFourthPage(
+            model, 
+            signature1Image, 
+            signature2Image,
+            witnessSignature1: witnessSignature1,
+            witnessSignature2: witnessSignature2,
           ),
+          buildFifthPage(model, signature1Image: signature1Image, bsbdSignature: bsbdSignature),
+          buildSixthPage(model, ackBankOfficialSignature: ackBankOfficialSignature),
+          buildSeventhPage(model, declarantSignature: form60DeclarantSignature),
+          buildEighthPage(model),
+          buildNinthPage(model, declarantSignature: fatcaDeclarantSignature),
+          buildTenthPage(
+        model,
+        signature1Image: signature1Image,
+        signature2Image: signature2Image,
+        signature3Image: signature3Image,
+      ),
         ],
       ),
     );

@@ -116,11 +116,22 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
   bool _rdStandingInstruction = false;
   bool _rdMaturityCredit = false;
 
+  Future<void> _pickRubberStampImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _rubberStampImagePath = image.path;
+        _notifyChange();
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _page3DateController = TextEditingController();
-    _page3AccountNoController = TextEditingController();
+    _page3DateController = TextEditingController(text: widget.initialData.date); // Init from model if possible
+    _page3AccountNoController = TextEditingController(text: widget.initialData.accountNo); // Fixed: Init from model
     _firstApplicantCustomerIdController = TextEditingController(
       text: widget.initialData.firstApplicantCustomerId,
     );
@@ -257,196 +268,74 @@ class _Page3FormEnhancedState extends State<Page3FormEnhanced> {
   }
 
   void _notifyChange() {
-    widget.onDataChanged(_buildUpdatedData());
-  }
+    widget.initialData.date = _page3DateController.text;
+    widget.initialData.accountNo = _page3AccountNoController.text;
+    widget.initialData.firstApplicantCustomerId = _firstApplicantCustomerIdController.text;
+    widget.initialData.secondApplicantCustomerId = _secondApplicantCustomerIdController.text;
+    widget.initialData.atmCardName = _atmCardName1stController.text;
+    widget.initialData.fdAmount = _fdAmountController.text;
+    widget.initialData.rdInstallment = _rdInstallmentController.text;
+    widget.initialData.debitAccountNo = _debitAccountNoController.text;
+    widget.initialData.modeOfOperationOther = _modeOfOperationOtherController.text;
+    widget.initialData.nominationRegistrationNo = _nominationRegistrationNoController.text;
+    widget.initialData.depositType = _depositTypeController.text;
+    widget.initialData.nominationAccountNo = _nominationAccountNoController.text;
 
-  Future<void> _pickRubberStampImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _rubberStampImagePath = image.path;
-        _notifyChange();
-      });
-    }
-  }
+    // Checkboxes
+    widget.initialData.accountTypeSavingsBank = _accountTypeSavings;
+    widget.initialData.accountTypeBSBDA = _accountTypeBSBDA;
+    widget.initialData.accountTypeSmallAccount = _accountTypeSmall;
+    widget.initialData.accountTypeCurrent = _accountTypeCurrent;
+    widget.initialData.accountTypeFixedDeposit = _accountTypeFixedDeposit;
+    widget.initialData.accountTypeCapsGain = _accountTypeCapsGain;
 
-  FormDataModel _buildUpdatedData() {
-    return FormDataModel(
-      branchName: widget.initialData.branchName,
-      branchCode: widget.initialData.branchCode,
-      date: widget.initialData.date,
-      customerId: widget.initialData.customerId,
-      accountNo: widget.initialData.accountNo,
-      ckycNo: widget.initialData.ckycNo,
-      existingCustomerId: widget.initialData.existingCustomerId,
-      customerFirstName: widget.initialData.customerFirstName,
-      customerMiddleName: widget.initialData.customerMiddleName,
-      customerLastName: widget.initialData.customerLastName,
-      customerPrefix: widget.initialData.customerPrefix,
-      maidenName: widget.initialData.maidenName,
-      maidenNamePrefix: widget.initialData.maidenNamePrefix,
-      fatherName: widget.initialData.fatherName,
-      motherName: widget.initialData.motherName,
-      spouseName: widget.initialData.spouseName,
-      mobileNo: widget.initialData.mobileNo,
-      emailId: widget.initialData.emailId,
-      alternateMobileNo: widget.initialData.alternateMobileNo,
-      telOff: widget.initialData.telOff,
-      telRes: widget.initialData.telRes,
-      aadharDocNo: widget.initialData.aadharDocNo,
-      currentAddress: widget.initialData.currentAddress,
-      currentCity: widget.initialData.currentCity,
-      currentDistrict: widget.initialData.currentDistrict,
-      currentState: widget.initialData.currentState,
-      currentPin: widget.initialData.currentPin,
-      dob: widget.initialData.dob,
-      occupationType: widget.initialData.occupationType,
-      monthlyIncome: widget.initialData.monthlyIncome,
-      netWorth: widget.initialData.netWorth,
-      estAnnualTurnover: widget.initialData.estAnnualTurnover,
-      noOfDependents: widget.initialData.noOfDependents,
-      guardianPrefix: widget.initialData.guardianPrefix,
-      guardianName: widget.initialData.guardianName,
-      guardianMiddleName: widget.initialData.guardianMiddleName,
-      guardianSurname: widget.initialData.guardianSurname,
-      relationshipWithGuardian: widget.initialData.relationshipWithGuardian,
-      placeCityOfBirth: widget.initialData.placeCityOfBirth,
-      countryCodeOfBirth: widget.initialData.countryCodeOfBirth,
-      citizenship: widget.initialData.citizenship,
-      panTaxIdNumber: widget.initialData.panTaxIdNumber,
-      alternateCountry: widget.initialData.alternateCountry,
-      stdCode: widget.initialData.stdCode,
-      landlineNo: widget.initialData.landlineNo,
-      alternateStdCode: widget.initialData.alternateStdCode,
-      alternateLandlineNo: widget.initialData.alternateLandlineNo,
-      documentNo: widget.initialData.documentNo,
-      issueDate: widget.initialData.issueDate,
-      expiryDate: widget.initialData.expiryDate,
-      correspondenceAddress: widget.initialData.correspondenceAddress,
-      correspondenceCity: widget.initialData.correspondenceCity,
-      correspondenceDistrict: widget.initialData.correspondenceDistrict,
-      correspondenceState: widget.initialData.correspondenceState,
-      correspondencePin: widget.initialData.correspondencePin,
-      ovdDocumentNo: widget.initialData.ovdDocumentNo,
-      ovdDocumentDate: widget.initialData.ovdDocumentDate,
-      applicantSignatureName: widget.initialData.applicantSignatureName,
-      declarationPlace: widget.initialData.declarationPlace,
-      declarationDate: widget.initialData.declarationDate,
-      officialName: widget.initialData.officialName,
-      pfNo: widget.initialData.pfNo,
-      designation: widget.initialData.designation,
-      ssNo: widget.initialData.ssNo,
-      officeUseDate: widget.initialData.officeUseDate,
-      firstApplicantCustomerId: _firstApplicantCustomerIdController.text,
-      secondApplicantCustomerId: _secondApplicantCustomerIdController.text,
-      atmCardName: _atmCardName1stController.text,
-      fdAmount: _fdAmountController.text,
-      rdInstallment: _rdInstallmentController.text,
-      debitAccountNo: _debitAccountNoController.text,
-      modeOfOperationOther: _modeOfOperationOtherController.text,
-      nominationRegistrationNo: _nominationRegistrationNoController.text,
-      depositType: _depositTypeController.text,
-      nominationAccountNo: _nominationAccountNoController.text,
-      nomineeName: widget.initialData.nomineeName,
-      nomineeMobile: widget.initialData.nomineeMobile,
-      nomineeRelationship: widget.initialData.nomineeRelationship,
-      nomineeDob: widget.initialData.nomineeDob,
-      nomineeAddress: widget.initialData.nomineeAddress,
-      nomineeGuardianName: widget.initialData.nomineeGuardianName,
-      witness1Name: widget.initialData.witness1Name,
-      witness1Address: widget.initialData.witness1Address,
-      witness2Name: widget.initialData.witness2Name,
-      witness2Address: widget.initialData.witness2Address,
-      form60FirstName: widget.initialData.form60FirstName,
-      form60MiddleName: widget.initialData.form60MiddleName,
-      form60Surname: widget.initialData.form60Surname,
-      form60DateOfBirth: widget.initialData.form60DateOfBirth,
-      form60FatherName: widget.initialData.form60FatherName,
-      form60FlatNo: widget.initialData.form60FlatNo,
-      form60PremisesName: widget.initialData.form60PremisesName,
-      form60RoadStreet: widget.initialData.form60RoadStreet,
-      form60AreaLocality: widget.initialData.form60AreaLocality,
-      form60TownDistrictState: widget.initialData.form60TownDistrictState,
-      form60PinCode: widget.initialData.form60PinCode,
-      form60TelephoneSTD: widget.initialData.form60TelephoneSTD,
-      form60MobileNumber: widget.initialData.form60MobileNumber,
-      form60TransactionAmount: widget.initialData.form60TransactionAmount,
-      form60TransactionDate: widget.initialData.form60TransactionDate,
-      form60JointPersonsCount: widget.initialData.form60JointPersonsCount,
-      form60ModeCash: widget.initialData.form60ModeCash,
-      form60ModeCheque: widget.initialData.form60ModeCheque,
-      form60ModeCard: widget.initialData.form60ModeCard,
-      form60ModeDraft: widget.initialData.form60ModeDraft,
-      form60ModeOnlineTransfer: widget.initialData.form60ModeOnlineTransfer,
-      form60ModeOther: widget.initialData.form60ModeOther,
-      form60AadhaarNumber: widget.initialData.form60AadhaarNumber,
-      // Row 17-18 fields
-      form60PanApplicationDate: widget.initialData.form60PanApplicationDate,
-      form60PanAckNo: widget.initialData.form60PanAckNo,
-      form60AgriculturalIncome: widget.initialData.form60AgriculturalIncome,
-      form60OtherIncome: widget.initialData.form60OtherIncome,
-      // Verification section fields
-      form60VerifiedDay: widget.initialData.form60VerifiedDay,
-      form60VerifiedMonth: widget.initialData.form60VerifiedMonth,
-      form60VerifiedYear: widget.initialData.form60VerifiedYear,
-      form60VerificationPlace: widget.initialData.form60VerificationPlace,
-      form60DeclarantSignature: widget.initialData.form60DeclarantSignature,
-      relatedPersonFirstName: widget.initialData.relatedPersonFirstName,
-      relatedPersonPrefix: widget.initialData.relatedPersonPrefix,
-      relatedPersonDocNo: widget.initialData.relatedPersonDocNo,
-      signature1Text: widget.initialData.signature1Text,
-      signature2Text: widget.initialData.signature2Text,
-      applicantPhoto: widget.initialData.applicantPhoto,
-      witnessSignature1: widget.initialData.witnessSignature1,
-      witnessSignature2: widget.initialData.witnessSignature2,
-      // Checkboxes
-      accountTypeSavingsBank: _accountTypeSavings,
-      accountTypeBSBDA: _accountTypeBSBDA,
-      accountTypeSmallAccount: _accountTypeSmall,
-      accountTypeCurrent: _accountTypeCurrent,
-      accountTypeFixedDeposit: _accountTypeFixedDeposit,
-      accountTypeCapsGain: _accountTypeCapsGain,
-      modeOfOperationSelf: _modeOfOperationSelf,
-      modeOfOperationEitherOrSurvivor: _modeOfOperationEitherOrSurvivor,
-      modeOfOperationFormerOrSurvivor: _modeOfOperationFormerOrSurvivor,
-      modeOfOperationAnyoneOrSurvivor: _modeOfOperationAnyOneOrSurvivor,
-      modeOfOperationJointly: _modeOfOperationJointly,
-      modeOfOperationOtherCheckbox: _modeOfOperationOtherChecked,
-      atmCard1stApplicant: _atmCard1stApplicant,
-      atmCard2ndApplicant: _atmCard2ndApplicant,
-      netBankingYes: _netBankingYes,
-      netBankingNo: _netBankingNo,
-      mobileBankingYes: _mobileBankingYes,
-      mobileBankingNo: _mobileBankingNo,
-      smsAlertYes: _smsAlertYes,
-      smsAlertNo: _smsAlertNo,
-      emailStatementYes: _emailStatementYes,
-      emailStatementNo: _emailStatementNo,
-      chequeBookYes: _chequeBookYes,
-      chequeBookNo: _chequeBookNo,
-      nominationYes: _nominationYes,
-      nominationNo: _nominationNo,
-      fdAutoRenewPrincipalPaybackInterest: _fdAutoRenewPrincipalPaybackInterest,
-      fdPayPrincipalAndInterest: _fdPayPrincipalAndInterest,
-      fdAutoRenewBoth: _fdAutoRenewBoth,
-      fdAutoRenewPartAmount: _fdAutoRenewPartAmount,
-      modRecurringDeposit: _modRecurringDeposit,
-      modDoubleBenefit: _modDoubleBenefit,
-      modMICQIC: _modMICQIC,
-      modShortFixedDeposit: _modShortFixedDeposit,
-      modTaxSaving: _modTaxSaving,
-      modCapitalGain: _modCapitalGain,
-      rdMonthly: _rdMonthly,
-      rdQuarterly: _rdQuarterly,
-      rdCalenderQuarter: _rdCalenderQuarter,
-      rdHalfYearly: _rdHalfYearly,
-      rdYearly: _rdYearly,
-      fatcaIndianCitizen: widget.initialData.fatcaIndianCitizen,
-      fatcaNonIndianCitizen: widget.initialData.fatcaNonIndianCitizen,
-      pepYes: widget.initialData.pepYes,
-      pepNo: widget.initialData.pepNo,
-    );
+    widget.initialData.modeOfOperationSelf = _modeOfOperationSelf;
+    widget.initialData.modeOfOperationEitherOrSurvivor = _modeOfOperationEitherOrSurvivor;
+    widget.initialData.modeOfOperationFormerOrSurvivor = _modeOfOperationFormerOrSurvivor;
+    widget.initialData.modeOfOperationAnyoneOrSurvivor = _modeOfOperationAnyOneOrSurvivor;
+    widget.initialData.modeOfOperationJointly = _modeOfOperationJointly;
+    widget.initialData.modeOfOperationOtherCheckbox = _modeOfOperationOtherChecked;
+
+    widget.initialData.atmCard1stApplicant = _atmCard1stApplicant;
+    widget.initialData.atmCard2ndApplicant = _atmCard2ndApplicant;
+    widget.initialData.netBankingYes = _netBankingYes;
+    widget.initialData.netBankingNo = _netBankingNo;
+    widget.initialData.mobileBankingYes = _mobileBankingYes;
+    widget.initialData.mobileBankingNo = _mobileBankingNo;
+    widget.initialData.smsAlertYes = _smsAlertYes;
+    widget.initialData.smsAlertNo = _smsAlertNo;
+    widget.initialData.emailStatementYes = _emailStatementYes;
+    widget.initialData.emailStatementNo = _emailStatementNo;
+    widget.initialData.chequeBookYes = _chequeBookYes;
+    widget.initialData.chequeBookNo = _chequeBookNo;
+
+    widget.initialData.nominationYes = _nominationYes;
+    widget.initialData.nominationNo = _nominationNo;
+
+    widget.initialData.fdAutoRenewPrincipalPaybackInterest = _fdAutoRenewPrincipalPaybackInterest;
+    widget.initialData.fdPayPrincipalAndInterest = _fdPayPrincipalAndInterest;
+    widget.initialData.fdAutoRenewBoth = _fdAutoRenewBoth;
+    widget.initialData.fdAutoRenewPartAmount = _fdAutoRenewPartAmount;
+
+    widget.initialData.modRecurringDeposit = _modRecurringDeposit;
+    widget.initialData.modDoubleBenefit = _modDoubleBenefit;
+    widget.initialData.modMICQIC = _modMICQIC;
+    widget.initialData.modShortFixedDeposit = _modShortFixedDeposit;
+    widget.initialData.modTaxSaving = _modTaxSaving;
+    widget.initialData.modCapitalGain = _modCapitalGain;
+
+    widget.initialData.rdMonthly = _rdMonthly;
+    widget.initialData.rdQuarterly = _rdQuarterly;
+    widget.initialData.rdCalenderQuarter = _rdCalenderQuarter;
+    widget.initialData.rdHalfYearly = _rdHalfYearly;
+    widget.initialData.rdYearly = _rdYearly;
+
+    widget.initialData.fatcaIndianCitizen = widget.initialData.fatcaIndianCitizen; // Keep existing
+    widget.initialData.fatcaNonIndianCitizen = widget.initialData.fatcaNonIndianCitizen; // Keep existing
+    widget.initialData.pepYes = widget.initialData.pepYes; // Keep existing
+    widget.initialData.pepNo = widget.initialData.pepNo; // Keep existing
+
+    widget.onDataChanged(widget.initialData);
   }
 
   @override

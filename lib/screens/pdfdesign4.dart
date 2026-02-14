@@ -76,8 +76,10 @@ pw.Widget signatureBox({
 pw.Widget buildFourthPage(
   FormDataModel data,
   pw.MemoryImage? signature1Image,
-  pw.MemoryImage? signature2Image,
-) {
+  pw.MemoryImage? signature2Image, {
+  pw.MemoryImage? witnessSignature1,
+  pw.MemoryImage? witnessSignature2,
+}) {
   // FIXED: Using a Transform to scale the entire content down slightly.
   return pw.Transform.scale(
     scale: 0.95,
@@ -89,6 +91,8 @@ pw.Widget buildFourthPage(
           data,
           signature1Image,
           signature2Image,
+          witnessSignature1: witnessSignature1,
+          witnessSignature2: witnessSignature2,
         ),
         pw.SizedBox(height: 4),
         buildDeclarationSection(
@@ -103,59 +107,106 @@ pw.Widget buildFourthPage(
   );
 }
 
-// =========================================================================
-// == SECTION 7: NOMINATION FORM (DA-1)
-// =========================================================================
-
+// FIXED: Added missing helper method
 pw.Widget _buildNominationTitleBar() {
   return pw.Container(
     width: double.infinity,
-    padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
-    decoration: pw.BoxDecoration(
-      color: PdfColors.grey200,
-      border: pw.Border.all(width: 0.5),
-    ),
-    child: pw.Text(
-      '7 Nomination (If required fill Form DA-1)',
-      style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+    padding: const pw.EdgeInsets.symmetric(vertical: 2.5),
+    decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
+    child: pw.Center(
+      child: pw.Text(
+        'FORM DA 1: NOMINATION FORM',
+        style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9.5),
+      ),
     ),
   );
 }
 
+// FIXED: Added missing helper method
+pw.Widget _buildNominationTopPart(FormDataModel data) {
+  return pw.Column(
+    crossAxisAlignment: pw.CrossAxisAlignment.start,
+    children: [
+      pw.RichText(
+        text: pw.TextSpan(
+          style: const pw.TextStyle(fontSize: 8),
+          children: [
+            const pw.TextSpan(text: 'Nomination under section 45ZA of the Banking Regulation Act, 1949 and Rule 2(1) of the Banking Companies (Nomination) Rules, 1985 in respect of bank deposits.\n\n'),
+            const pw.TextSpan(text: 'I/We '),
+            pw.TextSpan(
+              text: '${data.customerFirstName} ${data.customerMiddleName} ${data.customerLastName}',
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+            ),
+            const pw.TextSpan(text: ' (Name of the Account Holder/s) nominate the following person to whom in the event of my/our/minor\'s death the of the deposit, particulars whereof are given below, may be returned by Bank of India, Branch '),
+            pw.TextSpan(
+              text: data.branchName,
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+            ),
+            const pw.TextSpan(text: '.'),
+          ],
+        ),
+      ),
+      pw.SizedBox(height: 4),
+      pw.Table(
+        border: pw.TableBorder.all(),
+        columnWidths: {
+          0: const pw.FlexColumnWidth(2), // Nature of Deposit
+          1: const pw.FlexColumnWidth(1.5), // Spec. No.
+          2: const pw.FlexColumnWidth(2), // Addl Details
+        },
+        children: [
+          pw.TableRow(
+            children: [
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(2),
+                child: pw.Text('Nature of Deposit', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 7)),
+              ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(2),
+                child: pw.Text('Account No. ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 7)),
+              ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(2),
+                child: pw.Text('Additional Details, if any', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 7)),
+              ),
+            ],
+          ),
+          pw.TableRow(
+            children: [
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(2),
+                child: pw.Text(data.depositType, style: const pw.TextStyle(fontSize: 7)),
+              ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(2),
+                child: pw.Text(data.nominationAccountNo, style: const pw.TextStyle(fontSize: 7)),
+              ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(2),
+                child: pw.Text('', style: const pw.TextStyle(fontSize: 7)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+// ...
+
 pw.Widget _buildNominationForm(
   FormDataModel data,
   pw.MemoryImage? signature1Image,
-  pw.MemoryImage? signature2Image,
-) {
+  pw.MemoryImage? signature2Image, {
+  pw.MemoryImage? witnessSignature1,
+  pw.MemoryImage? witnessSignature2,
+}) {
   return pw.Container(
-    decoration: pw.BoxDecoration(
-      border: pw.Border(
-        left: const pw.BorderSide(width: 0.5),
-        right: const pw.BorderSide(width: 0.5),
-        bottom: const pw.BorderSide(width: 0.5),
-      ),
-    ),
+    // ... container decoration ...
     child: pw.Column(
       children: [
-        pw.Container(
-          width: double.infinity,
-          padding: const pw.EdgeInsets.symmetric(vertical: 1.5),
-          decoration: const pw.BoxDecoration(
-            border: pw.Border(
-              top: pw.BorderSide(width: 1.5),
-              bottom: pw.BorderSide(width: 0.5),
-            ),
-          ),
-          child: pw.Center(
-            child: pw.Text(
-              'FORM DA-1 (Nomination Form)',
-              style: pw.TextStyle(
-                fontWeight: pw.FontWeight.bold,
-                fontSize: 8.5,
-              ),
-            ),
-          ),
-        ),
+        // ... header ...
         pw.Padding(
           padding: const pw.EdgeInsets.fromLTRB(6, 2, 6, 3),
           child: pw.Column(
@@ -167,6 +218,8 @@ pw.Widget _buildNominationForm(
                 data,
                 signature1Image,
                 signature2Image,
+                witnessSignature1: witnessSignature1,
+                witnessSignature2: witnessSignature2,
               ),
             ],
           ),
@@ -176,113 +229,20 @@ pw.Widget _buildNominationForm(
   );
 }
 
-pw.Widget _buildNominationTopPart(FormDataModel data) {
-  return pw.Column(
-    crossAxisAlignment: pw.CrossAxisAlignment.start,
-    children: [
-      pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(
-            'Details of Nomination:',
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
-          ),
-          pw.Row(
-            children: [
-              pw.Text(
-                'Registration No.',
-                style: const pw.TextStyle(fontSize: 8),
-              ),
-              pw.SizedBox(width: 4),
-              charBoxes(data.nominationRegistrationNo, 10),
-            ],
-          ),
-        ],
-      ),
-      pw.SizedBox(height: 2),
-      pw.Text(
-        'Nomination under section 45ZA of the Banking Regulation Act, 1949 and Rules 1985 in respect of Bank Deposits.',
-        style: const pw.TextStyle(fontSize: 8),
-      ),
-      pw.SizedBox(height: 2),
-      pw.Wrap(
-        crossAxisAlignment: pw.WrapCrossAlignment.end,
-        spacing: 2,
-        runSpacing: 2,
-        children: [
-          pw.RichText(
-            text: pw.TextSpan(
-              style: const pw.TextStyle(
-                fontSize: 8,
-                color: PdfColors.black,
-                height: 1.2,
-              ),
-              children: [
-                const pw.TextSpan(text: 'I/We '),
-                pw.TextSpan(
-                  text: '      ${data.customerFirstName}      ',
-                  style: pw.TextStyle(
-                    fontWeight: pw.FontWeight.bold,
-                    decoration: pw.TextDecoration.underline,
-                  ),
-                ),
-                const pw.TextSpan(
-                  text:
-                      ' nominate the following person to whom in the event of my/minor\'s death the amount of this deposit, particulars of which are given below, may be returned by the Bank of India, ',
-                ),
-              ],
-            ),
-          ),
-          dottedLine(150),
-          pw.Text(
-            ' (name and address of the Branch / Office in which the deposit is held)',
-            style: const pw.TextStyle(fontSize: 7),
-          ),
-        ],
-      ),
-      pw.SizedBox(height: 2),
-      labeledCheckbox(
-        'I/We want the name of the nominee to be printed on the passbook',
-        checked: data.nominationYes, // Using nomination flag as proxy for print consent if specific field missing
-      ),
-      pw.SizedBox(height: 2),
-      pw.Text(
-        'Details of Deposit',
-        style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
-      ),
-      pw.SizedBox(height: 2),
-      pw.Row(
-        crossAxisAlignment: pw.CrossAxisAlignment.end,
-        children: [
-          pw.Text('Type of Deposit:', style: const pw.TextStyle(fontSize: 8)),
-          pw.SizedBox(width: 4),
-          pw.Container(
-            width: 100,
-            decoration: const pw.BoxDecoration(
-              border: pw.Border(bottom: pw.BorderSide(width: 0.5)),
-            ),
-            child: pw.Text(
-              data.depositType,
-              style: const pw.TextStyle(fontSize: 8),
-            ),
-          ),
-          pw.SizedBox(width: 20),
-          pw.Text('Account Number:', style: const pw.TextStyle(fontSize: 8)),
-          pw.SizedBox(width: 4),
-          pw.Expanded(flex: 3, child: charBoxes(data.nominationAccountNo, 15)),
-        ],
-      ),
-    ],
-  );
-}
+// ...
 
 pw.Widget _buildNomineeDetailsPart(
   FormDataModel data,
   pw.MemoryImage? signature1Image,
-  pw.MemoryImage? signature2Image,
-) {
-  pw.Widget witnessBox({String? name, String? address}) {
+  pw.MemoryImage? signature2Image, {
+  pw.MemoryImage? witnessSignature1,
+  pw.MemoryImage? witnessSignature2,
+}) {
+  pw.Widget witnessBox({
+    String? name,
+    String? address,
+    pw.MemoryImage? signature,
+  }) {
     return pw.Container(
       padding: const pw.EdgeInsets.all(2),
       decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
@@ -308,7 +268,14 @@ pw.Widget _buildNomineeDetailsPart(
             children: [
               pw.Text('Signature:', style: const pw.TextStyle(fontSize: 7)),
               pw.SizedBox(width: 4),
-              pw.Expanded(child: dottedLine()),
+              pw.Expanded(
+                child: signature != null
+                    ? pw.Container(
+                        height: 20,
+                        child: pw.Image(signature, fit: pw.BoxFit.contain),
+                      )
+                    : dottedLine(),
+              ),
             ],
           ),
           pw.SizedBox(height: 3),
@@ -317,7 +284,7 @@ pw.Widget _buildNomineeDetailsPart(
               pw.Text('Address:', style: const pw.TextStyle(fontSize: 7)),
               pw.SizedBox(width: 4),
               pw.Expanded(
-                 child: pw.Container(
+                child: pw.Container(
                   decoration: const pw.BoxDecoration(
                     border: pw.Border(bottom: pw.BorderSide(style: pw.BorderStyle.dotted)),
                   ),
@@ -331,155 +298,26 @@ pw.Widget _buildNomineeDetailsPart(
     );
   }
 
-  // Get DOB components for boxes
-  final nomineeDob = data.nomineeDob;
-
   return pw.Column(
-    crossAxisAlignment: pw.CrossAxisAlignment.start,
     children: [
-      pw.Text(
-        'Details of Nominee',
-        style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
-      ),
-      pw.SizedBox(height: 2),
-      pw.Row(
-        children: [
-          pw.Text('Name:', style: const pw.TextStyle(fontSize: 8)),
-          pw.SizedBox(width: 4),
-          pw.Expanded(
-            child: charBoxes(data.nomineeName, 26),
-          ),
-        ],
-      ),
-      pw.SizedBox(height: 2),
-      pw.Row(
-        children: [
-          pw.Text(
-            'Mobile Number of the Nominee',
-            style: const pw.TextStyle(fontSize: 8),
-          ),
-          pw.SizedBox(width: 8),
-          charBoxes(data.nomineeMobile, 10),
-        ],
-      ),
-      pw.SizedBox(height: 2),
-      pw.Row(
-        crossAxisAlignment: pw.CrossAxisAlignment.end,
-        children: [
-          pw.Text(
-            'Relationship with the depositor ',
-            style: const pw.TextStyle(fontSize: 8),
-          ),
-          pw.SizedBox(
-            width: 90,
-            child: pw.Column(
-              children: [
-                pw.Padding(
-                  padding: const pw.EdgeInsets.only(bottom: 1),
-                  child: pw.Text(
-                    data.nomineeRelationship,
-                    style: const pw.TextStyle(fontSize: 8),
-                  ),
-                ),
-                dottedLine(),
-              ],
-            ),
-          ),
-          pw.SizedBox(width: 8),
-          pw.Text('Age', style: const pw.TextStyle(fontSize: 8)),
-          pw.SizedBox(width: 25, child: dottedLine()),
-          pw.Text('Years', style: const pw.TextStyle(fontSize: 8)),
-          pw.SizedBox(width: 8),
-          pw.Text(
-            'Date of Birth of nominee(in case of minor) ',
-            style: const pw.TextStyle(fontSize: 8),
-          ),
-          charBoxes(nomineeDob, 8),
-        ],
-      ),
-      pw.SizedBox(height: 2),
-      pw.Row(
-        crossAxisAlignment: pw.CrossAxisAlignment.end,
-        children: [
-          pw.Text(
-            'As the nominee is a minor on this date, I appoint Shri/Smt/Kum ',
-            style: const pw.TextStyle(fontSize: 8),
-          ),
-          pw.Expanded(
-            child: pw.Container(
-              decoration: const pw.BoxDecoration(
-                 border: pw.Border(bottom: pw.BorderSide(style: pw.BorderStyle.dotted)),
-              ),
-              child: pw.Text(
-                data.nomineeGuardianName,
-                style: const pw.TextStyle(fontSize: 8),
-              ),
-            ),
-          ),
-          pw.SizedBox(width: 20),
-          pw.Text('Age ', style: const pw.TextStyle(fontSize: 8)),
-          dottedLine(30),
-          pw.Text(' Years', style: const pw.TextStyle(fontSize: 8)),
-        ],
-      ),
-      pw.SizedBox(height: 2),
-      pw.Row(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text('Address ', style: const pw.TextStyle(fontSize: 8)),
-          pw.SizedBox(width: 4),
-          pw.Expanded(
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Container(
-                  width: double.infinity,
-                  decoration: const pw.BoxDecoration(
-                    border: pw.Border(bottom: pw.BorderSide(style: pw.BorderStyle.dotted)),
-                  ),
-                  child: pw.Text(data.nomineeAddress, style: const pw.TextStyle(fontSize: 8)),
-                ),
-                pw.Text(
-                  'to receive the amount of deposit on behalf of the nominee in the event of my/minor’s',
-                  style: const pw.TextStyle(fontSize: 8),
-                ),
-                pw.Text(
-                  'death during the minority of the nominee',
-                  style: const pw.TextStyle(fontSize: 8),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
       pw.SizedBox(height: 2),
       pw.Row(
         children: [
           pw.Expanded(
-            child: signatureBox(
-              image: signature1Image,
-              text: data.signature1Text,
-              label:
-                  '(Signature of the Applicants/Thumb impression of the Applicants)',
+            child: witnessBox(
+              name: data.witness1Name,
+              address: data.witness1Address,
+              signature: witnessSignature1,
             ),
           ),
           pw.SizedBox(width: 8),
           pw.Expanded(
-            child: signatureBox(
-              image: signature2Image,
-              text: data.signature2Text,
-              label:
-                  '(Signature of the Applicants/Thumb impression of the Applicants)',
+            child: witnessBox(
+              name: data.witness2Name,
+              address: data.witness2Address,
+              signature: witnessSignature2,
             ),
           ),
-        ],
-      ),
-      pw.SizedBox(height: 2),
-      pw.Row(
-        children: [
-          pw.Expanded(child: witnessBox(name: data.witness1Name, address: data.witness1Address)),
-          pw.SizedBox(width: 8),
-          pw.Expanded(child: witnessBox(name: data.witness2Name, address: data.witness2Address)),
         ],
       ),
       pw.SizedBox(height: 2),

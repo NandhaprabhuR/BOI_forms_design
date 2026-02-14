@@ -3,6 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
 import 'dart:io';
 import '../model/form_data_model.dart';
 import 'form_helper.dart';
@@ -38,12 +39,17 @@ class _Page6FormState extends State<Page6Form> {
   @override
   void initState() {
     super.initState();
-    _nomineeNameController = TextEditingController();
-    _nomineeAgeController = TextEditingController();
+    _nomineeNameController = TextEditingController(text: widget.initialData.nomineeName);
+    _nomineeAgeController = TextEditingController(text: widget.initialData.nomineeAge); 
     _nomineeYearsController = TextEditingController();
-    _accountNumberController = TextEditingController();
-    _registrationNoController = TextEditingController();
-    _acknowledgementDateController = TextEditingController();
+    _accountNumberController = TextEditingController(text: widget.initialData.nominationAccountNo);
+    _registrationNoController = TextEditingController(text: widget.initialData.nominationRegistrationNo);
+    _acknowledgementDateController = TextEditingController(text: widget.initialData.acknowledgementDate);
+
+    // Initialize Signature Paths
+    _bsbdSignaturePath = widget.initialData.bsbdSignature.isNotEmpty ? widget.initialData.bsbdSignature : null;
+    _ackApplicantSignaturePath = widget.initialData.ackApplicantSignature.isNotEmpty ? widget.initialData.ackApplicantSignature : null;
+    _ackBankOfficialSignaturePath = widget.initialData.ackBankOfficialSignature.isNotEmpty ? widget.initialData.ackBankOfficialSignature : null;
 
     FormHelper.addListeners([
       _nomineeNameController,
@@ -56,6 +62,16 @@ class _Page6FormState extends State<Page6Form> {
   }
 
   void _notifyChange() {
+    widget.initialData.nomineeName = _nomineeNameController.text;
+    widget.initialData.nomineeAge = _nomineeAgeController.text; // NEW
+    widget.initialData.nominationRegistrationNo = _registrationNoController.text;
+    // Update other text fields to model if they exist
+    widget.initialData.nominationAccountNo = _accountNumberController.text;
+    widget.initialData.acknowledgementDate = _acknowledgementDateController.text; // NEW
+    
+    widget.initialData.bsbdSignature = _bsbdSignaturePath ?? '';
+    widget.initialData.ackApplicantSignature = _ackApplicantSignaturePath ?? '';
+    widget.initialData.ackBankOfficialSignature = _ackBankOfficialSignaturePath ?? '';
     widget.onDataChanged(widget.initialData);
   }
 
@@ -63,8 +79,10 @@ class _Page6FormState extends State<Page6Form> {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
+      final bytes = await image.readAsBytes();
+      final base64String = 'data:image/png;base64,${base64Encode(bytes)}';
       setState(() {
-        setPath(image.path);
+        setPath(base64String);
         _notifyChange();
       });
     }
@@ -88,6 +106,8 @@ class _Page6FormState extends State<Page6Form> {
     String? imagePath,
     Function(String?) setPath,
   ) {
+    bool isBase64 = imagePath != null && imagePath.startsWith('data:image');
+
     return GestureDetector(
       onTap: () => _pickImage(setPath),
       child: Container(
@@ -102,9 +122,14 @@ class _Page6FormState extends State<Page6Form> {
             ? Stack(
                 children: [
                   Center(
-                    child: kIsWeb
-                        ? Image.network(imagePath, fit: BoxFit.contain)
-                        : Image.file(File(imagePath), fit: BoxFit.contain),
+                    child: isBase64
+                        ? Image.memory(
+                            base64Decode(imagePath.split(',')[1]),
+                            fit: BoxFit.contain,
+                          )
+                        : (kIsWeb
+                            ? Image.network(imagePath, fit: BoxFit.contain)
+                            : Image.file(File(imagePath), fit: BoxFit.contain)),
                   ),
                   Positioned(
                     top: 0,

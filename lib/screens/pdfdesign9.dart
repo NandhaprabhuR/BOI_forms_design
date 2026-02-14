@@ -4,28 +4,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'model/form_data_model.dart' show FormDataModel;
 
-/// Builds the ninth page of the document with a single form border.
-pw.Widget buildNinthPage(FormDataModel data) {
-  return pw.Container(
-    decoration: pw.BoxDecoration(
-      border: pw.Border.all(color: PdfColors.black, width: 1),
-    ),
-    padding: const pw.EdgeInsets.all(10), // Adds some space inside the border
-    child: pw.Column(
-      children: [
-        _buildAnnexure2Form(data),
-        pw.SizedBox(height: 5),
-        _buildProofOfIdentitySection(data),
-        pw.SizedBox(height: 5),
-        _buildFatcaDeclarationForm(data), // Modified to accept data if needed
-        pw.SizedBox(height: 2),
-        _buildTaxResidencySection(),
-        pw.SizedBox(height: 5),
-        _buildForeignTaxAddressSection(data),
-      ],
-    ),
-  );
-}
+
 
 /// Builds the Tax Residency details section. (Unchanged)
 pw.Widget _buildTaxResidencySection() {
@@ -426,8 +405,31 @@ pw.Widget _buildProofOfIdentitySection(FormDataModel data) {
   );
 }
 
+/// Builds the ninth page of the document with a single form border.
+pw.Widget buildNinthPage(FormDataModel data, {pw.MemoryImage? declarantSignature}) {
+  return pw.Container(
+    decoration: pw.BoxDecoration(
+      border: pw.Border.all(color: PdfColors.black, width: 1),
+    ),
+    padding: const pw.EdgeInsets.all(10), // Adds some space inside the border
+    child: pw.Column(
+      children: [
+        _buildAnnexure2Form(data),
+        pw.SizedBox(height: 5),
+        _buildProofOfIdentitySection(data),
+        pw.SizedBox(height: 5),
+        // _buildFatcaDeclarationForm(data), // Modified to accept data if needed
+        // pw.SizedBox(height: 2),
+        // _buildTaxResidencySection(),
+        pw.SizedBox(height: 5),
+        _buildForeignTaxAddressSection(data, declarantSignature: declarantSignature),
+      ],
+    ),
+  );
+}
+
 /// Builds the Foreign Tax Address section, signature, and date.
-pw.Widget _buildForeignTaxAddressSection(FormDataModel data) {
+pw.Widget _buildForeignTaxAddressSection(FormDataModel data, {pw.MemoryImage? declarantSignature}) {
   const double regularFontSize = 9;
   const double smallFontSize = 7;
 
@@ -525,13 +527,15 @@ pw.Widget _buildForeignTaxAddressSection(FormDataModel data) {
             height: 50,
             padding: const pw.EdgeInsets.all(4),
             decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
-            child: pw.Center(
-              child: pw.Text(
-                'Signature/thumb impression of the Applicant/Applicants',
-                textAlign: pw.TextAlign.center,
-                style: pw.TextStyle(fontSize: smallFontSize),
-              ),
-            ),
+            child: declarantSignature != null
+                ? pw.Center(child: pw.Image(declarantSignature, fit: pw.BoxFit.contain))
+                : pw.Center(
+                    child: pw.Text(
+                      'Signature/thumb impression of the Applicant/Applicants',
+                      textAlign: pw.TextAlign.center,
+                      style: pw.TextStyle(fontSize: smallFontSize),
+                    ),
+                  ),
           ),
         ],
       ),

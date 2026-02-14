@@ -5,7 +5,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'model/form_data_model.dart'; // <--- NEW: Import the data model
 
 /// Builds the sixth page using a hybrid two-column and single-column layout.
-pw.Widget buildSixthPage(FormDataModel data) {
+pw.Widget buildSixthPage(FormDataModel data, {pw.MemoryImage? ackBankOfficialSignature}) {
   // <--- MODIFIED
   // NEW: A Container to wrap the entire page content and add a border
   return pw.Container(
@@ -34,7 +34,7 @@ pw.Widget buildSixthPage(FormDataModel data) {
         // PART 2: The final sections in a single, full-width column.
         _buildBsbdFeaturesSection(),
         pw.SizedBox(height: 5),
-        _buildAcknowledgementForm(data), // <--- MODIFIED
+        _buildAcknowledgementForm(data, ackBankOfficialSignature), // <--- MODIFIED
       ],
     ),
   );
@@ -277,7 +277,7 @@ pw.Widget _buildBsbdFeaturesSection() {
 }
 
 /// Builds the final "ACKNOWLEDGEMENT DA-1" form
-pw.Widget _buildAcknowledgementForm(FormDataModel data) {
+pw.Widget _buildAcknowledgementForm(FormDataModel data, pw.MemoryImage? ackBankOfficialSignature) {
   // <--- MODIFIED
   const double regularFontSize = 9.0;
   const double smallFontSize = 8.0;
@@ -295,7 +295,11 @@ pw.Widget _buildAcknowledgementForm(FormDataModel data) {
     );
   }
 
-  pw.Widget registrationBoxes() {
+  pw.Widget registrationBoxes(String text) {
+    // Ensure we have exactly 10 boxes (or more if needed, but usually fixed)
+    // Pad with spaces/empty strings if text is shorter
+    // Truncate if longer?
+    final paddedText = text.padRight(10, ' ').split('');
     return pw.Row(
       children: List.generate(
         10,
@@ -305,6 +309,12 @@ pw.Widget _buildAcknowledgementForm(FormDataModel data) {
           margin: const pw.EdgeInsets.only(right: 1),
           decoration: pw.BoxDecoration(
             border: pw.Border.all(color: borderColor, width: 0.5),
+          ),
+          child: pw.Center(
+            child: pw.Text(
+              index < paddedText.length ? paddedText[index] : '',
+              style: pw.TextStyle(fontSize: smallFontSize),
+            ),
           ),
         ),
       ),
@@ -351,64 +361,81 @@ pw.Widget _buildAcknowledgementForm(FormDataModel data) {
                       ), // <--- FROM MODEL
                       pw.Expanded(child: underline(double.infinity)),
                       pw.SizedBox(width: 4),
-                      pw.Text(
-                        'Age:',
-                        style: pw.TextStyle(fontSize: regularFontSize),
-                      ),
-                      pw.SizedBox(width: 4),
-                      underline(25),
-                      pw.SizedBox(width: 4),
-                      pw.Text(
-                        'Years.',
-                        style: pw.TextStyle(fontSize: regularFontSize),
-                      ),
-                    ],
-                  ),
-                  pw.SizedBox(height: 8),
-                  pw.Row(
-                    children: [
-                      pw.Text(
-                        'With respect to your Account Number',
-                        style: pw.TextStyle(fontSize: regularFontSize),
-                      ),
-                      pw.SizedBox(width: 4),
-                      pw.Expanded(child: underline(double.infinity)),
-                    ],
-                  ),
-                  pw.SizedBox(height: 8),
-                  pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: pw.CrossAxisAlignment.end,
-                    children: [
-                      pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [
-                          pw.Text(
-                            'Registration No.',
-                            style: pw.TextStyle(fontSize: regularFontSize),
-                          ),
-                          pw.SizedBox(height: 2),
-                          registrationBoxes(),
-                        ],
-                      ),
-                      pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.end,
-                        children: [
-                          pw.Row(
-                            children: [
-                              pw.Text(
-                                'Date:',
-                                style: pw.TextStyle(fontSize: regularFontSize),
-                              ),
-                              underline(80),
-                            ],
-                          ),
+                        pw.Text(
+                          'Age:',
+                          style: pw.TextStyle(fontSize: regularFontSize),
+                        ),
+                        pw.SizedBox(width: 4),
+                        pw.Text(
+                           data.nomineeAge.isNotEmpty ? data.nomineeAge : '_____', 
+                           style: pw.TextStyle(fontSize: regularFontSize)
+                        ),
+                        pw.SizedBox(width: 4),
+                        pw.Text(
+                          'Years.',
+                          style: pw.TextStyle(fontSize: regularFontSize),
+                        ),
+                      ],
+                    ),
+                    pw.SizedBox(height: 8),
+                    pw.Row(
+                      children: [
+                        pw.Text(
+                          'With respect to your Account Number',
+                          style: pw.TextStyle(fontSize: regularFontSize),
+                        ),
+                        pw.SizedBox(width: 4),
+                        pw.Text(
+                           data.nominationAccountNo.isNotEmpty ? data.nominationAccountNo : '____________________', 
+                           style: pw.TextStyle(fontSize: regularFontSize)
+                        ),
+                      ],
+                    ),
+                    pw.SizedBox(height: 8),
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: pw.CrossAxisAlignment.end,
+                      children: [
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              'Registration No.',
+                              style: pw.TextStyle(fontSize: regularFontSize),
+                            ),
+                            pw.SizedBox(height: 2),
+                            registrationBoxes(data.nominationRegistrationNo),
+                          ],
+                        ),
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.end,
+                          children: [
+                            pw.Row(
+                              children: [
+                                pw.Text(
+                                  'Date:',
+                                  style: pw.TextStyle(fontSize: regularFontSize),
+                                ),
+                                pw.SizedBox(width: 4),
+                                pw.Text(
+                                   data.acknowledgementDate.isNotEmpty ? data.acknowledgementDate : '__________', 
+                                   style: pw.TextStyle(fontSize: regularFontSize)
+                                ),
+                              ],
+                            ),
                           pw.SizedBox(height: 15),
                           pw.Text(
                             'Yours faithfully',
                             style: pw.TextStyle(fontSize: regularFontSize),
                           ),
-                          pw.SizedBox(height: 15),
+                          pw.SizedBox(height: 5),
+                          if (ackBankOfficialSignature != null)
+                             pw.Container(
+                               height: 40,
+                               width: 100,
+                               child: pw.Image(ackBankOfficialSignature, fit: pw.BoxFit.contain),
+                             ),
+                          pw.SizedBox(height: 5),
                           pw.Text(
                             'Signature of Bank Official with Seal',
                             style: pw.TextStyle(fontSize: smallFontSize),

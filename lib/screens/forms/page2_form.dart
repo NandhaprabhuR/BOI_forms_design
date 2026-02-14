@@ -1,6 +1,7 @@
 // lib/screens/forms/page2_form.dart
 
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -290,181 +291,67 @@ class _Page2FormState extends State<Page2Form> {
   }
 
   void _notifyChange() {
-    widget.onDataChanged(_buildUpdatedData());
-  }
+    // Page 2 fields - Address type
+    widget.initialData.addressTypeResidentialBusiness = _addressTypeResidentialBusiness;
+    widget.initialData.addressTypeResidential = _addressTypeResidential;
+    widget.initialData.addressTypeBusiness = _addressTypeBusiness;
+    widget.initialData.addressTypeRegisteredOffice = _addressTypeRegisteredOffice;
+    widget.initialData.addressTypeUnspecified = _addressTypeUnspecified;
 
-  FormDataModel _buildUpdatedData() {
-    return FormDataModel(
-      // Page 1 fields from initial data
-      branchName: widget.initialData.branchName,
-      branchCode: widget.initialData.branchCode,
-      date: widget.initialData.date,
-      customerId: widget.initialData.customerId,
-      accountNo: widget.initialData.accountNo,
-      ckycNo: widget.initialData.ckycNo,
-      existingCustomerId: widget.initialData.existingCustomerId,
-      customerFirstName: widget.initialData.customerFirstName,
-      customerMiddleName: widget.initialData.customerMiddleName,
-      customerLastName: widget.initialData.customerLastName,
-      customerPrefix: widget.initialData.customerPrefix,
-      maidenName: widget.initialData.maidenName,
-      maidenNamePrefix: widget.initialData.maidenNamePrefix,
-      fatherName: widget.initialData.fatherName,
-      motherName: widget.initialData.motherName,
-      spouseName: widget.initialData.spouseName,
-      mobileNo: widget.initialData.mobileNo,
-      emailId: widget.initialData.emailId,
-      alternateMobileNo: widget.initialData.alternateMobileNo,
-      telOff: widget.initialData.telOff,
-      telRes: widget.initialData.telRes,
-      aadharDocNo: widget.initialData.aadharDocNo,
-      currentAddress: widget.initialData.currentAddress,
-      currentCity: widget.initialData.currentCity,
-      currentDistrict: widget.initialData.currentDistrict,
-      currentState: widget.initialData.currentState,
-      currentPin: widget.initialData.currentPin,
-      dob: widget.initialData.dob,
-      occupationType: widget.initialData.occupationType,
-      monthlyIncome: widget.initialData.monthlyIncome,
-      netWorth: widget.initialData.netWorth,
-      estAnnualTurnover: widget.initialData.estAnnualTurnover,
-      noOfDependents: widget.initialData.noOfDependents,
-      guardianPrefix: widget.initialData.guardianPrefix,
-      guardianName: widget.initialData.guardianName,
-      guardianMiddleName: widget.initialData.guardianMiddleName,
-      guardianSurname: widget.initialData.guardianSurname,
-      relationshipWithGuardian: widget.initialData.relationshipWithGuardian,
-      placeCityOfBirth: widget.initialData.placeCityOfBirth,
-      countryCodeOfBirth: widget.initialData.countryCodeOfBirth,
-      citizenship: widget.initialData.citizenship,
-      panTaxIdNumber: widget.initialData.panTaxIdNumber,
-      alternateCountry: widget.initialData.alternateCountry,
-      stdCode: widget.initialData.stdCode,
-      landlineNo: widget.initialData.landlineNo,
-      alternateStdCode: widget.initialData.alternateStdCode,
-      alternateLandlineNo: widget.initialData.alternateLandlineNo,
-      documentNo: widget.initialData.documentNo,
-      issueDate: widget.initialData.issueDate,
-      expiryDate: widget.initialData.expiryDate,
-      // Page 2 fields - Address type
-      addressTypeResidentialBusiness: _addressTypeResidentialBusiness,
-      addressTypeResidential: _addressTypeResidential,
-      addressTypeBusiness: _addressTypeBusiness,
-      addressTypeRegisteredOffice: _addressTypeRegisteredOffice,
-      addressTypeUnspecified: _addressTypeUnspecified,
-      // Page 2 fields - updated from controllers
-      correspondenceAddress: _correspondenceAddressController.text,
-      correspondenceAddressLine2: _correspondenceAddressLine2Controller.text,
-      correspondenceCity: _correspondenceCityController.text,
-      correspondenceDistrict: _correspondenceDistrictController.text,
-      correspondenceState: _correspondenceStateController.text,
-      correspondencePin: _correspondencePinController.text,
-      localAddress: _localAddressController.text,
-      localAddressLine2: _localAddressLine2Controller.text,
-      localCity: _localCityController.text,
-      localDistrict: _localDistrictController.text,
-      localState: _localStateController.text,
-      localPin: _localPinController.text,
-      sameAsAddress: _sameAsAddressController.text,
-      sameAsAddressLine2: _sameAsAddressLine2Controller.text,
-      sameAsCity: _sameAsCityController.text,
-      sameAsDistrict: _sameAsDistrictController.text,
-      sameAsState: _sameAsStateController.text,
-      sameAsPin: _sameAsPinController.text,
-      selfDeclarationAadhaarMismatch: _selfDeclarationAadhaarMismatch,
-      altProofUtilityBill: _altProofUtilityBill,
-      altProofPPOFPPO: _altProofPPOFPPO,
-      altProofPropertyTaxReceipt: _altProofPropertyTaxReceipt,
-      altProofLetterOfAllotment: _altProofLetterOfAllotment,
-      altProofDocumentNo: _altProofDocumentNoController.text,
-      altProofDate: _altProofDateController.text,
-      declarationTermsAccepted: _declarationTermsAccepted,
-      declarationAadhaarSubmitted: _declarationAadhaarSubmitted,
-      biometricConsentYes: _biometricConsentYes,
-      biometricConsentNo: _biometricConsentNo,
-      applicantPhoto: _applicantPhotoPath ?? '',
-      applicantSignatureImage: _applicantSignaturePath ?? '',
-      declarationPlace: _declarationPlaceController.text,
-      declarationDate: _declarationDateController.text,
-      ovdDocumentNo: _ovdDocumentNoController.text,
-      ovdDocumentDate: _ovdDocumentDateController.text,
-      applicantSignatureName: _applicantSignatureNameController.text,
-      officeVerificationYes: _officeVerificationYes,
-      officeVerificationNo: _officeVerificationNo,
-      depositorIlliterate: _depositorIlliterate,
-      depositorBlind: _depositorBlind,
-      depositorStaff: _depositorStaffController.text,
-      riskCategoryHigh: _riskCategoryHigh,
-      riskCategoryMedium: _riskCategoryMedium,
-      riskCategoryLow: _riskCategoryLow,
-      officeIdentificationMarks: _officeIdentificationMarksController.text,
-      officialName: _officialNameController.text,
-      pfNo: _pfNoController.text,
-      designation: _designationController.text,
-      ssNo: _ssNoController.text,
-      officeUseDate: _officeUseDateController.text,
-      officialSignature: _officialSignaturePath ?? '',
-      // Other pages from initial data
-      firstApplicantCustomerId: widget.initialData.firstApplicantCustomerId,
-      secondApplicantCustomerId: widget.initialData.secondApplicantCustomerId,
-      atmCardName: widget.initialData.atmCardName,
-      fdAmount: widget.initialData.fdAmount,
-      rdInstallment: widget.initialData.rdInstallment,
-      debitAccountNo: widget.initialData.debitAccountNo,
-      modeOfOperationOther: widget.initialData.modeOfOperationOther,
-      nominationRegistrationNo: widget.initialData.nominationRegistrationNo,
-      depositType: widget.initialData.depositType,
-      nominationAccountNo: widget.initialData.nominationAccountNo,
-      nomineeName: widget.initialData.nomineeName,
-      nomineeMobile: widget.initialData.nomineeMobile,
-      nomineeRelationship: widget.initialData.nomineeRelationship,
-      nomineeDob: widget.initialData.nomineeDob,
-      nomineeAddress: widget.initialData.nomineeAddress,
-      nomineeGuardianName: widget.initialData.nomineeGuardianName,
-      witness1Name: widget.initialData.witness1Name,
-      witness1Address: widget.initialData.witness1Address,
-      witness2Name: widget.initialData.witness2Name,
-      witness2Address: widget.initialData.witness2Address,
-      form60FirstName: widget.initialData.form60FirstName,
-      form60MiddleName: widget.initialData.form60MiddleName,
-      form60Surname: widget.initialData.form60Surname,
-      form60DateOfBirth: widget.initialData.form60DateOfBirth,
-      form60FatherName: widget.initialData.form60FatherName,
-      form60FlatNo: widget.initialData.form60FlatNo,
-      form60PremisesName: widget.initialData.form60PremisesName,
-      form60RoadStreet: widget.initialData.form60RoadStreet,
-      form60AreaLocality: widget.initialData.form60AreaLocality,
-      form60TownDistrictState: widget.initialData.form60TownDistrictState,
-      form60PinCode: widget.initialData.form60PinCode,
-      form60TelephoneSTD: widget.initialData.form60TelephoneSTD,
-      form60MobileNumber: widget.initialData.form60MobileNumber,
-      form60TransactionAmount: widget.initialData.form60TransactionAmount,
-      form60TransactionDate: widget.initialData.form60TransactionDate,
-      form60JointPersonsCount: widget.initialData.form60JointPersonsCount,
-      form60ModeCash: widget.initialData.form60ModeCash,
-      form60ModeCheque: widget.initialData.form60ModeCheque,
-      form60ModeCard: widget.initialData.form60ModeCard,
-      form60ModeDraft: widget.initialData.form60ModeDraft,
-      form60ModeOnlineTransfer: widget.initialData.form60ModeOnlineTransfer,
-      form60ModeOther: widget.initialData.form60ModeOther,
-      form60AadhaarNumber: widget.initialData.form60AadhaarNumber,
-      // Row 17-18 fields
-      form60PanApplicationDate: widget.initialData.form60PanApplicationDate,
-      form60PanAckNo: widget.initialData.form60PanAckNo,
-      form60AgriculturalIncome: widget.initialData.form60AgriculturalIncome,
-      form60OtherIncome: widget.initialData.form60OtherIncome,
-      // Verification section fields
-      form60VerifiedDay: widget.initialData.form60VerifiedDay,
-      form60VerifiedMonth: widget.initialData.form60VerifiedMonth,
-      form60VerifiedYear: widget.initialData.form60VerifiedYear,
-      form60VerificationPlace: widget.initialData.form60VerificationPlace,
-      form60DeclarantSignature: widget.initialData.form60DeclarantSignature,
-      relatedPersonFirstName: widget.initialData.relatedPersonFirstName,
-      relatedPersonPrefix: widget.initialData.relatedPersonPrefix,
-      relatedPersonDocNo: widget.initialData.relatedPersonDocNo,
-      signature1Text: widget.initialData.signature1Text,
-      signature2Text: widget.initialData.signature2Text,
-    );
+    // Page 2 fields - updated from controllers
+    widget.initialData.correspondenceAddress = _correspondenceAddressController.text;
+    widget.initialData.correspondenceAddressLine2 = _correspondenceAddressLine2Controller.text;
+    widget.initialData.correspondenceCity = _correspondenceCityController.text;
+    widget.initialData.correspondenceDistrict = _correspondenceDistrictController.text;
+    widget.initialData.correspondenceState = _correspondenceStateController.text;
+    widget.initialData.correspondencePin = _correspondencePinController.text;
+    widget.initialData.localAddress = _localAddressController.text;
+    widget.initialData.localAddressLine2 = _localAddressLine2Controller.text;
+    widget.initialData.localCity = _localCityController.text;
+    widget.initialData.localDistrict = _localDistrictController.text;
+    widget.initialData.localState = _localStateController.text;
+    widget.initialData.localPin = _localPinController.text;
+    widget.initialData.sameAsAddress = _sameAsAddressController.text;
+    widget.initialData.sameAsAddressLine2 = _sameAsAddressLine2Controller.text;
+    widget.initialData.sameAsCity = _sameAsCityController.text;
+    widget.initialData.sameAsDistrict = _sameAsDistrictController.text;
+    widget.initialData.sameAsState = _sameAsStateController.text;
+    widget.initialData.sameAsPin = _sameAsPinController.text;
+    widget.initialData.selfDeclarationAadhaarMismatch = _selfDeclarationAadhaarMismatch;
+    widget.initialData.altProofUtilityBill = _altProofUtilityBill;
+    widget.initialData.altProofPPOFPPO = _altProofPPOFPPO;
+    widget.initialData.altProofPropertyTaxReceipt = _altProofPropertyTaxReceipt;
+    widget.initialData.altProofLetterOfAllotment = _altProofLetterOfAllotment;
+    widget.initialData.altProofDocumentNo = _altProofDocumentNoController.text;
+    widget.initialData.altProofDate = _altProofDateController.text;
+    widget.initialData.declarationTermsAccepted = _declarationTermsAccepted;
+    widget.initialData.declarationAadhaarSubmitted = _declarationAadhaarSubmitted;
+    widget.initialData.biometricConsentYes = _biometricConsentYes;
+    widget.initialData.biometricConsentNo = _biometricConsentNo;
+    widget.initialData.applicantPhoto = _applicantPhotoPath ?? '';
+    widget.initialData.applicantSignatureImage = _applicantSignaturePath ?? '';
+    widget.initialData.declarationPlace = _declarationPlaceController.text;
+    widget.initialData.declarationDate = _declarationDateController.text;
+    widget.initialData.ovdDocumentNo = _ovdDocumentNoController.text;
+    widget.initialData.ovdDocumentDate = _ovdDocumentDateController.text;
+    widget.initialData.applicantSignatureName = _applicantSignatureNameController.text;
+    widget.initialData.officeVerificationYes = _officeVerificationYes;
+    widget.initialData.officeVerificationNo = _officeVerificationNo;
+    widget.initialData.depositorIlliterate = _depositorIlliterate;
+    widget.initialData.depositorBlind = _depositorBlind;
+    widget.initialData.depositorStaff = _depositorStaffController.text;
+    widget.initialData.riskCategoryHigh = _riskCategoryHigh;
+    widget.initialData.riskCategoryMedium = _riskCategoryMedium;
+    widget.initialData.riskCategoryLow = _riskCategoryLow;
+    widget.initialData.officeIdentificationMarks = _officeIdentificationMarksController.text;
+    widget.initialData.officialName = _officialNameController.text;
+    widget.initialData.pfNo = _pfNoController.text;
+    widget.initialData.designation = _designationController.text;
+    widget.initialData.ssNo = _ssNoController.text;
+    widget.initialData.officeUseDate = _officeUseDateController.text;
+    widget.initialData.officialSignature = _officialSignaturePath ?? '';
+
+    widget.onDataChanged(widget.initialData);
   }
 
   @override
@@ -1319,7 +1206,10 @@ class _Page2FormState extends State<Page2Form> {
     if (source != null) {
       final XFile? image = await picker.pickImage(source: source);
       if (image != null) {
-        onImageSelected(image.path);
+        // Convert to Base64
+        final bytes = await image.readAsBytes();
+        final base64String = 'data:image/png;base64,${base64Encode(bytes)}';
+        onImageSelected(base64String);
       }
     }
   }
@@ -1330,6 +1220,8 @@ class _Page2FormState extends State<Page2Form> {
     required String? imagePath,
     required Function(String) onImageSelected,
   }) {
+    bool isBase64 = imagePath != null && imagePath.startsWith('data:image');
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1358,11 +1250,15 @@ class _Page2FormState extends State<Page2Form> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: kIsWeb
-                    ? Image.network(imagePath, fit: BoxFit.contain)
-                    : Image.file(File(imagePath), fit: BoxFit.contain),
-              ),
+                  borderRadius: BorderRadius.circular(8),
+                  child: isBase64
+                      ? Image.memory(
+                          base64Decode(imagePath.split(',')[1]),
+                          fit: BoxFit.contain,
+                        )
+                      : (kIsWeb
+                          ? Image.network(imagePath, fit: BoxFit.contain)
+                          : Image.file(File(imagePath), fit: BoxFit.contain))),
             ),
           const SizedBox(height: 12),
           Row(

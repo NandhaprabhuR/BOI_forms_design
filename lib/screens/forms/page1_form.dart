@@ -632,205 +632,181 @@ class _Page1FormState extends State<Page1Form> {
   }
 
   void _notifyChange() {
-    widget.onDataChanged(
-      FormDataModel(
-        branchName: _branchNameController.text,
-        branchCode: _branchCodeController.text,
-        date: _dateController.text,
-        customerId: _customerIdController.text,
-        accountNo: _accountNoController.text,
-        ckycNo: _ckycNoController.text,
-        existingCustomerId: _existingCustomerIdController.text,
-        applicationTypeNew: _applicationTypeNew,
-        applicationTypeUpdate: _applicationTypeUpdate,
-        accountTypeNormal: _accountTypeNormal,
-        accountTypeSmallRisk: _accountTypeSmallRisk,
-        customerFirstName: _customerFirstNameController.text,
-        customerMiddleName: _customerMiddleNameController.text,
-        customerLastName: _customerLastNameController.text,
-        customerPrefix: _customerPrefixController.text,
-        maidenName: _maidenNameController.text,
-        maidenNamePrefix: _maidenNamePrefixController.text,
-        fatherName: _fatherNameController.text,
-        fatherPrefix: _fatherPrefixController.text,
-        motherName: _motherNameController.text,
-        motherPrefix: _motherPrefixController.text,
-        spouseName: _spouseNameController.text,
-        spousePrefix: _spousePrefixController.text,
-        genderMale: _genderMale,
-        genderFemale: _genderFemale,
-        genderTransgender: _genderTransgender,
-        maritalStatusMarried: _maritalStatusMarried,
-        maritalStatusUnmarried: _maritalStatusUnmarried,
-        maritalStatusOthers: _maritalStatusOthers,
-        illiterateYes: _illiterateYes,
-        illiterateNo: _illiterateNo,
-        identificationMarks: _identificationMarksController.text,
-        nationalityInIndian: _nationalityInIndian,
-        nationalityOthers: _nationalityOthers,
-        countryName: _countryNameController.text,
-        residentIndividual: _residentIndividual,
-        nonResidentIndian: _nonResidentIndian,
-        foreignNational: _foreignNational,
-        pio: _pio,
-        occupationSService: _occupationSService,
-        occupationPrivateSector: _occupationPrivateSector,
-        occupationPublicSector: _occupationPublicSector,
-        occupationGovernmentSector: _occupationGovernmentSector,
-        occupationOOthers: _occupationOOthers,
-        occupationProfessional: _occupationProfessional,
-        occupationSelfEmployed: _occupationSelfEmployed,
-        occupationRetired: _occupationRetired,
-        occupationHouseWife: _occupationHouseWife,
-        occupationStudent: _occupationStudent,
-        occupationBBusiness: _occupationBBusiness,
-        occupationAgriculture: _occupationAgriculture,
-        occupationXNotCategorised: _occupationXNotCategorised,
-        religionHindu: _religionHindu,
-        religionMuslim: _religionMuslim,
-        religionChristian: _religionChristian,
-        religionSikh: _religionSikh,
-        religionOthers: _religionOthers,
-        categoryGeneral: _categoryGeneral,
-        categoryOBC: _categoryOBC,
-        categorySC: _categorySC,
-        categoryST: _categoryST,
-        categoryMinority: _categoryMinority,
-        customerTypeGeneral: _customerTypeGeneral,
-        customerTypeSrCitizen: _customerTypeSrCitizen,
-        customerTypePensioner: _customerTypePensioner,
-        customerTypeMinor: _customerTypeMinor,
-        customerTypeStaffExStaff: _customerTypeStaffExStaff,
-        customerTypePfNo: _customerTypePfNoController.text,
-        customerTypeOthers: _customerTypeOthers,
-        customerTypeOthersSpecify: _customerTypeOthersSpecifyController.text,
-        disabilityYes: _disabilityYes,
-        disabilityNo: _disabilityNo,
-        disabilityVisuallyImpaired: _disabilityVisuallyImpaired,
-        disabilityDifferentlyAbled: _disabilityDifferentlyAbled,
-        educationBelowSSC: _educationBelowSSC,
-        educationSSC: _educationSSC,
-        educationHSC: _educationHSC,
-        educationGraduate: _educationGraduate,
-        educationPostGraduate: _educationPostGraduate,
-        educationProfessional: _educationProfessional,
-        educationOthers: _educationOthers,
-        organizationName: _organizationNameController.text,
-        designationProfession: _designationProfessionController.text,
-        natureOfBusiness: _natureOfBusinessController.text,
-        politicallyExposedPerson: _politicallyExposedPerson,
-        relatedToPoliticallyExposedPerson: _relatedToPoliticallyExposedPerson,
-        politicallyExposedNone: _politicallyExposedNone,
-        isoCountryCodeJurisdiction: _isoCountryCodeJurisdictionController.text,
-        isoCountryCodeOfBirth: _isoCountryCodeOfBirthController.text,
-        taxResidenceIndiaYes: _taxResidenceIndiaYes,
-        taxResidenceIndiaNo: _taxResidenceIndiaNo,
-        mobileNo: _mobileNoController.text,
-        emailId: _emailIdController.text,
-        alternateMobileNo: _alternateMobileNoController.text,
-        telOff: _telOffController.text,
-        telRes: _telResController.text,
-        aadharDocNo: _aadharDocNoController.text,
-        currentAddress: _currentAddressController.text,
-        currentCity: _currentCityController.text,
-        currentDistrict: _currentDistrictController.text,
-        currentState: _currentStateController.text,
-        currentPin: _currentPinController.text,
-        dob: _dobController.text,
-        occupationType: _occupationTypeController.text,
-        monthlyIncome: _monthlyIncomeController.text,
-        netWorth: _netWorthController.text,
-        estAnnualTurnover: _estAnnualTurnoverController.text,
-        noOfDependents: _noOfDependentsController.text,
-        guardianPrefix: _guardianPrefixController.text,
-        guardianName: _guardianNameController.text,
-        guardianMiddleName: _guardianMiddleNameController.text,
-        guardianSurname: _guardianSurnameController.text,
-        relationshipWithGuardian: _relationshipWithGuardianController.text,
-        placeCityOfBirth: _placeCityOfBirthController.text,
-        countryCodeOfBirth: _countryCodeOfBirthController.text,
-        citizenship: _citizenshipController.text,
-        panTaxIdNumber: _panTaxIdNumberController.text,
-        alternateCountry: _alternateCountryController.text,
-        stdCode: _stdCodeController.text,
-        landlineNo: _landlineNoController.text,
-        alternateStdCode: _alternateStdCodeController.text,
-        alternateLandlineNo: _alternateLandlineNoController.text,
-        // Document Type checkboxes
-        docTypePassport: _docTypePassport,
-        docTypeVoterIdCard: _docTypeVoterIdCard,
-        docTypeDrivingLicence: _docTypeDrivingLicence,
-        docTypeAadhaar: _docTypeAadhaar,
-        docTypeNregaJobCard: _docTypeNregaJobCard,
-        docTypePopulationRegisterLetter: _docTypePopulationRegisterLetter,
-        documentNo: _documentNoController.text,
-        issueDate: _issueDateController.text,
-        expiryDate: _expiryDateController.text,
-        // Address Type checkboxes
-        addressTypeResidentialBusiness: _addressTypeResidentialBusiness,
-        addressTypeResidential: _addressTypeResidential,
-        addressTypeBusiness: _addressTypeBusiness,
-        addressTypeRegisteredOffice: _addressTypeRegisteredOffice,
-        addressTypeUnspecified: _addressTypeUnspecified,
-        // Current Address
-        currentAddressLine2: _currentAddressLine2Controller.text,
-        // Permanent Address
-        permanentAddress: _permanentAddressController.text,
-        permanentAddressLine2: _permanentAddressLine2Controller.text,
-        permanentCity: _permanentCityController.text,
-        permanentDistrict: _permanentDistrictController.text,
-        permanentState: _permanentStateController.text,
-        permanentPin: _permanentPinController.text,
-        // Overseas Address
-        overseasAddress: _overseasAddressController.text,
-        overseasAddressLine2: _overseasAddressLine2Controller.text,
-        overseasCity: _overseasCityController.text,
-        overseasDistrict: _overseasDistrictController.text,
-        overseasState: _overseasStateController.text,
-        overseasPin: _overseasPinController.text,
-        // Keep other fields from initial data
-        correspondenceAddress: widget.initialData.correspondenceAddress,
-        correspondenceCity: widget.initialData.correspondenceCity,
-        correspondenceDistrict: widget.initialData.correspondenceDistrict,
-        correspondenceState: widget.initialData.correspondenceState,
-        correspondencePin: widget.initialData.correspondencePin,
-        ovdDocumentNo: widget.initialData.ovdDocumentNo,
-        ovdDocumentDate: widget.initialData.ovdDocumentDate,
-        applicantSignatureName: widget.initialData.applicantSignatureName,
-        declarationPlace: widget.initialData.declarationPlace,
-        declarationDate: widget.initialData.declarationDate,
-        officialName: widget.initialData.officialName,
-        pfNo: widget.initialData.pfNo,
-        designation: widget.initialData.designation,
-        ssNo: widget.initialData.ssNo,
-        officeUseDate: widget.initialData.officeUseDate,
-        firstApplicantCustomerId: widget.initialData.firstApplicantCustomerId,
-        secondApplicantCustomerId: widget.initialData.secondApplicantCustomerId,
-        atmCardName: widget.initialData.atmCardName,
-        fdAmount: widget.initialData.fdAmount,
-        rdInstallment: widget.initialData.rdInstallment,
-        debitAccountNo: widget.initialData.debitAccountNo,
-        modeOfOperationOther: widget.initialData.modeOfOperationOther,
-        nominationRegistrationNo: widget.initialData.nominationRegistrationNo,
-        depositType: widget.initialData.depositType,
-        nominationAccountNo: widget.initialData.nominationAccountNo,
-        nomineeName: widget.initialData.nomineeName,
-        nomineeMobile: widget.initialData.nomineeMobile,
-        nomineeRelationship: widget.initialData.nomineeRelationship,
-        nomineeDob: widget.initialData.nomineeDob,
-        nomineeAddress: widget.initialData.nomineeAddress,
-        nomineeGuardianName: widget.initialData.nomineeGuardianName,
-        witness1Name: widget.initialData.witness1Name,
-        witness1Address: widget.initialData.witness1Address,
-        witness2Name: widget.initialData.witness2Name,
-        witness2Address: widget.initialData.witness2Address,
-        relatedPersonFirstName: widget.initialData.relatedPersonFirstName,
-        relatedPersonPrefix: widget.initialData.relatedPersonPrefix,
-        relatedPersonDocNo: widget.initialData.relatedPersonDocNo,
-        signature1Text: widget.initialData.signature1Text,
-        signature2Text: widget.initialData.signature2Text,
-      ),
-    );
+    // Update model directly to preserve other fields (like signatures from Page 6)
+    widget.initialData.branchName = _branchNameController.text;
+    widget.initialData.branchCode = _branchCodeController.text;
+    widget.initialData.date = _dateController.text;
+    widget.initialData.customerId = _customerIdController.text;
+    widget.initialData.accountNo = _accountNoController.text;
+    widget.initialData.ckycNo = _ckycNoController.text;
+    widget.initialData.existingCustomerId = _existingCustomerIdController.text;
+    
+    widget.initialData.applicationTypeNew = _applicationTypeNew;
+    widget.initialData.applicationTypeUpdate = _applicationTypeUpdate;
+    widget.initialData.accountTypeNormal = _accountTypeNormal;
+    widget.initialData.accountTypeSmallRisk = _accountTypeSmallRisk;
+    
+    widget.initialData.customerFirstName = _customerFirstNameController.text;
+    widget.initialData.customerMiddleName = _customerMiddleNameController.text;
+    widget.initialData.customerLastName = _customerLastNameController.text;
+    widget.initialData.customerPrefix = _customerPrefixController.text;
+    widget.initialData.maidenName = _maidenNameController.text;
+    widget.initialData.maidenNamePrefix = _maidenNamePrefixController.text;
+    widget.initialData.fatherName = _fatherNameController.text;
+    widget.initialData.fatherPrefix = _fatherPrefixController.text;
+    widget.initialData.motherName = _motherNameController.text;
+    widget.initialData.motherPrefix = _motherPrefixController.text;
+    widget.initialData.spouseName = _spouseNameController.text;
+    widget.initialData.spousePrefix = _spousePrefixController.text;
+    
+    widget.initialData.genderMale = _genderMale;
+    widget.initialData.genderFemale = _genderFemale;
+    widget.initialData.genderTransgender = _genderTransgender;
+    widget.initialData.maritalStatusMarried = _maritalStatusMarried;
+    widget.initialData.maritalStatusUnmarried = _maritalStatusUnmarried;
+    widget.initialData.maritalStatusOthers = _maritalStatusOthers;
+    
+    widget.initialData.illiterateYes = _illiterateYes;
+    widget.initialData.illiterateNo = _illiterateNo;
+    widget.initialData.identificationMarks = _identificationMarksController.text;
+    
+    widget.initialData.nationalityInIndian = _nationalityInIndian;
+    widget.initialData.nationalityOthers = _nationalityOthers;
+    widget.initialData.countryName = _countryNameController.text; // Fixed: was using text directly
+    widget.initialData.residentIndividual = _residentIndividual;
+    widget.initialData.nonResidentIndian = _nonResidentIndian;
+    widget.initialData.foreignNational = _foreignNational;
+    widget.initialData.pio = _pio;
+    
+    widget.initialData.occupationSService = _occupationSService;
+    widget.initialData.occupationPrivateSector = _occupationPrivateSector;
+    widget.initialData.occupationPublicSector = _occupationPublicSector;
+    widget.initialData.occupationGovernmentSector = _occupationGovernmentSector;
+    widget.initialData.occupationOOthers = _occupationOOthers;
+    widget.initialData.occupationProfessional = _occupationProfessional;
+    widget.initialData.occupationSelfEmployed = _occupationSelfEmployed;
+    widget.initialData.occupationRetired = _occupationRetired;
+    widget.initialData.occupationHouseWife = _occupationHouseWife;
+    widget.initialData.occupationStudent = _occupationStudent;
+    widget.initialData.occupationBBusiness = _occupationBBusiness;
+    widget.initialData.occupationAgriculture = _occupationAgriculture;
+    widget.initialData.occupationXNotCategorised = _occupationXNotCategorised;
+    
+    widget.initialData.religionHindu = _religionHindu;
+    widget.initialData.religionMuslim = _religionMuslim;
+    widget.initialData.religionChristian = _religionChristian;
+    widget.initialData.religionSikh = _religionSikh;
+    widget.initialData.religionOthers = _religionOthers;
+    
+    widget.initialData.categoryGeneral = _categoryGeneral;
+    widget.initialData.categoryOBC = _categoryOBC;
+    widget.initialData.categorySC = _categorySC;
+    widget.initialData.categoryST = _categoryST;
+    widget.initialData.categoryMinority = _categoryMinority;
+    
+    widget.initialData.customerTypeGeneral = _customerTypeGeneral;
+    widget.initialData.customerTypeSrCitizen = _customerTypeSrCitizen;
+    widget.initialData.customerTypePensioner = _customerTypePensioner;
+    widget.initialData.customerTypeMinor = _customerTypeMinor;
+    widget.initialData.customerTypeStaffExStaff = _customerTypeStaffExStaff;
+    widget.initialData.customerTypePfNo = _customerTypePfNoController.text;
+    widget.initialData.customerTypeOthers = _customerTypeOthers;
+    widget.initialData.customerTypeOthersSpecify = _customerTypeOthersSpecifyController.text;
+    
+    widget.initialData.disabilityYes = _disabilityYes;
+    widget.initialData.disabilityNo = _disabilityNo;
+    widget.initialData.disabilityVisuallyImpaired = _disabilityVisuallyImpaired;
+    widget.initialData.disabilityDifferentlyAbled = _disabilityDifferentlyAbled;
+    
+    widget.initialData.educationBelowSSC = _educationBelowSSC;
+    widget.initialData.educationSSC = _educationSSC;
+    widget.initialData.educationHSC = _educationHSC;
+    widget.initialData.educationGraduate = _educationGraduate;
+    widget.initialData.educationPostGraduate = _educationPostGraduate;
+    widget.initialData.educationProfessional = _educationProfessional;
+    widget.initialData.educationOthers = _educationOthers;
+    
+    widget.initialData.organizationName = _organizationNameController.text;
+    widget.initialData.designationProfession = _designationProfessionController.text;
+    widget.initialData.natureOfBusiness = _natureOfBusinessController.text;
+    
+    widget.initialData.politicallyExposedPerson = _politicallyExposedPerson;
+    widget.initialData.relatedToPoliticallyExposedPerson = _relatedToPoliticallyExposedPerson;
+    widget.initialData.politicallyExposedNone = _politicallyExposedNone;
+    
+    widget.initialData.isoCountryCodeJurisdiction = _isoCountryCodeJurisdictionController.text;
+    widget.initialData.isoCountryCodeOfBirth = _isoCountryCodeOfBirthController.text;
+    widget.initialData.taxResidenceIndiaYes = _taxResidenceIndiaYes;
+    widget.initialData.taxResidenceIndiaNo = _taxResidenceIndiaNo;
+    
+    widget.initialData.mobileNo = _mobileNoController.text;
+    widget.initialData.emailId = _emailIdController.text;
+    widget.initialData.alternateMobileNo = _alternateMobileNoController.text;
+    widget.initialData.telOff = _telOffController.text;
+    widget.initialData.telRes = _telResController.text;
+    widget.initialData.aadharDocNo = _aadharDocNoController.text;
+    widget.initialData.currentAddress = _currentAddressController.text;
+    widget.initialData.currentCity = _currentCityController.text;
+    widget.initialData.currentDistrict = _currentDistrictController.text;
+    widget.initialData.currentState = _currentStateController.text;
+    widget.initialData.currentPin = _currentPinController.text;
+    widget.initialData.dob = _dobController.text;
+    widget.initialData.occupationType = _occupationTypeController.text;
+    widget.initialData.monthlyIncome = _monthlyIncomeController.text;
+    widget.initialData.netWorth = _netWorthController.text;
+    widget.initialData.estAnnualTurnover = _estAnnualTurnoverController.text;
+    widget.initialData.noOfDependents = _noOfDependentsController.text;
+    widget.initialData.guardianPrefix = _guardianPrefixController.text;
+    widget.initialData.guardianName = _guardianNameController.text;
+    widget.initialData.guardianMiddleName = _guardianMiddleNameController.text;
+    widget.initialData.guardianSurname = _guardianSurnameController.text;
+    widget.initialData.relationshipWithGuardian = _relationshipWithGuardianController.text;
+    widget.initialData.placeCityOfBirth = _placeCityOfBirthController.text;
+    widget.initialData.countryCodeOfBirth = _countryCodeOfBirthController.text;
+    widget.initialData.citizenship = _citizenshipController.text;
+    widget.initialData.panTaxIdNumber = _panTaxIdNumberController.text;
+    widget.initialData.alternateCountry = _alternateCountryController.text;
+    widget.initialData.stdCode = _stdCodeController.text;
+    widget.initialData.landlineNo = _landlineNoController.text;
+    widget.initialData.alternateStdCode = _alternateStdCodeController.text;
+    widget.initialData.alternateLandlineNo = _alternateLandlineNoController.text;
+    
+    // Document Type checkboxes
+    widget.initialData.docTypePassport = _docTypePassport;
+    widget.initialData.docTypeVoterIdCard = _docTypeVoterIdCard;
+    widget.initialData.docTypeDrivingLicence = _docTypeDrivingLicence;
+    widget.initialData.docTypeAadhaar = _docTypeAadhaar;
+    widget.initialData.docTypeNregaJobCard = _docTypeNregaJobCard;
+    widget.initialData.docTypePopulationRegisterLetter = _docTypePopulationRegisterLetter;
+    
+    widget.initialData.documentNo = _documentNoController.text;
+    widget.initialData.issueDate = _issueDateController.text;
+    widget.initialData.expiryDate = _expiryDateController.text;
+    
+    // Address Type checkboxes
+    widget.initialData.addressTypeResidentialBusiness = _addressTypeResidentialBusiness;
+    widget.initialData.addressTypeResidential = _addressTypeResidential;
+    widget.initialData.addressTypeBusiness = _addressTypeBusiness;
+    widget.initialData.addressTypeRegisteredOffice = _addressTypeRegisteredOffice;
+    widget.initialData.addressTypeUnspecified = _addressTypeUnspecified;
+    
+    // Addresses
+    widget.initialData.currentAddressLine2 = _currentAddressLine2Controller.text;
+    widget.initialData.permanentAddress = _permanentAddressController.text;
+    widget.initialData.permanentAddressLine2 = _permanentAddressLine2Controller.text;
+    widget.initialData.permanentCity = _permanentCityController.text;
+    widget.initialData.permanentDistrict = _permanentDistrictController.text;
+    widget.initialData.permanentState = _permanentStateController.text;
+    widget.initialData.permanentPin = _permanentPinController.text;
+    
+    widget.initialData.overseasAddress = _overseasAddressController.text;
+    widget.initialData.overseasAddressLine2 = _overseasAddressLine2Controller.text;
+    widget.initialData.overseasCity = _overseasCityController.text;
+    widget.initialData.overseasDistrict = _overseasDistrictController.text;
+    widget.initialData.overseasState = _overseasStateController.text;
+    widget.initialData.overseasPin = _overseasPinController.text;
+
+    widget.onDataChanged(widget.initialData);
   }
 
   @override

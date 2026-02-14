@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'dart:convert';
 import '../model/form_data_model.dart';
 import 'form_helper.dart';
 
@@ -104,9 +105,9 @@ class _Page4FormState extends State<Page4Form> {
   @override
   void initState() {
     super.initState();
-    _registrationNoController = TextEditingController();
-    _depositTypeController = TextEditingController();
-    _accountNumberController = TextEditingController();
+    _registrationNoController = TextEditingController(); // Not in model?
+    _depositTypeController = TextEditingController(text: widget.initialData.depositType);
+    _accountNumberController = TextEditingController(text: widget.initialData.accountNo); // Sync with model
     _nomineeNameController = TextEditingController(
       text: widget.initialData.nomineeName,
     );
@@ -172,6 +173,21 @@ class _Page4FormState extends State<Page4Form> {
     _officeKycAccountOpenedByController = TextEditingController();
     _officeAccountApprovedByController = TextEditingController();
 
+    // Checkboxes
+    _printNomineeOnPassbook = false; // Logic not in model?
+    _doNotWantToNominate = widget.initialData.nominationNo;
+    // ... other checkboxes not clearly in model
+
+    // Initialize signatures from model
+    _applicantSignature1Path = widget.initialData.signature1Text.isNotEmpty ? widget.initialData.signature1Text : null;
+    _applicantSignature2Path = widget.initialData.signature2Text.isNotEmpty ? widget.initialData.signature2Text : null;
+    _witness1SignaturePath = widget.initialData.witnessSignature1.isNotEmpty ? widget.initialData.witnessSignature1 : null;
+    _witness2SignaturePath = widget.initialData.witnessSignature2.isNotEmpty ? widget.initialData.witnessSignature2 : null;
+    
+    // Check if "No Nomination" was selected and if we have signatures there?
+    // Data model doesn't seem to separate "No Nomination" signatures from "Nomination" signatures clearly.
+    // For now, we only map the main Nomination-related ones to the model fields.
+
     FormHelper.addListeners([
       _registrationNoController,
       _depositTypeController,
@@ -224,201 +240,48 @@ class _Page4FormState extends State<Page4Form> {
   }
 
   void _notifyChange() {
-    widget.onDataChanged(_buildUpdatedData());
+    // Update model directly
+    widget.initialData.depositType = _depositTypeController.text;
+    widget.initialData.accountNo = _accountNumberController.text;
+    widget.initialData.nomineeName = _nomineeNameController.text;
+    widget.initialData.nomineeMobile = _nomineeMobileController.text;
+    widget.initialData.nomineeRelationship = _nomineeRelationshipController.text;
+    widget.initialData.nomineeDob = _nomineeDobController.text;
+    widget.initialData.nomineeGuardianName = _guardianNameController.text;
+    widget.initialData.nomineeAddress = _nomineeAddressController.text;
+    widget.initialData.witness1Name = _witness1NameController.text;
+    widget.initialData.witness1Address = _witness1AddressController.text;
+    widget.initialData.witness2Name = _witness2NameController.text;
+    widget.initialData.witness2Address = _witness2AddressController.text;
+
+    // Signatures
+    if (_applicantSignature1Path != null) widget.initialData.signature1Text = _applicantSignature1Path!;
+    if (_applicantSignature2Path != null) widget.initialData.signature2Text = _applicantSignature2Path!;
+    if (_witness1SignaturePath != null) widget.initialData.witnessSignature1 = _witness1SignaturePath!;
+    if (_witness2SignaturePath != null) widget.initialData.witnessSignature2 = _witness2SignaturePath!;
+
+    widget.initialData.nominationNo = _doNotWantToNominate;
+
+    widget.onDataChanged(widget.initialData);
   }
 
   Future<void> _pickImage(Function(String?) setPath) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
+      final bytes = await image.readAsBytes();
+      // Store as Base64 string
+      final base64String = 'data:image/png;base64,${base64Encode(bytes)}';
       setState(() {
-        setPath(image.path);
+        setPath(base64String);
         _notifyChange();
       });
     }
   }
 
-  FormDataModel _buildUpdatedData() {
-    return FormDataModel(
-      branchName: widget.initialData.branchName,
-      branchCode: widget.initialData.branchCode,
-      date: widget.initialData.date,
-      customerId: widget.initialData.customerId,
-      accountNo: widget.initialData.accountNo,
-      ckycNo: widget.initialData.ckycNo,
-      existingCustomerId: widget.initialData.existingCustomerId,
-      customerFirstName: widget.initialData.customerFirstName,
-      customerMiddleName: widget.initialData.customerMiddleName,
-      customerLastName: widget.initialData.customerLastName,
-      customerPrefix: widget.initialData.customerPrefix,
-      maidenName: widget.initialData.maidenName,
-      maidenNamePrefix: widget.initialData.maidenNamePrefix,
-      fatherName: widget.initialData.fatherName,
-      motherName: widget.initialData.motherName,
-      spouseName: widget.initialData.spouseName,
-      mobileNo: widget.initialData.mobileNo,
-      emailId: widget.initialData.emailId,
-      alternateMobileNo: widget.initialData.alternateMobileNo,
-      telOff: widget.initialData.telOff,
-      telRes: widget.initialData.telRes,
-      aadharDocNo: widget.initialData.aadharDocNo,
-      currentAddress: widget.initialData.currentAddress,
-      currentCity: widget.initialData.currentCity,
-      currentDistrict: widget.initialData.currentDistrict,
-      currentState: widget.initialData.currentState,
-      currentPin: widget.initialData.currentPin,
-      dob: widget.initialData.dob,
-      occupationType: widget.initialData.occupationType,
-      monthlyIncome: widget.initialData.monthlyIncome,
-      netWorth: widget.initialData.netWorth,
-      estAnnualTurnover: widget.initialData.estAnnualTurnover,
-      noOfDependents: widget.initialData.noOfDependents,
-      guardianPrefix: widget.initialData.guardianPrefix,
-      guardianName: widget.initialData.guardianName,
-      guardianMiddleName: widget.initialData.guardianMiddleName,
-      guardianSurname: widget.initialData.guardianSurname,
-      relationshipWithGuardian: widget.initialData.relationshipWithGuardian,
-      placeCityOfBirth: widget.initialData.placeCityOfBirth,
-      countryCodeOfBirth: widget.initialData.countryCodeOfBirth,
-      citizenship: widget.initialData.citizenship,
-      panTaxIdNumber: widget.initialData.panTaxIdNumber,
-      alternateCountry: widget.initialData.alternateCountry,
-      stdCode: widget.initialData.stdCode,
-      landlineNo: widget.initialData.landlineNo,
-      alternateStdCode: widget.initialData.alternateStdCode,
-      alternateLandlineNo: widget.initialData.alternateLandlineNo,
-      documentNo: widget.initialData.documentNo,
-      issueDate: widget.initialData.issueDate,
-      expiryDate: widget.initialData.expiryDate,
-      correspondenceAddress: widget.initialData.correspondenceAddress,
-      correspondenceCity: widget.initialData.correspondenceCity,
-      correspondenceDistrict: widget.initialData.correspondenceDistrict,
-      correspondenceState: widget.initialData.correspondenceState,
-      correspondencePin: widget.initialData.correspondencePin,
-      ovdDocumentNo: widget.initialData.ovdDocumentNo,
-      ovdDocumentDate: widget.initialData.ovdDocumentDate,
-      applicantSignatureName: widget.initialData.applicantSignatureName,
-      declarationPlace: widget.initialData.declarationPlace,
-      declarationDate: widget.initialData.declarationDate,
-      officialName: widget.initialData.officialName,
-      pfNo: widget.initialData.pfNo,
-      designation: widget.initialData.designation,
-      ssNo: widget.initialData.ssNo,
-      officeUseDate: widget.initialData.officeUseDate,
-      firstApplicantCustomerId: widget.initialData.firstApplicantCustomerId,
-      secondApplicantCustomerId: widget.initialData.secondApplicantCustomerId,
-      atmCardName: widget.initialData.atmCardName,
-      fdAmount: widget.initialData.fdAmount,
-      rdInstallment: widget.initialData.rdInstallment,
-      debitAccountNo: widget.initialData.debitAccountNo,
-      modeOfOperationOther: widget.initialData.modeOfOperationOther,
-      nominationRegistrationNo: widget.initialData.nominationRegistrationNo,
-      depositType: widget.initialData.depositType,
-      nominationAccountNo: widget.initialData.nominationAccountNo,
-      nomineeName: _nomineeNameController.text,
-      nomineeMobile: _nomineeMobileController.text,
-      nomineeRelationship: _nomineeRelationshipController.text,
-      nomineeDob: _nomineeDobController.text,
-      nomineeAddress: _nomineeAddressController.text,
-      nomineeGuardianName: _guardianNameController.text,
-      witness1Name: _witness1NameController.text,
-      witness1Address: _witness1AddressController.text,
-      witness2Name: _witness2NameController.text,
-      witness2Address: _witness2AddressController.text,
-      form60FirstName: widget.initialData.form60FirstName,
-      form60MiddleName: widget.initialData.form60MiddleName,
-      form60Surname: widget.initialData.form60Surname,
-      form60DateOfBirth: widget.initialData.form60DateOfBirth,
-      form60FatherName: widget.initialData.form60FatherName,
-      form60FlatNo: widget.initialData.form60FlatNo,
-      form60PremisesName: widget.initialData.form60PremisesName,
-      form60RoadStreet: widget.initialData.form60RoadStreet,
-      form60AreaLocality: widget.initialData.form60AreaLocality,
-      form60TownDistrictState: widget.initialData.form60TownDistrictState,
-      form60PinCode: widget.initialData.form60PinCode,
-      form60TelephoneSTD: widget.initialData.form60TelephoneSTD,
-      form60MobileNumber: widget.initialData.form60MobileNumber,
-      form60TransactionAmount: widget.initialData.form60TransactionAmount,
-      form60TransactionDate: widget.initialData.form60TransactionDate,
-      form60JointPersonsCount: widget.initialData.form60JointPersonsCount,
-      form60ModeCash: widget.initialData.form60ModeCash,
-      form60ModeCheque: widget.initialData.form60ModeCheque,
-      form60ModeCard: widget.initialData.form60ModeCard,
-      form60ModeDraft: widget.initialData.form60ModeDraft,
-      form60ModeOnlineTransfer: widget.initialData.form60ModeOnlineTransfer,
-      form60ModeOther: widget.initialData.form60ModeOther,
-      form60AadhaarNumber: widget.initialData.form60AadhaarNumber,
-      // Row 17-18 fields
-      form60PanApplicationDate: widget.initialData.form60PanApplicationDate,
-      form60PanAckNo: widget.initialData.form60PanAckNo,
-      form60AgriculturalIncome: widget.initialData.form60AgriculturalIncome,
-      form60OtherIncome: widget.initialData.form60OtherIncome,
-      // Verification section fields
-      form60VerifiedDay: widget.initialData.form60VerifiedDay,
-      form60VerifiedMonth: widget.initialData.form60VerifiedMonth,
-      form60VerifiedYear: widget.initialData.form60VerifiedYear,
-      form60VerificationPlace: widget.initialData.form60VerificationPlace,
-      form60DeclarantSignature: widget.initialData.form60DeclarantSignature,
-      relatedPersonFirstName: widget.initialData.relatedPersonFirstName,
-      relatedPersonPrefix: widget.initialData.relatedPersonPrefix,
-      relatedPersonDocNo: widget.initialData.relatedPersonDocNo,
-      signature1Text: widget.initialData.signature1Text,
-      signature2Text: widget.initialData.signature2Text,
-    );
-  }
-
-  @override
-  void dispose() {
-    FormHelper.disposeControllers([
-      _registrationNoController,
-      _depositTypeController,
-      _accountNumberController,
-      _nomineeNameController,
-      _nomineeMobileController,
-      _nomineeRelationshipController,
-      _nomineeAgeController,
-      _nomineeDobController,
-      _guardianNameController,
-      _guardianAgeController,
-      _nomineeAddressController,
-      _witness1NameController,
-      _witness1AddressController,
-      _witness2NameController,
-      _witness2AddressController,
-      _witnessDateController,
-      _witnessPlaceController,
-      _minorDobController,
-      _guardianOrderDateController,
-      _declarationPlaceController,
-      _declarationDateController,
-      _officeOpenAccountDateController,
-      _officeInbKitNoController,
-      _officeInbViewingRightsDateController,
-      _officeInbTransactionRightsDateController,
-      _officeAtmCardDataController,
-      _officeNominationSerialNoController,
-      _officeThresholdKycController,
-      _officePhoneBankingController,
-      _officeAccountTransactionNoController,
-      _officeAccountInitialsController,
-      _officeCifLinkingTransactionNoController,
-      _officeCifLinkingInitialsController,
-      _officePersonalisedChequeTransactionNoController,
-      _officePersonalisedChequeInitialsController,
-      _officeRinbTransactionNoController,
-      _officeRinbInitialsController,
-      _officeMbsTransactionNoController,
-      _officeMbsInitialsController,
-      _officeSmsAlertTransactionNoController,
-      _officeSmsAlertInitialsController,
-      _officeRemovalPostingTransactionNoController,
-      _officeRemovalPostingInitialsController,
-      _officeScanningTransactionNoController,
-      _officeScanningInitialsController,
-      _officeKycAccountOpenedByController,
-      _officeAccountApprovedByController,
-    ]);
-    super.dispose();
+  // Helper to check if string is Base64
+  bool _isBase64(String path) {
+    return path.startsWith('data:image') || path.length > 500; // simplistic check
   }
 
   Widget _buildSignatureBox(
@@ -440,9 +303,14 @@ class _Page4FormState extends State<Page4Form> {
             ? Stack(
                 children: [
                   Center(
-                    child: kIsWeb
-                        ? Image.network(imagePath!, fit: BoxFit.contain)
-                        : Image.file(File(imagePath!), fit: BoxFit.contain),
+                    child: _isBase64(imagePath)
+                        ? Image.memory(
+                            base64Decode(imagePath.split(',').last),
+                            fit: BoxFit.contain,
+                          )
+                        : (kIsWeb
+                            ? Image.network(imagePath, fit: BoxFit.contain)
+                            : Image.file(File(imagePath), fit: BoxFit.contain)),
                   ),
                   Positioned(
                     top: 0,

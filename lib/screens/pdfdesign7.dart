@@ -5,7 +5,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'model/form_data_model.dart';
 
 // Main build function
-pw.Widget buildSeventhPage(FormDataModel data) {
+pw.Widget buildSeventhPage(FormDataModel data, {pw.MemoryImage? declarantSignature}) {
   return pw.Container(
     decoration: pw.BoxDecoration(
       border: pw.Border.all(color: PdfColors.black, width: 1.5),
@@ -18,7 +18,7 @@ pw.Widget buildSeventhPage(FormDataModel data) {
         pw.SizedBox(height: 8),
         _buildFormTable(data),
         pw.SizedBox(height: 15),
-        _buildVerificationSection(data),
+        _buildVerificationSection(data, declarantSignature),
         pw.SizedBox(height: 15),
         _buildFinalNoteSection(),
       ],
@@ -190,12 +190,12 @@ pw.Widget _buildFormTable(FormDataModel data) {
   );
 }
 
-pw.Widget _buildVerificationSection(FormDataModel data) {
-  const double regularFontSize = 9;
-  const double smallFontSize = 7.5;
+pw.Widget _buildVerificationSection(FormDataModel data, pw.MemoryImage? declarantSignature) {
+  const double regularFontSize = 9.0;
+  const double smallFontSize = 8.0;
   const PdfColor borderColor = PdfColors.black;
 
-  pw.Widget underlineWithText(String text, {double width = 80}) {
+  pw.Widget underlineWithText(String text, {double width = 100}) {
     return pw.Container(
       width: width,
       padding: pw.EdgeInsets.only(bottom: 1),
@@ -284,12 +284,14 @@ pw.Widget _buildVerificationSection(FormDataModel data) {
                 decoration: pw.BoxDecoration(
                   border: pw.Border.all(color: borderColor, width: 0.5),
                 ),
-                child: pw.Center(
-                  child: pw.Text(
-                    _getFullName(data),
-                    style: pw.TextStyle(fontSize: regularFontSize),
-                  ),
-                ),
+                child: declarantSignature != null
+                    ? pw.Image(declarantSignature, fit: pw.BoxFit.contain)
+                    : pw.Center(
+                        child: pw.Text(
+                          _getFullName(data),
+                          style: pw.TextStyle(fontSize: regularFontSize),
+                        ),
+                      ),
               ),
               pw.SizedBox(height: 3),
               pw.Text(
@@ -657,6 +659,12 @@ pw.TableRow _buildDocumentRow(String no, String desc, FormDataModel data, {requi
   if (identificationNo.isEmpty && data.documentNo.isNotEmpty && !isAddress) {
       identificationNo = data.documentNo;
       name = 'Identity Document';
+  }
+  
+  // Fallback for Address Proof
+  if (identificationNo.isEmpty && data.altProofDocumentNo.isNotEmpty && isAddress) {
+      identificationNo = data.altProofDocumentNo;
+      name = 'Address Proof Document';
   }
 
   return pw.TableRow(

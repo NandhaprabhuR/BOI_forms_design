@@ -8,6 +8,7 @@ import 'model/form_data_model.dart'; // <--- ADDED: Import the data model
 pw.Widget buildFifthPage(
   FormDataModel data, {
   pw.MemoryImage? signature1Image,
+  pw.MemoryImage? bsbdSignature,
 }) {
   // <--- MODIFIED: Accepts data and signature
   /// A helper function for creating the signature box.
@@ -211,7 +212,7 @@ pw.Widget buildFifthPage(
             pw.Align(
               alignment: pw.Alignment.centerRight,
               child: _signatureBox(
-                image: signature1Image,
+                image: bsbdSignature ?? signature1Image,
                 text: data.signature1Text, // <--- MODIFIED: Use model data
                 label: 'Signature / Thumb Impression of\nApplicant(s)',
               ),

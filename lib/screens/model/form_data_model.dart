@@ -2,410 +2,410 @@
 
 class FormDataModel {
   // --- Page 1: Part-I & CIF Data (pdfdesign1.dart) ---
-  final String branchName;
-  final String branchCode;
-  final String date;
-  final String customerId;
-  final String accountNo;
-  final String ckycNo;
-  final String existingCustomerId;
+  String branchName;
+  String branchCode;
+  String date;
+  String customerId;
+  String accountNo;
+  String ckycNo;
+  String existingCustomerId;
 
   // --- Page 1: Application and Account Type Checkboxes ---
-  final bool applicationTypeNew;
-  final bool applicationTypeUpdate;
-  final bool accountTypeNormal;
-  final bool accountTypeSmallRisk;
-  final String customerFirstName;
-  final String customerMiddleName;
-  final String customerLastName;
-  final String customerPrefix;
-  final String maidenName;
-  final String maidenNamePrefix;
-  final String fatherName;
-  final String fatherPrefix;
-  final String motherName;
-  final String motherPrefix;
-  final String spouseName;
-  final String spousePrefix;
+  bool applicationTypeNew;
+  bool applicationTypeUpdate;
+  bool accountTypeNormal;
+  bool accountTypeSmallRisk;
+  String customerFirstName;
+  String customerMiddleName;
+  String customerLastName;
+  String customerPrefix;
+  String maidenName;
+  String maidenNamePrefix;
+  String fatherName;
+  String fatherPrefix;
+  String motherName;
+  String motherPrefix;
+  String spouseName;
+  String spousePrefix;
 
   // Gender and Marital Status
-  final bool genderMale;
-  final bool genderFemale;
-  final bool genderTransgender;
-  final bool maritalStatusMarried;
-  final bool maritalStatusUnmarried;
-  final bool maritalStatusOthers;
+  bool genderMale;
+  bool genderFemale;
+  bool genderTransgender;
+  bool maritalStatusMarried;
+  bool maritalStatusUnmarried;
+  bool maritalStatusOthers;
 
-  final String mobileNo;
-  final String emailId;
-  final String alternateMobileNo;
-  final String telOff;
-  final String telRes;
-  final String aadharDocNo;
-  final String currentAddress;
-  final String currentAddressLine2;
-  final String currentCity;
-  final String currentDistrict;
-  final String currentState;
-  final String currentPin;
-  final String dob;
+  String mobileNo;
+  String emailId;
+  String alternateMobileNo;
+  String telOff;
+  String telRes;
+  String aadharDocNo;
+  String currentAddress;
+  String currentAddressLine2;
+  String currentCity;
+  String currentDistrict;
+  String currentState;
+  String currentPin;
+  String dob;
 
   // Occupation Type checkboxes
-  final bool occupationSService;
-  final bool occupationPrivateSector;
-  final bool occupationPublicSector;
-  final bool occupationGovernmentSector;
-  final bool occupationOOthers;
-  final bool occupationProfessional;
-  final bool occupationSelfEmployed;
-  final bool occupationRetired;
-  final bool occupationHouseWife;
-  final bool occupationStudent;
-  final bool occupationBBusiness;
-  final bool occupationAgriculture;
-  final bool occupationXNotCategorised;
+  bool occupationSService;
+  bool occupationPrivateSector;
+  bool occupationPublicSector;
+  bool occupationGovernmentSector;
+  bool occupationOOthers;
+  bool occupationProfessional;
+  bool occupationSelfEmployed;
+  bool occupationRetired;
+  bool occupationHouseWife;
+  bool occupationStudent;
+  bool occupationBBusiness;
+  bool occupationAgriculture;
+  bool occupationXNotCategorised;
 
-  final String occupationType;
-  final String monthlyIncome;
-  final String netWorth;
-  final String estAnnualTurnover;
-  final String noOfDependents;
-  final bool illiterateYes;
-  final bool illiterateNo;
-  final String identificationMarks;
-  final String guardianPrefix;
-  final String guardianName;
-  final String guardianMiddleName;
-  final String guardianSurname;
-  final String relationshipWithGuardian;
+  String occupationType;
+  String monthlyIncome;
+  String netWorth;
+  String estAnnualTurnover;
+  String noOfDependents;
+  bool illiterateYes;
+  bool illiterateNo;
+  String identificationMarks;
+  String guardianPrefix;
+  String guardianName;
+  String guardianMiddleName;
+  String guardianSurname;
+  String relationshipWithGuardian;
 
   // Nationality and Resident Status
-  final bool nationalityInIndian;
-  final bool nationalityOthers;
-  final String countryName;
-  final bool residentIndividual;
-  final bool nonResidentIndian;
-  final bool foreignNational;
-  final bool pio;
+  bool nationalityInIndian;
+  bool nationalityOthers;
+  String countryName;
+  bool residentIndividual;
+  bool nonResidentIndian;
+  bool foreignNational;
+  bool pio;
 
   // Religion checkboxes
-  final bool religionHindu;
-  final bool religionMuslim;
-  final bool religionChristian;
-  final bool religionSikh;
-  final bool religionOthers;
+  bool religionHindu;
+  bool religionMuslim;
+  bool religionChristian;
+  bool religionSikh;
+  bool religionOthers;
 
   // Category checkboxes
-  final bool categoryGeneral;
-  final bool categoryOBC;
-  final bool categorySC;
-  final bool categoryST;
-  final bool categoryMinority;
+  bool categoryGeneral;
+  bool categoryOBC;
+  bool categorySC;
+  bool categoryST;
+  bool categoryMinority;
 
   // Customer Type checkboxes
-  final bool customerTypeGeneral;
-  final bool customerTypeSrCitizen;
-  final bool customerTypePensioner;
-  final bool customerTypeMinor;
-  final bool customerTypeStaffExStaff;
-  final String customerTypePfNo;
-  final bool customerTypeOthers;
-  final String customerTypeOthersSpecify;
+  bool customerTypeGeneral;
+  bool customerTypeSrCitizen;
+  bool customerTypePensioner;
+  bool customerTypeMinor;
+  bool customerTypeStaffExStaff;
+  String customerTypePfNo;
+  bool customerTypeOthers;
+  String customerTypeOthersSpecify;
 
   // Person with disability
-  final bool disabilityYes;
-  final bool disabilityNo;
-  final bool disabilityVisuallyImpaired;
-  final bool disabilityDifferentlyAbled;
+  bool disabilityYes;
+  bool disabilityNo;
+  bool disabilityVisuallyImpaired;
+  bool disabilityDifferentlyAbled;
 
   // Educational Qualification checkboxes
-  final bool educationBelowSSC;
-  final bool educationSSC;
-  final bool educationHSC;
-  final bool educationGraduate;
-  final bool educationPostGraduate;
-  final bool educationProfessional;
-  final bool educationOthers;
+  bool educationBelowSSC;
+  bool educationSSC;
+  bool educationHSC;
+  bool educationGraduate;
+  bool educationPostGraduate;
+  bool educationProfessional;
+  bool educationOthers;
 
   // Organization and Business
-  final String organizationName;
-  final String designationProfession;
-  final String natureOfBusiness;
+  String organizationName;
+  String designationProfession;
+  String natureOfBusiness;
 
   // Politically Exposed Person
-  final bool politicallyExposedPerson;
-  final bool relatedToPoliticallyExposedPerson;
-  final bool politicallyExposedNone;
+  bool politicallyExposedPerson;
+  bool relatedToPoliticallyExposedPerson;
+  bool politicallyExposedNone;
 
   // ISO codes and other
-  final String isoCountryCodeJurisdiction;
-  final String placeCityOfBirth;
-  final String isoCountryCodeOfBirth;
-  final String countryCodeOfBirth;
-  final String citizenship;
+  String isoCountryCodeJurisdiction;
+  String placeCityOfBirth;
+  String isoCountryCodeOfBirth;
+  String countryCodeOfBirth;
+  String citizenship;
 
   // Tax Residence
-  final bool taxResidenceIndiaYes;
-  final bool taxResidenceIndiaNo;
-  final String panTaxIdNumber;
-  final String alternateCountry;
-  final String stdCode;
-  final String landlineNo;
-  final String alternateStdCode;
-  final String alternateLandlineNo;
+  bool taxResidenceIndiaYes;
+  bool taxResidenceIndiaNo;
+  String panTaxIdNumber;
+  String alternateCountry;
+  String stdCode;
+  String landlineNo;
+  String alternateStdCode;
+  String alternateLandlineNo;
 
   // --- Document Details (Proof of Identity/Address) ---
   // Document type checkboxes
-  final bool docTypePassport;
-  final bool docTypeVoterIdCard;
-  final bool docTypeDrivingLicence;
-  final bool docTypeAadhaar;
-  final bool docTypeNregaJobCard;
-  final bool docTypePopulationRegisterLetter;
+  bool docTypePassport;
+  bool docTypeVoterIdCard;
+  bool docTypeDrivingLicence;
+  bool docTypeAadhaar;
+  bool docTypeNregaJobCard;
+  bool docTypePopulationRegisterLetter;
 
-  final String documentNo;
-  final String issueDate;
-  final String expiryDate;
+  String documentNo;
+  String issueDate;
+  String expiryDate;
 
   // Address type checkboxes
-  final bool addressTypeResidentialBusiness;
-  final bool addressTypeResidential;
-  final bool addressTypeBusiness;
-  final bool addressTypeRegisteredOffice;
-  final bool addressTypeUnspecified;
+  bool addressTypeResidentialBusiness;
+  bool addressTypeResidential;
+  bool addressTypeBusiness;
+  bool addressTypeRegisteredOffice;
+  bool addressTypeUnspecified;
 
   // Permanent Address fields
-  final String permanentAddress;
-  final String permanentAddressLine2;
-  final String permanentCity;
-  final String permanentDistrict;
-  final String permanentState;
-  final String permanentPin;
+  String permanentAddress;
+  String permanentAddressLine2;
+  String permanentCity;
+  String permanentDistrict;
+  String permanentState;
+  String permanentPin;
 
   // Overseas Address fields
-  final String overseasAddress;
-  final String overseasAddressLine2;
-  final String overseasCity;
-  final String overseasDistrict;
-  final String overseasState;
-  final String overseasPin;
+  String overseasAddress;
+  String overseasAddressLine2;
+  String overseasCity;
+  String overseasDistrict;
+  String overseasState;
+  String overseasPin;
 
   // --- Page 2: Part-I Continuation (pdfdesign2.dart) ---
   // Section 5: Address details - Correspondence/Local/Same as Current-Permanent
-  final String correspondenceAddress;
-  final String correspondenceAddressLine2;
-  final String correspondenceCity;
-  final String correspondenceDistrict;
-  final String correspondenceState;
-  final String correspondencePin;
+  String correspondenceAddress;
+  String correspondenceAddressLine2;
+  String correspondenceCity;
+  String correspondenceDistrict;
+  String correspondenceState;
+  String correspondencePin;
 
-  final String localAddress;
-  final String localAddressLine2;
-  final String localCity;
-  final String localDistrict;
-  final String localState;
-  final String localPin;
+  String localAddress;
+  String localAddressLine2;
+  String localCity;
+  String localDistrict;
+  String localState;
+  String localPin;
 
-  final String sameAsAddress;
-  final String sameAsAddressLine2;
-  final String sameAsCity;
-  final String sameAsDistrict;
-  final String sameAsState;
-  final String sameAsPin;
+  String sameAsAddress;
+  String sameAsAddressLine2;
+  String sameAsCity;
+  String sameAsDistrict;
+  String sameAsState;
+  String sameAsPin;
 
   // Section 6: Self Declaration
-  final bool selfDeclarationAadhaarMismatch;
+  bool selfDeclarationAadhaarMismatch;
 
   // Section 7: Alternative address proof documents
-  final bool altProofUtilityBill;
-  final bool altProofPPOFPPO;
-  final bool altProofPropertyTaxReceipt;
-  final bool altProofLetterOfAllotment;
-  final String altProofDocumentNo;
-  final String altProofDate;
+  bool altProofUtilityBill;
+  bool altProofPPOFPPO;
+  bool altProofPropertyTaxReceipt;
+  bool altProofLetterOfAllotment;
+  String altProofDocumentNo;
+  String altProofDate;
 
   // Section 8: Declaration cum Undertaking
-  final bool declarationTermsAccepted;
-  final bool declarationAadhaarSubmitted;
-  final bool biometricConsentYes;
-  final bool biometricConsentNo;
-  final String applicantPhoto; // Photo path or base64
-  final String applicantSignatureImage; // Signature image path or base64
-  final String declarationPlace;
-  final String declarationDate;
+  bool declarationTermsAccepted;
+  bool declarationAadhaarSubmitted;
+  bool biometricConsentYes;
+  bool biometricConsentNo;
+  String applicantPhoto; // Photo path or base64
+  String applicantSignatureImage; // Signature image path or base64
+  String declarationPlace;
+  String declarationDate;
 
   // Legacy fields (kept for backward compatibility)
-  final String ovdDocumentNo;
-  final String ovdDocumentDate;
-  final String applicantSignatureName;
+  String ovdDocumentNo;
+  String ovdDocumentDate;
+  String applicantSignatureName;
 
   // --- Office Use/Attestation (Section 9) ---
-  final bool officeVerificationYes;
-  final bool officeVerificationNo;
-  final bool depositorIlliterate;
-  final bool depositorBlind;
-  final String depositorStaff;
-  final bool riskCategoryHigh;
-  final bool riskCategoryMedium;
-  final bool riskCategoryLow;
-  final String officeIdentificationMarks;
-  final String officialName;
-  final String pfNo;
-  final String designation;
-  final String ssNo;
-  final String officeUseDate;
-  final String officialSignature;
+  bool officeVerificationYes;
+  bool officeVerificationNo;
+  bool depositorIlliterate;
+  bool depositorBlind;
+  String depositorStaff;
+  bool riskCategoryHigh;
+  bool riskCategoryMedium;
+  bool riskCategoryLow;
+  String officeIdentificationMarks;
+  String officialName;
+  String pfNo;
+  String designation;
+  String ssNo;
+  String officeUseDate;
+  String officialSignature;
 
   // --- Page 3: Part-II (pdfdesign3.dart) ---
   // Header fields
-  final String page3Date;
-  final String page3AccountNo;
+  String page3Date;
+  String page3AccountNo;
 
-  final String firstApplicantCustomerId;
-  final String secondApplicantCustomerId;
-  final String atmCardName;
-  final String fdAmount;
-  final String rdInstallment;
-  final String debitAccountNo;
-  final String modeOfOperationOther;
-  final String nominationRegistrationNo;
-  final String depositType;
-  final String nominationAccountNo;
+  String firstApplicantCustomerId;
+  String secondApplicantCustomerId;
+  String atmCardName;
+  String fdAmount;
+  String rdInstallment;
+  String debitAccountNo;
+  String modeOfOperationOther;
+  String nominationRegistrationNo;
+  String depositType;
+  String nominationAccountNo;
+  String acknowledgementDate; // Page 6 Date
 
-  // --- Page 4: Nomination DA-1 (pdfdesign4.dart) ---
-  final String nomineeName;
-  final String nomineeMobile;
-  final String nomineeRelationship;
-  final String nomineeDob;
-  final String nomineeAddress;
-  final String nomineeGuardianName;
-  final String witness1Name;
-  final String witness1Address;
-  final String witness2Name;
-  final String witness2Address;
+  // --- Page 4: DA-1 Nomination ---
+  String nomineeName;
+  String nomineeAge; // Page 6 Age
+  String nomineeMobile;
+  String nomineeRelationship;
+  String nomineeDob;
+  String nomineeAddress;
+  String nomineeGuardianName;
+  String witness1Name;
+  String witness1Address;
+  String witness2Name;
+  String witness2Address;
 
   // --- Page 9: Annexure-2 (pdfdesign9.dart) ---
-  final String relatedPersonFirstName;
-  final String relatedPersonPrefix;
-  final String relatedPersonDocNo;
+  String relatedPersonFirstName;
+  String relatedPersonPrefix;
+  String relatedPersonDocNo;
 
   // --- Signatures and Photos ---
-  final String signature1Text; // Path or Base64 for first signature
-  final String signature2Text; // Path or Base64 for second signature
-  final String witnessSignature1; // For nomination witness 1
-  final String witnessSignature2; // For nomination witness 2
+  String signature1Text; // Path or Base64 for first signature
+  String signature2Text; // Path or Base64 for second signature
+  String signature3Text; // Path or Base64 for third signature (Page 10)
+  String witnessSignature1; // For nomination witness 1
+  String witnessSignature2; // For nomination witness 2
 
   // --- Checkboxes for Page 3: Account Type ---
-  final bool accountTypeSavingsBank;
-  final bool accountTypeBSBDA;
-  final bool accountTypeSmallAccount;
-  final bool accountTypeCurrent;
-  final bool accountTypeFixedDeposit;
-  final bool accountTypeCapsGain;
+  bool accountTypeSavingsBank;
+  bool accountTypeBSBDA;
+  bool accountTypeSmallAccount;
+  bool accountTypeCurrent;
+  bool accountTypeFixedDeposit;
+  bool accountTypeCapsGain;
 
   // --- Checkboxes for Page 3: Mode of Operation ---
-  final bool modeOfOperationSelf;
-  final bool modeOfOperationEitherOrSurvivor;
-  final bool modeOfOperationFormerOrSurvivor;
-  final bool modeOfOperationAnyoneOrSurvivor;
-  final bool modeOfOperationJointly;
-  final bool modeOfOperationOtherCheckbox;
-  final String modeOfOperationOtherText;
+  bool modeOfOperationSelf;
+  bool modeOfOperationEitherOrSurvivor;
+  bool modeOfOperationFormerOrSurvivor;
+  bool modeOfOperationAnyoneOrSurvivor;
+  bool modeOfOperationJointly;
+  bool modeOfOperationOtherCheckbox;
+  String modeOfOperationOtherText;
 
   // --- Checkboxes for Page 3: Services Required ---
   // Section 3: Services Required
-  final bool atmCard1stApplicant;
-  final bool atmCard2ndApplicant;
-  final String atmCardName1stApplicant;
-  final String atmCardName2ndApplicant;
-  final bool chequeBookYes;
-  final bool chequeBookNo;
-  final bool internetBanking1stApplicantYes;
-  final bool internetBanking1stApplicantNo;
-  final bool internetBanking2ndApplicantYes;
-  final bool internetBanking2ndApplicantNo;
-  final bool smsAlertYes;
-  final bool smsAlertNo;
-  final bool phoneBankingYes;
-  final bool phoneBankingNo;
-  final bool mobileBankingYes;
-  final bool mobileBankingNo;
-  final bool passbookYes;
-  final bool passbookNo;
-  final bool eStatementRequired;
-  final bool eStatementNotRequired;
-  final bool netBankingYes;
-  final bool netBankingNo;
-  final bool emailStatementYes;
-  final bool emailStatementNo;
+  bool atmCard1stApplicant;
+  bool atmCard2ndApplicant;
+  String atmCardName1stApplicant;
+  String atmCardName2ndApplicant;
+  bool chequeBookYes;
+  bool chequeBookNo;
+  bool internetBanking1stApplicantYes;
+  bool internetBanking1stApplicantNo;
+  bool internetBanking2ndApplicantYes;
+  bool internetBanking2ndApplicantNo;
+  bool smsAlertYes;
+  bool smsAlertNo;
+  bool phoneBankingYes;
+  bool phoneBankingNo;
+  bool mobileBankingYes;
+  bool mobileBankingNo;
+  bool passbookYes;
+  bool passbookNo;
+  bool eStatementRequired;
+  bool eStatementNotRequired;
+  bool netBankingYes;
+  bool netBankingNo;
+  bool emailStatementYes;
+  bool emailStatementNo;
 
-  // --- Checkboxes for Page 3: Nomination ---
-  final bool nominationYes;
-  final bool nominationNo;
+  // --- Missing Page 3 Checkboxes ---
+  bool nominationYes;
+  bool nominationNo;
+  bool fdAutoRenewPrincipalPaybackInterest;
+  bool fdPayPrincipalAndInterest;
+  bool fdAutoRenewBoth;
+  bool fdAutoRenewPartAmount;
+  bool modRecurringDeposit;
+  bool modDoubleBenefit;
+  bool modMICQIC;
+  bool modShortFixedDeposit;
+  bool modTaxSaving;
+  bool modCapitalGain;
+  bool rdMonthly;
+  bool rdQuarterly;
+  bool rdCalenderQuarter;
+  bool rdHalfYearly;
+  bool rdYearly;
 
-  // --- Checkboxes for Fixed Deposit Options ---
-  final bool fdAutoRenewPrincipalPaybackInterest;
-  final bool fdPayPrincipalAndInterest;
-  final bool fdAutoRenewBoth;
-  final bool fdAutoRenewPartAmount;
+  // --- Missing Page 7 (Form 60) Fields ---
+  String form60FirstName;
+  String form60MiddleName;
+  String form60Surname;
+  String form60DateOfBirth;
+  String form60FatherName;
+  String form60FlatNo;
+  String form60PremisesName;
+  String form60RoadStreet;
+  String form60AreaLocality;
+  String form60TownDistrictState;
+  String form60PinCode;
+  String form60TelephoneSTD;
+  String form60MobileNumber;
+  String form60TransactionAmount;
+  String form60TransactionDate;
+  String form60JointPersonsCount;
+  bool form60ModeCash;
+  bool form60ModeCheque;
+  bool form60ModeCard;
+  bool form60ModeDraft;
+  bool form60ModeOnlineTransfer;
+  bool form60ModeOther;
+  String form60AadhaarNumber;
+  String form60PanApplicationDate;
+  String form60PanAckNo;
+  String form60AgriculturalIncome;
+  String form60OtherIncome;
+  String form60VerifiedDay;
+  String form60VerifiedMonth;
+  String form60VerifiedYear;
+  String form60VerificationPlace;
+  String form60DeclarantSignature;
 
-  // --- Checkboxes for Multi Option Deposit ---
-  final bool modRecurringDeposit;
-  final bool modDoubleBenefit;
-  final bool modMICQIC;
-  final bool modShortFixedDeposit;
-  final bool modTaxSaving;
-  final bool modCapitalGain;
+  // --- Missing Page 9 Fields ---
+  bool fatcaIndianCitizen;
+  bool fatcaNonIndianCitizen;
+  bool pepYes;
+  bool pepNo;
 
-  // --- Checkboxes for RD Installment Frequency ---
-  final bool rdMonthly;
-  final bool rdQuarterly;
-  final bool rdCalenderQuarter;
-  final bool rdHalfYearly;
-  final bool rdYearly;
-
-  // --- Additional Page 5-10 Checkboxes ---
-  final bool fatcaIndianCitizen;
-  final bool fatcaNonIndianCitizen;
-  final bool pepYes;
-  final bool pepNo;
-
-  // --- Page 7: Form No.60 (Annexure-1) Fields ---
-  final String form60FirstName;
-  final String form60MiddleName;
-  final String form60Surname;
-  final String form60DateOfBirth;
-  final String form60FatherName;
-  final String form60FlatNo;
-  final String form60PremisesName;
-  final String form60RoadStreet;
-  final String form60AreaLocality;
-  final String form60TownDistrictState;
-  final String form60PinCode;
-  final String form60TelephoneSTD;
-  final String form60MobileNumber;
-  final String form60TransactionAmount;
-  final String form60TransactionDate;
-  final String form60JointPersonsCount;
-  final bool form60ModeCash;
-  final bool form60ModeCheque;
-  final bool form60ModeCard;
-  final bool form60ModeDraft;
-  final bool form60ModeOnlineTransfer;
-  final bool form60ModeOther;
-  final String form60AadhaarNumber;
-  // Row 17: PAN application details
-  final String form60PanApplicationDate;
-  final String form60PanAckNo;
-  // Row 18: Income details (if PAN not applied)
-  final String form60AgriculturalIncome;
-  final String form60OtherIncome;
-  // Verification section fields
-  final String form60VerifiedDay;
-  final String form60VerifiedMonth;
-  final String form60VerifiedYear;
-  final String form60VerificationPlace;
-  final String form60DeclarantSignature; // Image path for signature
+  // --- Page 6 Signatures (Mutable) ---
+  String bsbdSignature = '';
+  String ackApplicantSignature = '';
+  String ackBankOfficialSignature = '';
+  String fatcaDeclarantSignature = ''; // Added for Page 9 FATCA signature
 
   // --- MODIFIED: All default data is now blank ---
   FormDataModel({
@@ -649,9 +649,11 @@ class FormDataModel {
     this.nominationRegistrationNo = '',
     this.depositType = '',
     this.nominationAccountNo = '',
+    this.acknowledgementDate = '', // New field
 
     // Page 4 Defaults
     this.nomineeName = '',
+    this.nomineeAge = '', // New field
     this.nomineeMobile = '',
     this.nomineeRelationship = '',
     this.nomineeDob = '',
@@ -670,6 +672,7 @@ class FormDataModel {
     // Signature and Photo Defaults
     this.signature1Text = '',
     this.signature2Text = '',
+    this.signature3Text = '',
     this.witnessSignature1 = '',
     this.witnessSignature2 = '',
 
@@ -724,13 +727,7 @@ class FormDataModel {
     this.rdHalfYearly = false,
     this.rdYearly = false,
 
-    // Checkbox Defaults - Additional
-    this.fatcaIndianCitizen = false,
-    this.fatcaNonIndianCitizen = false,
-    this.pepYes = false,
-    this.pepNo = false,
-
-    // Page 7: Form No.60 Defaults
+    // Missing Page 7 (Form 60) Fields
     this.form60FirstName = '',
     this.form60MiddleName = '',
     this.form60Surname = '',
@@ -754,18 +751,21 @@ class FormDataModel {
     this.form60ModeOnlineTransfer = false,
     this.form60ModeOther = false,
     this.form60AadhaarNumber = '',
-    // Row 17: PAN application details
     this.form60PanApplicationDate = '',
     this.form60PanAckNo = '',
-    // Row 18: Income details
     this.form60AgriculturalIncome = '',
     this.form60OtherIncome = '',
-    // Verification section fields
     this.form60VerifiedDay = '',
     this.form60VerifiedMonth = '',
     this.form60VerifiedYear = '',
     this.form60VerificationPlace = '',
     this.form60DeclarantSignature = '',
+
+    // Missing Page 9 FATCA Checkboxes
+    this.fatcaIndianCitizen = false,
+    this.fatcaNonIndianCitizen = false,
+    this.pepYes = false,
+    this.pepNo = false,
   });
 
   // --- This 'fromMap' factory is already correct. ---

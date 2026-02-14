@@ -1,6 +1,7 @@
 // lib/screens/forms/page9_form.dart
 
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -125,7 +126,7 @@ class _Page9FormState extends State<Page9Form> {
     _nameLastController = TextEditingController(
       text: widget.initialData.customerLastName,
     );
-    _kycOfRelatedPersonController = TextEditingController();
+    _kycOfRelatedPersonController = TextEditingController(); // Not in model?
     _relatedPersonPrefixController = TextEditingController(
       text: widget.initialData.relatedPersonPrefix,
     );
@@ -169,7 +170,9 @@ class _Page9FormState extends State<Page9Form> {
     _fatcaLastNameController = TextEditingController(
       text: widget.initialData.customerLastName,
     );
-    _countryNameController = TextEditingController();
+    _countryNameController = TextEditingController(
+      text: widget.initialData.countryName,
+    );
     _placeOfBirthController = TextEditingController(
       text: widget.initialData.placeCityOfBirth,
     );
@@ -213,6 +216,11 @@ class _Page9FormState extends State<Page9Form> {
     _outsideIndiaZipController = TextEditingController();
     _outsideIndiaPlaceController = TextEditingController();
     _outsideIndiaDateController = TextEditingController();
+
+    // Initialize signature
+    _outsideIndiaSignaturePath = widget.initialData.fatcaDeclarantSignature.isNotEmpty
+        ? widget.initialData.fatcaDeclarantSignature
+        : null;
 
     FormHelper.addListeners([
       _customerIdController,
@@ -267,102 +275,127 @@ class _Page9FormState extends State<Page9Form> {
   }
 
   void _notifyChange() {
-    widget.onDataChanged(_buildUpdatedData());
+    // Update model directly
+    widget.initialData.customerId = _customerIdController.text;
+    widget.initialData.ckycNo = _ckycNoController.text;
+    widget.initialData.accountNo = _accountNoController.text;
+    widget.initialData.customerFirstName = _nameFirstController.text;
+    widget.initialData.customerMiddleName = _nameMiddleController.text;
+    widget.initialData.customerLastName = _nameLastController.text;
+    widget.initialData.relatedPersonPrefix = _relatedPersonPrefixController.text;
+    widget.initialData.relatedPersonFirstName = _relatedPersonFirstNameController.text;
+    widget.initialData.documentNo = _documentNoController.text;
+    widget.initialData.issueDate = _issueDateController.text;
+    widget.initialData.expiryDate = _expiryDateController.text;
+    
+    // FATCA fields
+    widget.initialData.countryName = _countryNameController.text;
+    widget.initialData.placeCityOfBirth = _placeOfBirthController.text;
+    widget.initialData.countryCodeOfBirth = _countryOfBirthController.text;
+    widget.initialData.currentAddress = _fatcaAddressController.text;
+    widget.initialData.currentCity = _fatcaCityController.text;
+    widget.initialData.currentDistrict = _fatcaDistrictController.text;
+    widget.initialData.currentState = _fatcaStateController.text;
+    widget.initialData.currentPin = _fatcaPinController.text;
+    
+    // Checkboxes (Example: Citizenship)
+    widget.initialData.fatcaNonIndianCitizen = _citizenshipOthers;
+    widget.initialData.fatcaIndianCitizen = _citizenshipIndia;
+
+    // Signature
+    widget.initialData.fatcaDeclarantSignature = _outsideIndiaSignaturePath ?? '';
+
+    widget.onDataChanged(widget.initialData);
   }
 
-  FormDataModel _buildUpdatedData() {
-    return FormDataModel(
-      branchName: widget.initialData.branchName,
-      branchCode: widget.initialData.branchCode,
-      date: widget.initialData.date,
-      customerId: _customerIdController.text,
-      accountNo: _accountNoController.text,
-      ckycNo: _ckycNoController.text,
-      existingCustomerId: widget.initialData.existingCustomerId,
-      customerFirstName: _nameFirstController.text,
-      customerMiddleName: _nameMiddleController.text,
-      customerLastName: _nameLastController.text,
-      customerPrefix: widget.initialData.customerPrefix,
-      maidenName: widget.initialData.maidenName,
-      maidenNamePrefix: widget.initialData.maidenNamePrefix,
-      fatherName: widget.initialData.fatherName,
-      motherName: widget.initialData.motherName,
-      spouseName: widget.initialData.spouseName,
-      mobileNo: widget.initialData.mobileNo,
-      emailId: widget.initialData.emailId,
-      alternateMobileNo: widget.initialData.alternateMobileNo,
-      telOff: widget.initialData.telOff,
-      telRes: widget.initialData.telRes,
-      aadharDocNo: widget.initialData.aadharDocNo,
-      currentAddress: widget.initialData.currentAddress,
-      currentCity: widget.initialData.currentCity,
-      currentDistrict: widget.initialData.currentDistrict,
-      currentState: widget.initialData.currentState,
-      currentPin: widget.initialData.currentPin,
-      dob: widget.initialData.dob,
-      occupationType: widget.initialData.occupationType,
-      monthlyIncome: widget.initialData.monthlyIncome,
-      netWorth: widget.initialData.netWorth,
-      estAnnualTurnover: widget.initialData.estAnnualTurnover,
-      noOfDependents: widget.initialData.noOfDependents,
-      guardianPrefix: widget.initialData.guardianPrefix,
-      guardianName: widget.initialData.guardianName,
-      guardianMiddleName: widget.initialData.guardianMiddleName,
-      guardianSurname: widget.initialData.guardianSurname,
-      relationshipWithGuardian: widget.initialData.relationshipWithGuardian,
-      placeCityOfBirth: widget.initialData.placeCityOfBirth,
-      countryCodeOfBirth: widget.initialData.countryCodeOfBirth,
-      citizenship: widget.initialData.citizenship,
-      panTaxIdNumber: widget.initialData.panTaxIdNumber,
-      alternateCountry: widget.initialData.alternateCountry,
-      stdCode: widget.initialData.stdCode,
-      landlineNo: widget.initialData.landlineNo,
-      alternateStdCode: widget.initialData.alternateStdCode,
-      alternateLandlineNo: widget.initialData.alternateLandlineNo,
-      documentNo: widget.initialData.documentNo,
-      issueDate: widget.initialData.issueDate,
-      expiryDate: widget.initialData.expiryDate,
-      correspondenceAddress: widget.initialData.correspondenceAddress,
-      correspondenceCity: widget.initialData.correspondenceCity,
-      correspondenceDistrict: widget.initialData.correspondenceDistrict,
-      correspondenceState: widget.initialData.correspondenceState,
-      correspondencePin: widget.initialData.correspondencePin,
-      ovdDocumentNo: widget.initialData.ovdDocumentNo,
-      ovdDocumentDate: widget.initialData.ovdDocumentDate,
-      applicantSignatureName: widget.initialData.applicantSignatureName,
-      declarationPlace: widget.initialData.declarationPlace,
-      declarationDate: widget.initialData.declarationDate,
-      officialName: widget.initialData.officialName,
-      pfNo: widget.initialData.pfNo,
-      designation: widget.initialData.designation,
-      ssNo: widget.initialData.ssNo,
-      officeUseDate: widget.initialData.officeUseDate,
-      firstApplicantCustomerId: widget.initialData.firstApplicantCustomerId,
-      secondApplicantCustomerId: widget.initialData.secondApplicantCustomerId,
-      atmCardName: widget.initialData.atmCardName,
-      fdAmount: widget.initialData.fdAmount,
-      rdInstallment: widget.initialData.rdInstallment,
-      debitAccountNo: widget.initialData.debitAccountNo,
-      modeOfOperationOther: widget.initialData.modeOfOperationOther,
-      nominationRegistrationNo: widget.initialData.nominationRegistrationNo,
-      depositType: widget.initialData.depositType,
-      nominationAccountNo: widget.initialData.nominationAccountNo,
-      nomineeName: widget.initialData.nomineeName,
-      nomineeMobile: widget.initialData.nomineeMobile,
-      nomineeRelationship: widget.initialData.nomineeRelationship,
-      nomineeDob: widget.initialData.nomineeDob,
-      nomineeAddress: widget.initialData.nomineeAddress,
-      nomineeGuardianName: widget.initialData.nomineeGuardianName,
-      witness1Name: widget.initialData.witness1Name,
-      witness1Address: widget.initialData.witness1Address,
-      witness2Name: widget.initialData.witness2Name,
-      witness2Address: widget.initialData.witness2Address,
-      relatedPersonPrefix: _relatedPersonPrefixController.text,
-      relatedPersonFirstName: _relatedPersonFirstNameController.text,
-      relatedPersonDocNo: widget.initialData.relatedPersonDocNo,
-      signature1Text: widget.initialData.signature1Text,
-      signature2Text: widget.initialData.signature2Text,
+  // Helper to check if string is Base64
+  bool _isBase64(String path) {
+    return path.startsWith('data:image') || path.length > 500; // simplistic check
+  }
+
+  Widget _buildSignatureBox() {
+    return GestureDetector(
+      onTap: _pickSignatureImage,
+      child: Container(
+        height: 80,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade400),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: _outsideIndiaSignaturePath != null
+            ? Stack(
+                children: [
+                  Center(
+                    child: _isBase64(_outsideIndiaSignaturePath!)
+                        ? (kIsWeb 
+                            ? Image.network(_outsideIndiaSignaturePath!, fit: BoxFit.contain)
+                            : Image.memory(
+                                base64Decode(_outsideIndiaSignaturePath!.split(',').last),
+                                fit: BoxFit.contain,
+                              ))
+                        : (kIsWeb
+                            ? Image.network(
+                                _outsideIndiaSignaturePath!,
+                                fit: BoxFit.contain,
+                              )
+                            : Image.file(
+                                File(_outsideIndiaSignaturePath!),
+                                fit: BoxFit.contain,
+                              )),
+                  ),
+                  Positioned(
+                    top: 4,
+                    right: 4,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _outsideIndiaSignaturePath = null;
+                          _notifyChange();
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade100,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          size: 14,
+                          color: Colors.red.shade700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.draw, size: 24, color: Colors.grey.shade400),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Tap to add signature',
+                    style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                  ),
+                ],
+              ),
+      ),
     );
+  }
+
+  Future<void> _pickSignatureImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      // Store as Base64 string
+      final base64String = 'data:image/png;base64,${base64Encode(bytes)}';
+      setState(() {
+        _outsideIndiaSignaturePath = base64String;
+        _notifyChange();
+      });
+    }
   }
 
   @override
@@ -1342,78 +1375,5 @@ class _Page9FormState extends State<Page9Form> {
     );
   }
 
-  Widget _buildSignatureBox() {
-    return GestureDetector(
-      onTap: _pickSignatureImage,
-      child: Container(
-        height: 80,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade400),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: _outsideIndiaSignaturePath != null
-            ? Stack(
-                children: [
-                  Center(
-                    child: kIsWeb
-                        ? Image.network(
-                            _outsideIndiaSignaturePath!,
-                            fit: BoxFit.contain,
-                          )
-                        : Image.file(
-                            File(_outsideIndiaSignaturePath!),
-                            fit: BoxFit.contain,
-                          ),
-                  ),
-                  Positioned(
-                    top: 4,
-                    right: 4,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _outsideIndiaSignaturePath = null;
-                          _notifyChange();
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade100,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.close,
-                          size: 14,
-                          color: Colors.red.shade700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.draw, size: 24, color: Colors.grey.shade400),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Tap to add signature',
-                    style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
-                  ),
-                ],
-              ),
-      ),
-    );
-  }
 
-  Future<void> _pickSignatureImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _outsideIndiaSignaturePath = image.path;
-        _notifyChange();
-      });
-    }
-  }
 }

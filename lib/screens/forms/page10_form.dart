@@ -1,6 +1,7 @@
 // lib/screens/forms/page10_form.dart
 
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -26,115 +27,38 @@ class _Page10FormState extends State<Page10Form> {
   String? _signature2Path;
   String? _signature3Path;
 
+  @override
+  void initState() {
+    super.initState();
+    _signature1Path = widget.initialData.signature1Text.isNotEmpty ? widget.initialData.signature1Text : null;
+    _signature2Path = widget.initialData.signature2Text.isNotEmpty ? widget.initialData.signature2Text : null;
+    _signature3Path = widget.initialData.signature3Text.isNotEmpty ? widget.initialData.signature3Text : null;
+  }
+
   void _notifyChange() {
-    widget.onDataChanged(FormDataModel(
-      branchName: widget.initialData.branchName,
-      branchCode: widget.initialData.branchCode,
-      date: widget.initialData.date,
-      customerId: widget.initialData.customerId,
-      accountNo: widget.initialData.accountNo,
-      ckycNo: widget.initialData.ckycNo,
-      existingCustomerId: widget.initialData.existingCustomerId,
-      customerFirstName: widget.initialData.customerFirstName,
-      customerMiddleName: widget.initialData.customerMiddleName,
-      customerLastName: widget.initialData.customerLastName,
-      customerPrefix: widget.initialData.customerPrefix,
-      maidenName: widget.initialData.maidenName,
-      maidenNamePrefix: widget.initialData.maidenNamePrefix,
-      fatherName: widget.initialData.fatherName,
-      motherName: widget.initialData.motherName,
-      spouseName: widget.initialData.spouseName,
-      mobileNo: widget.initialData.mobileNo,
-      emailId: widget.initialData.emailId,
-      alternateMobileNo: widget.initialData.alternateMobileNo,
-      telOff: widget.initialData.telOff,
-      telRes: widget.initialData.telRes,
-      aadharDocNo: widget.initialData.aadharDocNo,
-      currentAddress: widget.initialData.currentAddress,
-      currentCity: widget.initialData.currentCity,
-      currentDistrict: widget.initialData.currentDistrict,
-      currentState: widget.initialData.currentState,
-      currentPin: widget.initialData.currentPin,
-      dob: widget.initialData.dob,
-      occupationType: widget.initialData.occupationType,
-      monthlyIncome: widget.initialData.monthlyIncome,
-      netWorth: widget.initialData.netWorth,
-      estAnnualTurnover: widget.initialData.estAnnualTurnover,
-      noOfDependents: widget.initialData.noOfDependents,
-      guardianPrefix: widget.initialData.guardianPrefix,
-      guardianName: widget.initialData.guardianName,
-      guardianMiddleName: widget.initialData.guardianMiddleName,
-      guardianSurname: widget.initialData.guardianSurname,
-      relationshipWithGuardian: widget.initialData.relationshipWithGuardian,
-      placeCityOfBirth: widget.initialData.placeCityOfBirth,
-      countryCodeOfBirth: widget.initialData.countryCodeOfBirth,
-      citizenship: widget.initialData.citizenship,
-      panTaxIdNumber: widget.initialData.panTaxIdNumber,
-      alternateCountry: widget.initialData.alternateCountry,
-      stdCode: widget.initialData.stdCode,
-      landlineNo: widget.initialData.landlineNo,
-      alternateStdCode: widget.initialData.alternateStdCode,
-      alternateLandlineNo: widget.initialData.alternateLandlineNo,
-      documentNo: widget.initialData.documentNo,
-      issueDate: widget.initialData.issueDate,
-      expiryDate: widget.initialData.expiryDate,
-      correspondenceAddress: widget.initialData.correspondenceAddress,
-      correspondenceCity: widget.initialData.correspondenceCity,
-      correspondenceDistrict: widget.initialData.correspondenceDistrict,
-      correspondenceState: widget.initialData.correspondenceState,
-      correspondencePin: widget.initialData.correspondencePin,
-      ovdDocumentNo: widget.initialData.ovdDocumentNo,
-      ovdDocumentDate: widget.initialData.ovdDocumentDate,
-      applicantSignatureName: widget.initialData.applicantSignatureName,
-      declarationPlace: widget.initialData.declarationPlace,
-      declarationDate: widget.initialData.declarationDate,
-      officialName: widget.initialData.officialName,
-      pfNo: widget.initialData.pfNo,
-      designation: widget.initialData.designation,
-      ssNo: widget.initialData.ssNo,
-      officeUseDate: widget.initialData.officeUseDate,
-      firstApplicantCustomerId: widget.initialData.firstApplicantCustomerId,
-      secondApplicantCustomerId: widget.initialData.secondApplicantCustomerId,
-      atmCardName: widget.initialData.atmCardName,
-      fdAmount: widget.initialData.fdAmount,
-      rdInstallment: widget.initialData.rdInstallment,
-      debitAccountNo: widget.initialData.debitAccountNo,
-      modeOfOperationOther: widget.initialData.modeOfOperationOther,
-      nominationRegistrationNo: widget.initialData.nominationRegistrationNo,
-      depositType: widget.initialData.depositType,
-      nominationAccountNo: widget.initialData.nominationAccountNo,
-      nomineeName: widget.initialData.nomineeName,
-      nomineeMobile: widget.initialData.nomineeMobile,
-      nomineeRelationship: widget.initialData.nomineeRelationship,
-      nomineeDob: widget.initialData.nomineeDob,
-      nomineeAddress: widget.initialData.nomineeAddress,
-      nomineeGuardianName: widget.initialData.nomineeGuardianName,
-      witness1Name: widget.initialData.witness1Name,
-      witness1Address: widget.initialData.witness1Address,
-      witness2Name: widget.initialData.witness2Name,
-      witness2Address: widget.initialData.witness2Address,
-      relatedPersonPrefix: widget.initialData.relatedPersonPrefix,
-      relatedPersonFirstName: widget.initialData.relatedPersonFirstName,
-      relatedPersonDocNo: widget.initialData.relatedPersonDocNo,
-      signature1Text: _signature1Path ?? '',
-      signature2Text: _signature2Path ?? '',
-    ));
+    widget.initialData.signature1Text = _signature1Path ?? '';
+    widget.initialData.signature2Text = _signature2Path ?? '';
+    widget.initialData.signature3Text = _signature3Path ?? '';
+    widget.onDataChanged(widget.initialData);
   }
 
   Future<void> _pickSignature(int applicantNumber) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
+      final bytes = await image.readAsBytes();
+      final base64String = 'data:image/png;base64,${base64Encode(bytes)}';
+
       setState(() {
         switch (applicantNumber) {
           case 1:
-            _signature1Path = image.path;
+            _signature1Path = base64String;
             break;
           case 2:
-            _signature2Path = image.path;
+            _signature2Path = base64String;
             break;
           case 3:
-            _signature3Path = image.path;
+            _signature3Path = base64String;
             break;
         }
         _notifyChange();
@@ -238,11 +162,17 @@ class _Page10FormState extends State<Page10Form> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: _buildSignatureBox('Signature of Applicant 1', 1, _signature1Path)),
+              Expanded(
+                  child: _buildSignatureBox(
+                      'Signature of Applicant 1', 1, _signature1Path)),
               const SizedBox(width: 8),
-              Expanded(child: _buildSignatureBox('Signature of Applicant 2', 2, _signature2Path)),
+              Expanded(
+                  child: _buildSignatureBox(
+                      'Signature of Applicant 2', 2, _signature2Path)),
               const SizedBox(width: 8),
-              Expanded(child: _buildSignatureBox('Signature of Applicant 3', 3, _signature3Path)),
+              Expanded(
+                  child: _buildSignatureBox(
+                      'Signature of Applicant 3', 3, _signature3Path)),
             ],
           ),
           const SizedBox(height: 24),
@@ -251,7 +181,11 @@ class _Page10FormState extends State<Page10Form> {
     );
   }
 
-  Widget _buildSignatureBox(String label, int applicantNumber, String? signaturePath) {
+  Widget _buildSignatureBox(
+      String label, int applicantNumber, String? signaturePath) {
+    bool isBase64 =
+        signaturePath != null && signaturePath.startsWith('data:image');
+
     return Column(
       children: [
         GestureDetector(
@@ -266,15 +200,20 @@ class _Page10FormState extends State<Page10Form> {
                 ? Stack(
                     children: [
                       Center(
-                    child: kIsWeb
-                        ? Image.network(
-                            signaturePath,
-                            fit: BoxFit.contain,
-                          )
-                        : Image.file(
-                            File(signaturePath),
-                            fit: BoxFit.contain,
-                          ),
+                        child: isBase64
+                            ? Image.memory(
+                                base64Decode(signaturePath.split(',')[1]),
+                                fit: BoxFit.contain,
+                              )
+                            : (kIsWeb
+                                ? Image.network(
+                                    signaturePath,
+                                    fit: BoxFit.contain,
+                                  )
+                                : Image.file(
+                                    File(signaturePath),
+                                    fit: BoxFit.contain,
+                                  )),
                       ),
                       Positioned(
                         top: 4,
@@ -304,7 +243,8 @@ class _Page10FormState extends State<Page10Form> {
                       const SizedBox(height: 4),
                       Text(
                         'Tap to add',
-                        style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                        style: TextStyle(
+                            fontSize: 10, color: Colors.grey.shade500),
                       ),
                     ],
                   ),

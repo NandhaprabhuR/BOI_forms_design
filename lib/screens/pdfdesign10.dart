@@ -63,6 +63,7 @@ pw.Widget buildTenthPage(
   FormDataModel data, {
   pw.MemoryImage? signature1Image,
   pw.MemoryImage? signature2Image,
+  pw.MemoryImage? signature3Image,
 }) {
   // <--- MODIFIED: Accepts data and signatures
   // The main builder function simply returns the fully constructed form.
@@ -70,6 +71,7 @@ pw.Widget buildTenthPage(
     data,
     signature1Image: signature1Image,
     signature2Image: signature2Image,
+    signature3Image: signature3Image,
   ); // <--- MODIFIED: Passes data and signatures
 }
 
@@ -78,6 +80,7 @@ pw.Widget _buildNriDeclarationForm(
   FormDataModel data, {
   pw.MemoryImage? signature1Image,
   pw.MemoryImage? signature2Image,
+  pw.MemoryImage? signature3Image,
 }) {
   // <--- MODIFIED: Accepts data and signatures
   const double headingFontSize = 12;
@@ -210,8 +213,9 @@ pw.Widget _buildNriDeclarationForm(
             ), // <--- MODIFIED
             _buildSignatureBox(
               'Signature of Applicant 3',
-              signatureText: '',
-            ), // Retain original third signature (no model data)
+              image: signature3Image,
+              signatureText: data.signature3Text,
+            ),
           ],
         ),
       ],
