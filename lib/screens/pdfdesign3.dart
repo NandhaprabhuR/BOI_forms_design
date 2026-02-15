@@ -6,23 +6,55 @@ import 'model/form_data_model.dart';
 import 'pdf_helpers.dart';
 
 // This function will build the entire third page
-pw.Widget buildThirdPage(FormDataModel data) {
+pw.Widget buildThirdPage(FormDataModel data, pw.MemoryImage? signature1, pw.MemoryImage? signature2) {
   return pw.Column(
-    crossAxisAlignment: pw.CrossAxisAlignment.start,
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        _buildPageThreeHeader(data),
+        pw.SizedBox(height: 2),
+        _buildAccountTypeSection(data),
+        pw.SizedBox(height: 2),
+        _buildModeOfOperationSection(data),
+        pw.SizedBox(height: 2),
+        _buildServicesRequiredSection(data),
+        pw.SizedBox(height: 2),
+        _buildFixedDepositSection(data),
+        pw.SizedBox(height: 2),
+        _buildMultiOptionDepositSection(data),
+        pw.SizedBox(height: 2),
+        _buildRecurringDepositSection(data),
+        pw.SizedBox(height: 2),
+        _buildPage3Signatures(data, signature1, signature2),
+      ],
+  );
+}
+
+pw.Widget _buildPage3Signatures(FormDataModel data, pw.MemoryImage? signature1, pw.MemoryImage? signature2) {
+  return pw.Row(
+    mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
     children: [
-      _buildPageThreeHeader(data),
-      pw.SizedBox(height: 3),
-      _buildAccountTypeSection(data),
-      pw.SizedBox(height: 3),
-      _buildModeOfOperationSection(data),
-      pw.SizedBox(height: 3),
-      _buildServicesRequiredSection(data),
-      pw.SizedBox(height: 3),
-      _buildFixedDepositSection(data),
-      pw.SizedBox(height: 3),
-      _buildMultiOptionDepositSection(data),
-      pw.SizedBox(height: 3),
-      _buildRecurringDepositSection(data),
+       pw.Column(
+         children: [
+           pw.Container(
+             height: 25,
+             width: 120,
+             decoration: pw.BoxDecoration(border: pw.Border.all()),
+             child: signature1 != null ? pw.Image(signature1, fit: pw.BoxFit.contain) : null,
+           ),
+           pw.Text("Signature of 1st Applicant", style: const pw.TextStyle(fontSize: 7)),
+         ],
+       ),
+       pw.Column(
+         children: [
+           pw.Container(
+             height: 25,
+             width: 120,
+             decoration: pw.BoxDecoration(border: pw.Border.all()),
+             child: signature2 != null ? pw.Image(signature2, fit: pw.BoxFit.contain) : null,
+           ),
+           pw.Text("Signature of 2nd Applicant", style: const pw.TextStyle(fontSize: 7)),
+         ],
+       ),
     ],
   );
 }
@@ -48,13 +80,13 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) {
             pw.Expanded(
               child: pw.Column(
                 children: [
-                  pw.SizedBox(height: 4),
+                  pw.SizedBox(height: 2),
                   pw.Text(
                     'ACCOUNT OPENING FORM FOR INDIVIDUAL (PART -II)',
                     textAlign: pw.TextAlign.center,
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,
-                      fontSize: 10,
+                      fontSize: 9,
                     ),
                   ),
                   pw.Text(
@@ -62,7 +94,7 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) {
                     textAlign: pw.TextAlign.center,
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,
-                      fontSize: 9,
+                      fontSize: 8,
                     ),
                   ),
                 ],
@@ -72,14 +104,14 @@ pw.Widget _buildPageThreeHeader(FormDataModel data) {
             pw.Row(
               mainAxisSize: pw.MainAxisSize.min,
               children: [
-                pw.Text('Date:', style: const pw.TextStyle(fontSize: 8)),
+                pw.Text('Date:', style: const pw.TextStyle(fontSize: 7)),
                 pw.SizedBox(width: 4),
                 dateBoxes,
               ],
             ),
           ],
         ),
-        pw.SizedBox(height: 10),
+        pw.SizedBox(height: 5),
 
         // --- Middle Row: Instructions, IDs, and Stamp Box ---
         pw.Row(
@@ -185,10 +217,10 @@ pw.Widget _buildAccountTypeSection(FormDataModel data) {
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         child: pw.Text(
           '1. Type of Account',
-          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
         ),
       ),
-      pw.SizedBox(height: 4),
+      pw.SizedBox(height: 2),
       pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
@@ -224,10 +256,10 @@ pw.Widget _buildModeOfOperationSection(FormDataModel data) {
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         child: pw.Text(
           '2. Mode of Operation',
-          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
         ),
       ),
-      pw.SizedBox(height: 4),
+      pw.SizedBox(height: 2),
       pw.Row(
         children: [
           labeledCheckbox('Self', checked: data.modeOfOperationSelf),
@@ -287,10 +319,10 @@ pw.Widget _buildServicesRequiredSection(FormDataModel data) {
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         child: pw.Text(
           '3. Services Required',
-          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
         ),
       ),
-      pw.SizedBox(height: 4),
+      pw.SizedBox(height: 2),
       // Two-column layout
       pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -314,22 +346,22 @@ pw.Widget _buildLeftServicesColumn(FormDataModel data) {
     children: [
       // --- ATM CARD ---
       pw.Text('1. ATM-CUM-DEBIT CARD', style: const pw.TextStyle(fontSize: 8)),
-      pw.SizedBox(height: 2),
+      pw.SizedBox(height: 1),
       _buildBoxedApplicantRow(
         '1st Applicant',
         isYesChecked: data.atmCard1stApplicant,
       ),
-      pw.SizedBox(height: 2),
+      pw.SizedBox(height: 1),
       _buildBoxedApplicantRow(
         '2nd Applicant',
         isYesChecked: data.atmCard2ndApplicant,
       ),
-      pw.SizedBox(height: 2),
+      pw.SizedBox(height: 1),
       pw.Text(
         '(Mobile no. is mandatory for services 2 to 8)',
         style: const pw.TextStyle(fontSize: 7),
       ),
-      pw.SizedBox(height: 8),
+      pw.SizedBox(height: 4),
 
       // --- CHEQUE BOOK ---
       pw.Row(
@@ -341,12 +373,12 @@ pw.Widget _buildLeftServicesColumn(FormDataModel data) {
           labeledCheckbox('NO', checked: data.chequeBookNo),
         ],
       ),
-      pw.SizedBox(height: 2),
+      pw.SizedBox(height: 1),
       pw.Text(
         '(Only for Regular SB/Current Accounts/Caps Gain(SB))\n(Not available for Regular BSBD/Small Accounts)',
         style: const pw.TextStyle(fontSize: 7),
       ),
-      pw.SizedBox(height: 8),
+      pw.SizedBox(height: 4),
 
       // --- INTERNET BANKING ---
       pw.Text(
@@ -357,14 +389,14 @@ pw.Widget _buildLeftServicesColumn(FormDataModel data) {
         'Transaction rights required',
         style: const pw.TextStyle(fontSize: 8),
       ),
-      pw.SizedBox(height: 2),
+      pw.SizedBox(height: 1),
       _buildUnboxedApplicantRow(
         '1st Applicant',
         isYesChecked: data.netBankingYes,
       ),
-      pw.SizedBox(height: 2),
+      pw.SizedBox(height: 1),
       _buildUnboxedApplicantRow('2nd Applicant', isYesChecked: false), // Default or add field
-      pw.SizedBox(height: 2),
+      pw.SizedBox(height: 1),
       pw.Text(
         '(Available only for singly operated accounts and joint accounts operated by Either or Survivor mode. In case of accounts operated as Former or Survivor mode INB facility is available to1st applicant only)',
         style: const pw.TextStyle(fontSize: 6.5, height: 1.2),
@@ -395,7 +427,7 @@ pw.Widget _buildRightServicesColumn(FormDataModel data) {
           ],
         ),
       ),
-      pw.SizedBox(height: 4),
+      pw.SizedBox(height: 2),
 
       // --- OTHER SERVICES ---
       _buildSimpleServiceRow(
@@ -410,15 +442,15 @@ pw.Widget _buildRightServicesColumn(FormDataModel data) {
           style: const pw.TextStyle(fontSize: 7),
         ),
       ),
-      pw.SizedBox(height: 6),
+      pw.SizedBox(height: 3),
       _buildSimpleServiceRow('5. PHONE BANKING SERVICES:', data.phoneBankingYes, data.phoneBankingNo),
-      pw.SizedBox(height: 6),
+      pw.SizedBox(height: 3),
       _buildSimpleServiceRow(
         '6. MOBILE BANKING:',
         data.mobileBankingYes,
         data.mobileBankingNo,
       ),
-      pw.SizedBox(height: 6),
+      pw.SizedBox(height: 3),
       _buildSimpleServiceRow('7. PASSBOOK REQUIRED:', data.passbookYes, data.passbookNo),
       pw.Padding(
         padding: const pw.EdgeInsets.only(left: 8),
@@ -427,7 +459,7 @@ pw.Widget _buildRightServicesColumn(FormDataModel data) {
           style: const pw.TextStyle(fontSize: 7),
         ),
       ),
-      pw.SizedBox(height: 6),
+      pw.SizedBox(height: 3),
       _buildSimpleServiceRowCustom(
         '8. e-Statement(at monthly intervals), in lieu of paper copy:',
         ['Required', 'Not Required'],
@@ -527,7 +559,7 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) {
   // REVISED STAMP BOX
   final stampBox = pw.Container(
     width: 150,
-    height: 40,
+    height: 30,
     decoration: pw.BoxDecoration(border: pw.Border.all(width: 0.5)),
     child: pw.Row(
       children: [
@@ -618,10 +650,10 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) {
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         child: pw.Text(
           '4. Fixed Deposit: For the following products/facilities, please furnish options/details:',
-          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
         ),
       ),
-      pw.SizedBox(height: 3),
+      pw.SizedBox(height: 2),
       pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
@@ -642,7 +674,7 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) {
           labeledCheckbox('Capital Gain (TDR)', checked: data.modCapitalGain),
         ],
       ),
-      pw.SizedBox(height: 4),
+      pw.SizedBox(height: 2),
       pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
@@ -669,7 +701,7 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) {
                     underlinedText(0),
                   ],
                 ),
-                pw.SizedBox(height: 4),
+                pw.SizedBox(height: 2),
                 pw.Row(
                   children: [
                     pw.Text('Period: ', style: const pw.TextStyle(fontSize: 8)),
@@ -694,7 +726,7 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) {
           stampBox,
         ],
       ),
-      pw.SizedBox(height: 4),
+      pw.SizedBox(height: 2),
       pw.Text(
         'In case of Term Deposit, interest payable#:',
         style: const pw.TextStyle(fontSize: 8),
@@ -709,7 +741,7 @@ pw.Widget _buildFixedDepositSection(FormDataModel data) {
           labeledCheckbox('Yearly', checked: data.rdYearly),
         ],
       ),
-      pw.SizedBox(height: 4),
+      pw.SizedBox(height: 2),
       maturityInstructionWidget,
       pw.SizedBox(height: 2),
       pw.Text(
@@ -763,62 +795,80 @@ pw.Widget _buildMultiOptionDepositSection(FormDataModel data) {
         padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         child: pw.Text(
           '5. MULTI-OPTION DEPOSIT SCHEME/AUTO SWEEP',
-          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
         ),
       ),
-      pw.SizedBox(height: 4),
+      pw.SizedBox(height: 2),
 
       // Type and Period Row
       pw.Row(
         children: [
-          pw.Text('Type of Deposit', style: const pw.TextStyle(fontSize: 8)),
-          pw.SizedBox(width: 8),
-          labeledCheckbox('Term Deposit', checked: false), // Todo: add field
-          pw.SizedBox(width: 8),
-          labeledCheckbox('Term Deposit (Reinvestment)', checked: false), // Todo: add field
-          pw.SizedBox(width: 20),
-          pw.Text('Period of Deposit', style: const pw.TextStyle(fontSize: 8)),
-          dottedText(50),
-          pw.Text(' Years(s)', style: const pw.TextStyle(fontSize: 8)),
-          dottedText(50),
-          pw.Text(' Months', style: const pw.TextStyle(fontSize: 8)),
+          pw.Text('Type of Deposit', style: const pw.TextStyle(fontSize: 7)),
+          pw.SizedBox(width: 4),
+          labeledCheckbox('Term Deposit', checked: data.modTermDeposit),
+          pw.SizedBox(width: 4),
+          labeledCheckbox('Term Deposit (Reinvestment)', checked: data.modTermDepositReinvestment),
+          pw.SizedBox(width: 10),
+          pw.Text('Period of Deposit', style: const pw.TextStyle(fontSize: 7)),
+          pw.Stack(
+             children: [
+               dottedText(40),
+               pw.Positioned(
+                 bottom: 2,
+                 left: 5,
+                 child: pw.Text(data.modPeriodYears, style: const pw.TextStyle(fontSize: 7)),
+               ),
+             ]
+          ),
+          pw.Text(' Years(s)', style: const pw.TextStyle(fontSize: 7)),
+          pw.Stack(
+             children: [
+               dottedText(40),
+               pw.Positioned(
+                 bottom: 2,
+                 left: 5,
+                 child: pw.Text(data.modPeriodMonths, style: const pw.TextStyle(fontSize: 7)),
+               ),
+             ]
+          ),
+          pw.Text(' Months', style: const pw.TextStyle(fontSize: 7)),
         ],
       ),
-      pw.SizedBox(height: 4),
+      pw.SizedBox(height: 2),
 
       // Consent Rows
       pw.Text(
         'I/We hereby give consent for debiting my/our account for recovering service charges as normally applicable to Savings Bank and Current Account.',
-        style: const pw.TextStyle(fontSize: 8),
+        style: const pw.TextStyle(fontSize: 7),
       ),
-      pw.SizedBox(height: 2),
+      pw.SizedBox(height: 1),
       pw.Text(
         'I/We hereby give consent for debiting my/our Savings Bank/Current Account for creating/AUTO SWEEP as per the Terms and Conditions.',
-        style: const pw.TextStyle(fontSize: 8),
+        style: const pw.TextStyle(fontSize: 7),
       ),
-      pw.SizedBox(height: 4),
+      pw.SizedBox(height: 2),
 
       // Linked Account Row
       pw.Row(
         children: [
           pw.Text(
             'Linked Saving Bank/Current Account No.',
-            style: const pw.TextStyle(fontSize: 8),
+            style: const pw.TextStyle(fontSize: 7),
           ),
-          pw.SizedBox(width: 8),
+          pw.SizedBox(width: 4),
           charBoxes(data.debitAccountNo, 15),
         ],
       ),
-      pw.SizedBox(height: 4),
+      pw.SizedBox(height: 2),
 
       // Reverse Sweep Row
       pw.Row(
         children: [
           pw.Text(
             'Under reverse sweep facility for breaking the MOD to be broken by',
-            style: const pw.TextStyle(fontSize: 8),
+            style: const pw.TextStyle(fontSize: 7),
           ),
-          pw.SizedBox(width: 8),
+          pw.SizedBox(width: 4),
           labeledCheckbox('Last in first out', checked: true),
         ],
       ),
@@ -852,11 +902,11 @@ pw.Widget _buildRecurringDepositSection(FormDataModel data) {
           padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 2),
           child: pw.Text(
             '6   RECURRING DEPOSIT',
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5),
+            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
           ),
         ),
         pw.Padding(
-          padding: const pw.EdgeInsets.fromLTRB(4, 3, 4, 3),
+          padding: const pw.EdgeInsets.fromLTRB(4, 2, 4, 2),
           child: pw.Column(
             children: [
               // Installment Row
@@ -864,25 +914,25 @@ pw.Widget _buildRecurringDepositSection(FormDataModel data) {
                 children: [
                   labeledCheckbox('Monthly / Core Monthly installment:', checked: data.rdMonthly),
                   pw.SizedBox(width: 4),
-                  pw.Text('Rs.', style: const pw.TextStyle(fontSize: 8)),
-                  pw.Text(data.rdInstallment, style: const pw.TextStyle(fontSize: 8)),
+                  pw.Text('Rs.', style: const pw.TextStyle(fontSize: 7)),
+                  pw.Text(data.rdInstallment, style: const pw.TextStyle(fontSize: 7)),
                   dottedText(40),
                   pw.SizedBox(width: 4),
                   pw.Text(
                     'Rs. (In words)',
-                    style: const pw.TextStyle(fontSize: 8),
+                    style: const pw.TextStyle(fontSize: 7),
                   ),
                   dottedText(80),
                   pw.SizedBox(width: 4),
-                  pw.Text('Period:', style: const pw.TextStyle(fontSize: 8)),
+                  pw.Text('Period:', style: const pw.TextStyle(fontSize: 7)),
                   dottedText(20),
-                  pw.Text(' Years:', style: const pw.TextStyle(fontSize: 8)),
+                  pw.Text(' Years:', style: const pw.TextStyle(fontSize: 7)),
                   dottedText(20),
-                  pw.Text(' Month(s)', style: const pw.TextStyle(fontSize: 8)),
+                  pw.Text(' Month(s)', style: const pw.TextStyle(fontSize: 7)),
                   dottedText(20),
                 ],
               ),
-              pw.SizedBox(height: 3),
+              pw.SizedBox(height: 1),
 
               // Standing Instruction Row
               pw.Row(
@@ -893,15 +943,15 @@ pw.Widget _buildRecurringDepositSection(FormDataModel data) {
                   ),
                   pw.Text(
                     'Debit Account No.',
-                    style: const pw.TextStyle(fontSize: 8),
+                    style: const pw.TextStyle(fontSize: 7),
                   ),
-                  pw.SizedBox(width: 8),
+                  pw.SizedBox(width: 4),
                   pw.Expanded(
                     child: charBoxes(data.debitAccountNo, 18),
                   ),
                 ],
               ),
-              pw.SizedBox(height: 3),
+              pw.SizedBox(height: 1),
 
               // On Maturity Row
               pw.Row(
@@ -919,19 +969,19 @@ pw.Widget _buildRecurringDepositSection(FormDataModel data) {
                   ),
                 ],
               ),
-              pw.SizedBox(height: 6),
+              pw.SizedBox(height: 3),
 
               // TDS Row
               pw.Row(
                 children: [
                   pw.Text(
                     'For the above Term Deposit Account, please deduct applicable TDS from',
-                    style: const pw.TextStyle(fontSize: 8),
+                    style: const pw.TextStyle(fontSize: 7),
                   ),
                   pw.SizedBox(width: 4),
                   pw.Text(
                     '(SB/CA Account No.)',
-                    style: const pw.TextStyle(fontSize: 8),
+                    style: const pw.TextStyle(fontSize: 7),
                   ),
                   pw.SizedBox(width: 4),
                   pw.Expanded(

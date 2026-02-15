@@ -82,7 +82,8 @@ pw.Widget buildFourthPage(
 }) {
   // FIXED: Using a Transform to scale the entire content down slightly.
   return pw.Transform.scale(
-    scale: 0.95,
+    scale: 0.9,
+    alignment: pw.Alignment.topCenter,
     child: pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -94,13 +95,13 @@ pw.Widget buildFourthPage(
           witnessSignature1: witnessSignature1,
           witnessSignature2: witnessSignature2,
         ),
-        pw.SizedBox(height: 4),
+        pw.SizedBox(height: 2),
         buildDeclarationSection(
           data,
           signature1Image,
           signature2Image,
         ),
-        pw.SizedBox(height: 4),
+        pw.SizedBox(height: 2),
         buildOfficeUseSection(),
       ],
     ),
@@ -179,7 +180,7 @@ pw.Widget _buildNominationTopPart(FormDataModel data) {
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(2),
-                child: pw.Text(data.nominationAccountNo, style: const pw.TextStyle(fontSize: 7)),
+                child: pw.Text(data.accountNo, style: const pw.TextStyle(fontSize: 7)),
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(2),

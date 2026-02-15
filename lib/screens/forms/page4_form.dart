@@ -205,7 +205,9 @@ class _Page4FormState extends State<Page4Form> {
       _witness2NameController,
       _witness2AddressController,
       _witnessDateController,
+      _witness2AddressController,
       _witnessPlaceController,
+      _declarationPlaceController,
       _minorDobController,
       _guardianOrderDateController,
       _declarationPlaceController,
@@ -407,6 +409,7 @@ class _Page4FormState extends State<Page4Form> {
           FormHelper.buildTextField(
             'Registration No.',
             _registrationNoController,
+            validator: (val) => val!.isEmpty ? 'Required' : null,
           ),
           const SizedBox(height: 12),
 
@@ -453,6 +456,7 @@ class _Page4FormState extends State<Page4Form> {
           FormHelper.buildTextField(
             'Account Number:',
             _accountNumberController,
+            validator: (val) => val!.isEmpty ? 'Required' : null,
           ),
           const SizedBox(height: 16),
 
@@ -460,7 +464,7 @@ class _Page4FormState extends State<Page4Form> {
           FormHelper.buildSectionTitle('Details of Nominee'),
           const SizedBox(height: 12),
 
-          FormHelper.buildTextField('Name:', _nomineeNameController),
+          FormHelper.buildTextField('Name:', _nomineeNameController, validator: (val) => val!.isEmpty ? 'Required' : null),
           const SizedBox(height: 12),
 
           FormHelper.buildTextField(
@@ -483,7 +487,8 @@ class _Page4FormState extends State<Page4Form> {
           ),
           const SizedBox(height: 12),
 
-          FormHelper.buildTextField(
+          FormHelper.buildDatePickerField(
+            context,
             'Date of Birth of nominee (in case of minor) DDMMYYYY',
             _nomineeDobController,
           ),
@@ -603,7 +608,12 @@ class _Page4FormState extends State<Page4Form> {
           ),
           const SizedBox(height: 16),
 
-          FormHelper.buildTextField('Date (DDMMYYYY)', _witnessDateController),
+          FormHelper.buildDatePickerField(
+            context,
+            'Date (DDMMYYYY)', 
+            _witnessDateController,
+            validator: (val) => val!.isEmpty ? 'Required' : null
+          ),
           const SizedBox(height: 12),
 
           FormHelper.buildTextField('Place', _witnessPlaceController),
@@ -748,12 +758,14 @@ class _Page4FormState extends State<Page4Form> {
                 padding: const EdgeInsets.only(left: 48.0),
                 child: Column(
                   children: [
-                    FormHelper.buildTextField(
+                    FormHelper.buildDatePickerField(
+                      context,
                       'Date of Birth of Minor',
                       _minorDobController,
                     ),
                     const SizedBox(height: 8),
-                    FormHelper.buildTextField(
+                    FormHelper.buildDatePickerField(
+                      context,
                       'Guardian Order Date',
                       _guardianOrderDateController,
                     ),

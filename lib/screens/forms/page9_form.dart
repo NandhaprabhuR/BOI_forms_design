@@ -92,11 +92,12 @@ class _Page9FormState extends State<Page9Form> {
   
   // POI Checkboxes
   bool _poiPassport = false;
-  bool _poiVotersCard = false;
+  bool _poiVoterId = false;
   bool _poiDrivingLicence = false;
   bool _poiAadhaar = false;
   bool _poiNregaJobCard = false;
   bool _poiNprLetter = false;
+  bool _poiOthers = false;
 
   // Citizenship checkboxes
   bool _citizenshipIndia = false;
@@ -222,6 +223,15 @@ class _Page9FormState extends State<Page9Form> {
         ? widget.initialData.fatcaDeclarantSignature
         : null;
 
+    // Initialize POI from model
+    _poiPassport = widget.initialData.poiPassport;
+    _poiVoterId = widget.initialData.poiVoterId;
+    _poiDrivingLicence = widget.initialData.poiDrivingLicence;
+    _poiAadhaar = widget.initialData.poiAadhaar;
+    _poiNregaJobCard = widget.initialData.poiNregaJobCard;
+    _poiNprLetter = widget.initialData.poiNprLetter;
+    _poiOthers = widget.initialData.poiOthers;
+
     FormHelper.addListeners([
       _customerIdController,
       _ckycNoController,
@@ -301,6 +311,15 @@ class _Page9FormState extends State<Page9Form> {
     // Checkboxes (Example: Citizenship)
     widget.initialData.fatcaNonIndianCitizen = _citizenshipOthers;
     widget.initialData.fatcaIndianCitizen = _citizenshipIndia;
+
+    // POI Options
+    widget.initialData.poiPassport = _poiPassport;
+    widget.initialData.poiVoterId = _poiVoterId;
+    widget.initialData.poiDrivingLicence = _poiDrivingLicence;
+    widget.initialData.poiAadhaar = _poiAadhaar;
+    widget.initialData.poiNregaJobCard = _poiNregaJobCard;
+    widget.initialData.poiNprLetter = _poiNprLetter;
+    widget.initialData.poiOthers = _poiOthers;
 
     // Signature
     widget.initialData.fatcaDeclarantSignature = _outsideIndiaSignaturePath ?? '';
@@ -757,27 +776,29 @@ class _Page9FormState extends State<Page9Form> {
                   setState(() {
                     if (val == true) {
                       _poiPassport = true;
-                      _poiVotersCard = false;
+                      _poiVoterId = false;
                       _poiDrivingLicence = false;
                       _poiAadhaar = false;
                       _poiNregaJobCard = false;
                       _poiNprLetter = false;
+                      _poiOthers = false;
                     } else {
                       _poiPassport = false;
                     }
                   });
                 }),
-                _buildPOICheckbox('B-VOTER\'S IDENTITY CARD', _poiVotersCard, (val) {
+                _buildPOICheckbox('B-VOTER\'S IDENTITY CARD', _poiVoterId, (val) {
                   setState(() {
                     if (val == true) {
-                      _poiVotersCard = true;
+                      _poiVoterId = true;
                       _poiPassport = false;
                       _poiDrivingLicence = false;
                       _poiAadhaar = false;
                       _poiNregaJobCard = false;
                       _poiNprLetter = false;
+                      _poiOthers = false;
                     } else {
-                      _poiVotersCard = false;
+                      _poiVoterId = false;
                     }
                   });
                 }),
@@ -786,10 +807,11 @@ class _Page9FormState extends State<Page9Form> {
                     if (val == true) {
                       _poiDrivingLicence = true;
                       _poiPassport = false;
-                      _poiVotersCard = false;
+                      _poiVoterId = false;
                       _poiAadhaar = false;
                       _poiNregaJobCard = false;
                       _poiNprLetter = false;
+                      _poiOthers = false;
                     } else {
                       _poiDrivingLicence = false;
                     }
@@ -800,10 +822,11 @@ class _Page9FormState extends State<Page9Form> {
                     if (val == true) {
                       _poiAadhaar = true;
                       _poiPassport = false;
-                      _poiVotersCard = false;
+                      _poiVoterId = false;
                       _poiDrivingLicence = false;
                       _poiNregaJobCard = false;
                       _poiNprLetter = false;
+                      _poiOthers = false;
                     } else {
                       _poiAadhaar = false;
                     }
@@ -814,10 +837,11 @@ class _Page9FormState extends State<Page9Form> {
                     if (val == true) {
                       _poiNregaJobCard = true;
                       _poiPassport = false;
-                      _poiVotersCard = false;
+                      _poiVoterId = false;
                       _poiDrivingLicence = false;
                       _poiAadhaar = false;
                       _poiNprLetter = false;
+                      _poiOthers = false;
                     } else {
                       _poiNregaJobCard = false;
                     }
@@ -828,12 +852,28 @@ class _Page9FormState extends State<Page9Form> {
                     if (val == true) {
                       _poiNprLetter = true;
                       _poiPassport = false;
-                      _poiVotersCard = false;
+                      _poiVoterId = false;
                       _poiDrivingLicence = false;
                       _poiAadhaar = false;
                       _poiNregaJobCard = false;
+                      _poiOthers = false;
                     } else {
                       _poiNprLetter = false;
+                    }
+                  });
+                }),
+                _buildPOICheckbox('G-OTHERS', _poiOthers, (val) {
+                  setState(() {
+                    if (val == true) {
+                      _poiOthers = true;
+                      _poiPassport = false;
+                      _poiVoterId = false;
+                      _poiDrivingLicence = false;
+                      _poiAadhaar = false;
+                      _poiNregaJobCard = false;
+                      _poiNprLetter = false;
+                    } else {
+                      _poiOthers = false;
                     }
                   });
                 }),
@@ -849,23 +889,25 @@ class _Page9FormState extends State<Page9Form> {
             'Document No/Identification Number',
             _documentNoController,
             maxLines: 1,
+            validator: (val) => val!.isEmpty ? 'Required' : null,
           ),
           const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
-                child: FormHelper.buildTextField(
+                child: FormHelper.buildDatePickerField(
+                  context,
                   'Issue date* (dd/mm/yyyy)',
                   _issueDateController,
-                  maxLines: 1,
+                  validator: (val) => val!.isEmpty ? 'Required' : null,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: FormHelper.buildTextField(
+                child: FormHelper.buildDatePickerField(
+                  context,
                   'Expiry Date (If Applicable)',
                   _expiryDateController,
-                  maxLines: 1,
                 ),
               ),
             ],
@@ -1271,6 +1313,7 @@ class _Page9FormState extends State<Page9Form> {
             'Address*',
             _outsideIndiaAddressController,
             maxLines: 2,
+            validator: (val) => (_citizenshipOthers && val!.isEmpty) ? 'Required if Resident outside India' : null,
           ),
           const SizedBox(height: 12),
           Row(
@@ -1346,10 +1389,10 @@ class _Page9FormState extends State<Page9Form> {
                       maxLines: 1,
                     ),
                     const SizedBox(height: 12),
-                    FormHelper.buildTextField(
+                    FormHelper.buildDatePickerField(
+                      context,
                       'Date:',
                       _outsideIndiaDateController,
-                      maxLines: 1,
                     ),
                   ],
                 ),

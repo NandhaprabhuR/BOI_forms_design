@@ -331,38 +331,33 @@ pw.Widget _buildAnnexure2Form(FormDataModel data) {
 pw.Widget _buildProofOfIdentitySection(FormDataModel data) {
   const double regularFontSize = 9;
 
-  final poiList = {
-    'A-PASSPORT': false,
-    'B-VOTER\'S IDENTITY CARD': false,
-    'C-DRIVING LICENCE': false,
-    'D-UID(AADHAR)': true, // Defaulting for visual consistency in sample, logic needed if related person type supported
-    'E-NREGA JOB CARD': false,
-    'F-LETTER ISSUED BY NATIONAL POPULATION REGISTER CONTAINING DETAILS OF NAME & ADDRESS':
-        false,
-    'G-OTHERS': false,
-  };
-
-  return pw.Column(
-    crossAxisAlignment: pw.CrossAxisAlignment.start,
-    children: [
-      pw.Text(
-        'PROOF OF IDENTITY(POI) OF RELATED PERSON*',
-        style: pw.TextStyle(
-          fontWeight: pw.FontWeight.bold,
-          fontSize: regularFontSize,
-        ),
-      ),
-      pw.SizedBox(height: 3),
-      ...poiList.entries.map((entry) {
-        return pw.Padding(
-          padding: const pw.EdgeInsets.only(bottom: 2.0),
-          child: _buildCheckbox(
-            entry.key,
-            isChecked: entry.value,
-            labelFontSize: entry.key.startsWith('F-') ? 7.5 : regularFontSize,
+    //     'G-OTHERS': false, // TODO: Add to model if needed
+    //   };
+    
+      return pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(
+            'PROOF OF IDENTITY(POI) OF RELATED PERSON*',
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: regularFontSize,
+            ),
           ),
-        );
-      }).toList(),
+          pw.SizedBox(height: 3),
+          _buildCheckbox('A-PASSPORT', isChecked: data.poiPassport),
+          pw.SizedBox(height: 2),
+          _buildCheckbox('B-VOTER\'S IDENTITY CARD', isChecked: data.poiVoterId),
+          pw.SizedBox(height: 2),
+          _buildCheckbox('C-DRIVING LICENCE', isChecked: data.poiDrivingLicence),
+          pw.SizedBox(height: 2),
+          _buildCheckbox('D-UID(AADHAR)', isChecked: data.poiAadhaar),
+          pw.SizedBox(height: 2),
+          _buildCheckbox('E-NREGA JOB CARD', isChecked: data.poiNregaJobCard),
+          pw.SizedBox(height: 2),
+          _buildCheckbox('F-LETTER ISSUED BY NATIONAL POPULATION REGISTER CONTAINING DETAILS OF NAME & ADDRESS', isChecked: data.poiNprLetter, labelFontSize: 7.5),
+          pw.SizedBox(height: 2),
+          _buildCheckbox('G-OTHERS', isChecked: data.poiOthers),
       pw.Padding(
         padding: const pw.EdgeInsets.only(left: 30),
         child: pw.Text(
@@ -418,9 +413,9 @@ pw.Widget buildNinthPage(FormDataModel data, {pw.MemoryImage? declarantSignature
         pw.SizedBox(height: 5),
         _buildProofOfIdentitySection(data),
         pw.SizedBox(height: 5),
-        // _buildFatcaDeclarationForm(data), // Modified to accept data if needed
-        // pw.SizedBox(height: 2),
-        // _buildTaxResidencySection(),
+        _buildFatcaDeclarationForm(data),
+        pw.SizedBox(height: 2),
+        _buildTaxResidencySection(),
         pw.SizedBox(height: 5),
         _buildForeignTaxAddressSection(data, declarantSignature: declarantSignature),
       ],

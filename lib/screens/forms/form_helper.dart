@@ -23,11 +23,15 @@ class FormHelper {
     String? hint,
     TextInputType? keyboardType,
     int maxLines = 1,
+    String? Function(String?)? validator,
+    int? maxLength,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextFormField(
         controller: controller,
+        validator: validator,
+        maxLength: maxLength,
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
@@ -36,9 +40,49 @@ class FormHelper {
             horizontal: 12,
             vertical: 16,
           ),
+          counterText: maxLength != null ? '' : null,
         ),
         keyboardType: keyboardType,
         maxLines: maxLines,
+      ),
+    );
+  }
+
+  static Widget buildDatePickerField(
+    BuildContext context,
+    String label,
+    TextEditingController controller, {
+    String? Function(String?)? validator,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: TextFormField(
+        controller: controller,
+        validator: validator,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: 'DD/MM/YYYY',
+          border: const OutlineInputBorder(),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.calendar_today),
+            onPressed: () async {
+              final DateTime? picked = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime(2100),
+              );
+              if (picked != null) {
+                // Format as DD/MM/YYYY
+                final String day = picked.day.toString().padLeft(2, '0');
+                final String month = picked.month.toString().padLeft(2, '0');
+                final String year = picked.year.toString();
+                controller.text = '$day/$month/$year';
+              }
+            },
+          ),
+        ),
+        keyboardType: TextInputType.datetime,
       ),
     );
   }

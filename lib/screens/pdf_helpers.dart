@@ -49,7 +49,20 @@ pw.Widget checkBox({bool checked = false}) {
     margin: const pw.EdgeInsets.symmetric(horizontal: 4),
     decoration: pw.BoxDecoration(border: pw.Border.all(width: 1)),
     child: checked
-        ? pw.Center(child: pw.Text('✓', style: const pw.TextStyle(fontSize: 9)))
+        ? pw.Center(
+            child: pw.CustomPaint(
+              size: const PdfPoint(8, 8),
+              painter: (PdfGraphics canvas, PdfPoint size) {
+                canvas
+                  ..moveTo(1, size.y / 2)
+                  ..lineTo(size.x / 3, 1)
+                  ..lineTo(size.x - 1, size.y - 1)
+                  ..setStrokeColor(PdfColors.black)
+                  ..setLineWidth(1.0)
+                  ..strokePath();
+              },
+            ),
+          )
         : null,
   );
 }

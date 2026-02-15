@@ -361,6 +361,21 @@ class FormDataModel {
   bool rdHalfYearly;
   bool rdYearly;
 
+  // --- Page 3: Multi-Option Deposit/Recurring Deposit Options ---
+  bool modTermDeposit;
+  bool modTermDepositReinvestment;
+  String modPeriodYears;
+  String modPeriodMonths;
+
+  // --- Page 9: POI Options (Annexure-2) ---
+  bool poiPassport;
+  bool poiVoterId;
+  bool poiDrivingLicence;
+  bool poiAadhaar;
+  bool poiNregaJobCard;
+  bool poiNprLetter;
+  bool poiOthers;
+
   // --- Missing Page 7 (Form 60) Fields ---
   String form60FirstName;
   String form60MiddleName;
@@ -726,6 +741,21 @@ class FormDataModel {
     this.rdCalenderQuarter = false,
     this.rdHalfYearly = false,
     this.rdYearly = false,
+
+    // Page 3: MOD/RD defaults
+    this.modTermDeposit = false,
+    this.modTermDepositReinvestment = false,
+    this.modPeriodYears = '',
+    this.modPeriodMonths = '',
+
+    // Page 9: POI defaults
+    this.poiPassport = false,
+    this.poiVoterId = false,
+    this.poiDrivingLicence = false,
+    this.poiAadhaar = false,
+    this.poiNregaJobCard = false,
+    this.poiNprLetter = false,
+    this.poiOthers = false,
 
     // Missing Page 7 (Form 60) Fields
     this.form60FirstName = '',

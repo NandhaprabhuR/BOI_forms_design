@@ -280,7 +280,9 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
             applicantSignature,
             officialSignature,
           ),
-          buildThirdPage(model),
+          pw.NewPage(),
+          buildThirdPage(model, signature1Image, signature2Image),
+          pw.NewPage(),
           buildFourthPage(
             model, 
             signature1Image, 
@@ -288,6 +290,7 @@ class _PdfDesignPageState extends State<PdfDesignPage> {
             witnessSignature1: witnessSignature1,
             witnessSignature2: witnessSignature2,
           ),
+          pw.NewPage(),
           buildFifthPage(model, signature1Image: signature1Image, bsbdSignature: bsbdSignature),
           buildSixthPage(model, ackBankOfficialSignature: ackBankOfficialSignature),
           buildSeventhPage(model, declarantSignature: form60DeclarantSignature),

@@ -69,8 +69,18 @@ class _Page3FormState extends State<Page3Form> {
   bool _mobileBankingNo = false;
   bool _passbookYes = false;
   bool _passbookNo = false;
-  bool _eStatementRequired = false;
-  bool _eStatementNotRequired = false;
+  // Section 5: Multi-Option Deposit Scheme
+  bool _modTermDeposit = false;
+  bool _modTermDepositReinvestment = false;
+  late TextEditingController _modPeriodYearsController;
+  late TextEditingController _modPeriodMonthsController;
+
+  // Section 6: Recurring Deposit
+  bool _rdMonthly = false;
+  bool _rdQuarterly = false;
+  bool _rdCalenderQuarter = false;
+  bool _rdHalfYearly = false;
+  bool _rdYearly = false;
 
   @override
   void initState() {
@@ -166,11 +176,26 @@ class _Page3FormState extends State<Page3Form> {
     _eStatementRequired = widget.initialData.eStatementRequired;
     _eStatementNotRequired = widget.initialData.eStatementNotRequired;
 
+    // Initialize MOD/RD
+    _modTermDeposit = widget.initialData.modTermDeposit;
+    _modTermDepositReinvestment = widget.initialData.modTermDepositReinvestment;
+    _modPeriodYearsController = TextEditingController(text: widget.initialData.modPeriodYears);
+    _modPeriodMonthsController = TextEditingController(text: widget.initialData.modPeriodMonths);
+
+    _rdMonthly = widget.initialData.rdMonthly;
+    _rdQuarterly = widget.initialData.rdQuarterly;
+    _rdCalenderQuarter = widget.initialData.rdCalenderQuarter;
+    _rdHalfYearly = widget.initialData.rdHalfYearly;
+    _rdYearly = widget.initialData.rdYearly;
+
     _addListeners();
   }
 
   void _addListeners() {
     _firstApplicantCustomerIdController.addListener(_notifyChange);
+    // ... other listeners ...
+    _modPeriodYearsController.addListener(_notifyChange);
+    _modPeriodMonthsController.addListener(_notifyChange);
     _secondApplicantCustomerIdController.addListener(_notifyChange);
     _atmCardNameController.addListener(_notifyChange);
     _fdAmountController.addListener(_notifyChange);
@@ -360,6 +385,17 @@ class _Page3FormState extends State<Page3Form> {
       passbookNo: _passbookNo,
       eStatementRequired: _eStatementRequired,
       eStatementNotRequired: _eStatementNotRequired,
+      
+      // MOD/RD Data
+      modTermDeposit: _modTermDeposit,
+      modTermDepositReinvestment: _modTermDepositReinvestment,
+      modPeriodYears: _modPeriodYearsController.text,
+      modPeriodMonths: _modPeriodMonthsController.text,
+      rdMonthly: _rdMonthly,
+      rdQuarterly: _rdQuarterly,
+      rdCalenderQuarter: _rdCalenderQuarter,
+      rdHalfYearly: _rdHalfYearly,
+      rdYearly: _rdYearly,
     );
   }
 
@@ -375,6 +411,9 @@ class _Page3FormState extends State<Page3Form> {
     _nominationRegistrationNoController.dispose();
     _depositTypeController.dispose();
     _nominationAccountNoController.dispose();
+    _modPeriodYearsController.dispose();
+    _modPeriodMonthsController.dispose();
+    // ... dispose other controllers
 
     // Dispose new Part-II controllers
     _page3DateController.dispose();
@@ -439,11 +478,10 @@ class _Page3FormState extends State<Page3Form> {
                       children: [
                         const Text('Date: '),
                         Expanded(
-                          child: _buildTextField(
+                          child: FormHelper.buildDatePickerField(
+                            context,
                             '',
                             _page3DateController,
-                            maxLength: 10,
-                            hint: 'DD/MM/YYYY',
                           ),
                         ),
                       ],
@@ -488,7 +526,16 @@ class _Page3FormState extends State<Page3Form> {
             'Second Applicant Customer ID',
             _secondApplicantCustomerIdController,
           ),
-          _buildTextField('Account No.', _page3AccountNoController),
+          FormHelper.buildTextField(
+            'Account No.', 
+            _page3AccountNoController,
+            validator: (value) {
+               if (value == null || value.isEmpty) {
+                 return 'Please enter Account No.';
+               }
+               return null;
+            }
+          ),
           const SizedBox(height: 30),
 
           // Request text
@@ -968,6 +1015,44 @@ class _Page3FormState extends State<Page3Form> {
           const SizedBox(height: 30),
 
           // Existing fields (keep for backward compatibility)
+          // Multi-Option Deposit Scheme
+          _buildSectionTitle('5. Multi-Option Deposit Scheme/Auto Sweep'),
+          _buildCheckbox('Term Deposit', _modTermDeposit, (val) {
+             setState(() { _modTermDeposit = val ?? false; _notifyChange(); });
+          }),
+           _buildCheckbox('Term Deposit (Reinvestment)', _modTermDepositReinvestment, (val) {
+             setState(() { _modTermDepositReinvestment = val ?? false; _notifyChange(); });
+          }),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: FormHelper.buildTextField('Period (Years)', _modPeriodYearsController, keyboardType: TextInputType.number),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: FormHelper.buildTextField('Period (Months)', _modPeriodMonthsController, keyboardType: TextInputType.number),
+              ),
+            ],
+          ),
+          const SizedBox(height: 30),
+
+          // Recurring Deposit (New Section)
+          _buildSectionTitle('6. Recurring Deposit'),
+          Wrap(
+            spacing: 10,
+            children: [
+               _buildRDCheckbox('Monthly', _rdMonthly, (val) => setState(() { _rdMonthly = val!; if(val) _clearRD(0); _notifyChange(); })),
+               _buildRDCheckbox('Quarterly', _rdQuarterly, (val) => setState(() { _rdQuarterly = val!; if(val) _clearRD(1); _notifyChange(); })),
+               _buildRDCheckbox('Cal. Quarter', _rdCalenderQuarter, (val) => setState(() { _rdCalenderQuarter = val!; if(val) _clearRD(2); _notifyChange(); })),
+               _buildRDCheckbox('Half Yearly', _rdHalfYearly, (val) => setState(() { _rdHalfYearly = val!; if(val) _clearRD(3); _notifyChange(); })),
+               _buildRDCheckbox('Yearly', _rdYearly, (val) => setState(() { _rdYearly = val!; if(val) _clearRD(4); _notifyChange(); })),
+            ],
+          ),
+          FormHelper.buildTextField('RD Installment', _rdInstallmentController, keyboardType: TextInputType.number),
+          FormHelper.buildTextField('Debit Account No', _debitAccountNoController),
+
+          const SizedBox(height: 30),
           _buildSectionTitle('Fixed Deposit'),
           _buildTextField(
             'FD Amount',
@@ -1054,5 +1139,23 @@ class _Page3FormState extends State<Page3Form> {
       controlAffinity: ListTileControlAffinity.leading,
       contentPadding: EdgeInsets.zero,
     );
+  }
+
+  Widget _buildRDCheckbox(String label, bool value, Function(bool?) onChanged) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Checkbox(value: value, onChanged: onChanged),
+        Text(label),
+      ],
+    );
+  }
+
+  void _clearRD(int index) {
+      if (index != 0) _rdMonthly = false;
+      if (index != 1) _rdQuarterly = false;
+      if (index != 2) _rdCalenderQuarter = false;
+      if (index != 3) _rdHalfYearly = false;
+      if (index != 4) _rdYearly = false;
   }
 }
