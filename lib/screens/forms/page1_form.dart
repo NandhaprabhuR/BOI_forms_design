@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../model/form_data_model.dart';
+import 'form_helper.dart';
 
 class Page1Form extends StatefulWidget {
   final FormDataModel initialData;
@@ -906,7 +907,7 @@ class _Page1FormState extends State<Page1Form> {
           _buildSectionTitle('Branch Information'),
           _buildTextField('Branch Name', _branchNameController),
           _buildTextField('Branch Code', _branchCodeController),
-          _buildTextField('Date', _dateController, hint: 'DD/MM/YYYY'),
+          FormHelper.buildDatePickerField(context, 'Date', _dateController),
           const SizedBox(height: 20),
           _buildSectionTitle('Customer Information'),
           _buildTextField('Customer ID', _customerIdController),
@@ -1094,13 +1095,11 @@ class _Page1FormState extends State<Page1Form> {
             children: [
               Expanded(
                 flex: 3,
-                child: _buildTextField(
+                child: FormHelper.buildDatePickerField(
+                  context,
                   'Date of Birth *',
                   _dobController,
-                  maxLength: 10,
-                  hint: 'DD/MM/YYYY',
-                  isRequired: true,
-                  keyboardType: TextInputType.datetime,
+                  validator: FormHelper.validateDateField,
                 ),
               ),
               const SizedBox(width: 10),
@@ -1374,6 +1373,7 @@ class _Page1FormState extends State<Page1Form> {
             maxLength: 2,
             hint: '0-99',
             keyboardType: TextInputType.number,
+            validator: FormHelper.validateNumberField,
           ),
           const SizedBox(height: 15),
 
@@ -1976,6 +1976,7 @@ class _Page1FormState extends State<Page1Form> {
                   _monthlyIncomeController,
                   isRequired: true,
                   keyboardType: TextInputType.number,
+                  validator: FormHelper.validateDecimalField,
                 ),
               ),
               const SizedBox(width: 10),
@@ -1984,6 +1985,7 @@ class _Page1FormState extends State<Page1Form> {
                   'Net Worth (approx) (Rs.)',
                   _netWorthController,
                   keyboardType: TextInputType.number,
+                  validator: FormHelper.validateDecimalField,
                 ),
               ),
               const SizedBox(width: 10),
@@ -1992,6 +1994,7 @@ class _Page1FormState extends State<Page1Form> {
                   'Est. Annual Turnover (Rs.)',
                   _estAnnualTurnoverController,
                   keyboardType: TextInputType.number,
+                  validator: FormHelper.validateDecimalField,
                 ),
               ),
             ],
@@ -2906,22 +2909,20 @@ class _Page1FormState extends State<Page1Form> {
           Row(
             children: [
               Expanded(
-                child: _buildTextField(
+                child: FormHelper.buildDatePickerField(
+                  context,
                   'Issue Date*',
                   _issueDateController,
-                  hint: 'DDMMYYYY',
-                  maxLength: 8,
-                  keyboardType: TextInputType.number,
+                  validator: FormHelper.validateDateField,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _buildTextField(
+                child: FormHelper.buildDatePickerField(
+                  context,
                   'Expiry Date (If applicable)*',
                   _expiryDateController,
-                  hint: 'DDMMYYYY',
-                  maxLength: 8,
-                  keyboardType: TextInputType.number,
+                  validator: FormHelper.validateDateField,
                 ),
               ),
             ],
@@ -2949,6 +2950,7 @@ class _Page1FormState extends State<Page1Form> {
                   keyboardType: TextInputType.phone,
                   maxLength: 10,
                   hint: '10 digits',
+                  validator: FormHelper.validatePhoneField,
                 ),
               ),
             ],
@@ -2958,6 +2960,7 @@ class _Page1FormState extends State<Page1Form> {
             _emailIdController,
             keyboardType: TextInputType.emailAddress,
             maxLength: 50,
+            validator: FormHelper.validateEmailField,
           ),
           Row(
             children: [
@@ -2969,6 +2972,7 @@ class _Page1FormState extends State<Page1Form> {
                   keyboardType: TextInputType.phone,
                   maxLength: 10,
                   hint: '10 digits',
+                  validator: FormHelper.validatePhoneField,
                 ),
               ),
             ],
@@ -2982,6 +2986,7 @@ class _Page1FormState extends State<Page1Form> {
                   _stdCodeController,
                   keyboardType: TextInputType.phone,
                   maxLength: 3,
+                  validator: FormHelper.validateNumberField,
                 ),
               ),
               const SizedBox(width: 8),
@@ -2992,6 +2997,7 @@ class _Page1FormState extends State<Page1Form> {
                   _telOffController,
                   keyboardType: TextInputType.phone,
                   maxLength: 10,
+                  validator: FormHelper.validateNumberField,
                 ),
               ),
             ],
@@ -3005,6 +3011,7 @@ class _Page1FormState extends State<Page1Form> {
                   _alternateStdCodeController,
                   keyboardType: TextInputType.phone,
                   maxLength: 3,
+                  validator: FormHelper.validateNumberField,
                 ),
               ),
               const SizedBox(width: 8),
@@ -3015,6 +3022,7 @@ class _Page1FormState extends State<Page1Form> {
                   _telResController,
                   keyboardType: TextInputType.phone,
                   maxLength: 10,
+                  validator: FormHelper.validateNumberField,
                 ),
               ),
             ],
@@ -3207,6 +3215,7 @@ class _Page1FormState extends State<Page1Form> {
             _currentPinController,
             keyboardType: TextInputType.number,
             maxLength: 6,
+            validator: FormHelper.validatePinField,
           ),
           const SizedBox(height: 15),
 
@@ -3242,6 +3251,7 @@ class _Page1FormState extends State<Page1Form> {
             _permanentPinController,
             keyboardType: TextInputType.number,
             maxLength: 6,
+            validator: FormHelper.validatePinField,
           ),
           const SizedBox(height: 15),
 
@@ -3277,6 +3287,7 @@ class _Page1FormState extends State<Page1Form> {
             _overseasPinController,
             keyboardType: TextInputType.phone,
             maxLength: 6,
+            validator: FormHelper.validatePinField,
           ),
           const SizedBox(height: 20),
         ],
@@ -3306,6 +3317,7 @@ class _Page1FormState extends State<Page1Form> {
     int maxLines = 1,
     int? maxLength,
     bool isRequired = false,
+    String? Function(String?)? validator,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
@@ -3330,14 +3342,15 @@ class _Page1FormState extends State<Page1Form> {
         keyboardType: keyboardType,
         maxLines: maxLines,
         maxLength: maxLength,
-        validator: isRequired
-            ? (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'This field is required';
-                }
-                return null;
-              }
-            : null,
+        validator: validator ??
+            (isRequired
+                ? (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'This field is required';
+                    }
+                    return null;
+                  }
+                : null),
       ),
     );
   }

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../model/form_data_model.dart';
+import 'form_helper.dart';
 
 class Page3Form extends StatefulWidget {
   final FormDataModel initialData;
@@ -57,6 +58,8 @@ class _Page3FormState extends State<Page3Form> {
   late TextEditingController _atmCardName2ndApplicantController;
   bool _chequeBookYes = false;
   bool _chequeBookNo = false;
+  bool _eStatementRequired = false;
+  bool _eStatementNotRequired = false;
   bool _internetBanking1stApplicantYes = false;
   bool _internetBanking1stApplicantNo = false;
   bool _internetBanking2ndApplicantYes = false;
@@ -1027,11 +1030,11 @@ class _Page3FormState extends State<Page3Form> {
           Row(
             children: [
               Expanded(
-                child: FormHelper.buildTextField('Period (Years)', _modPeriodYearsController, keyboardType: TextInputType.number),
+                child: FormHelper.buildTextField('Period (Years)', _modPeriodYearsController, keyboardType: TextInputType.number, validator: FormHelper.validateNumberField),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: FormHelper.buildTextField('Period (Months)', _modPeriodMonthsController, keyboardType: TextInputType.number),
+                child: FormHelper.buildTextField('Period (Months)', _modPeriodMonthsController, keyboardType: TextInputType.number, validator: FormHelper.validateNumberField),
               ),
             ],
           ),
@@ -1049,7 +1052,7 @@ class _Page3FormState extends State<Page3Form> {
                _buildRDCheckbox('Yearly', _rdYearly, (val) => setState(() { _rdYearly = val!; if(val) _clearRD(4); _notifyChange(); })),
             ],
           ),
-          FormHelper.buildTextField('RD Installment', _rdInstallmentController, keyboardType: TextInputType.number),
+          FormHelper.buildTextField('RD Installment', _rdInstallmentController, keyboardType: TextInputType.number, validator: FormHelper.validateDecimalField),
           FormHelper.buildTextField('Debit Account No', _debitAccountNoController),
 
           const SizedBox(height: 30),
@@ -1058,6 +1061,7 @@ class _Page3FormState extends State<Page3Form> {
             'FD Amount',
             _fdAmountController,
             keyboardType: TextInputType.number,
+            validator: FormHelper.validateDecimalField,
           ),
           const SizedBox(height: 20),
           _buildSectionTitle('Recurring Deposit'),
@@ -1065,6 +1069,7 @@ class _Page3FormState extends State<Page3Form> {
             'RD Installment',
             _rdInstallmentController,
             keyboardType: TextInputType.number,
+            validator: FormHelper.validateDecimalField,
           ),
           _buildTextField('Debit Account No', _debitAccountNoController),
           const SizedBox(height: 20),
@@ -1110,11 +1115,13 @@ class _Page3FormState extends State<Page3Form> {
     TextInputType? keyboardType,
     int maxLines = 1,
     int? maxLength,
+    String? Function(String?)? validator,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextFormField(
         controller: controller,
+        validator: validator,
         decoration: InputDecoration(
           labelText: label.isNotEmpty ? label : null,
           hintText: hint,

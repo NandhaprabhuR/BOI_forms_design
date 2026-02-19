@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../model/form_data_model.dart';
+import 'form_helper.dart';
 
 class Page2Form extends StatefulWidget {
   final FormDataModel initialData;
@@ -613,6 +614,7 @@ class _Page2FormState extends State<Page2Form> {
             _correspondencePinController,
             keyboardType: TextInputType.number,
             maxLength: 6,
+            validator: FormHelper.validatePinField,
           ),
           const SizedBox(height: 15),
 
@@ -640,6 +642,7 @@ class _Page2FormState extends State<Page2Form> {
             _localPinController,
             keyboardType: TextInputType.number,
             maxLength: 6,
+            validator: FormHelper.validatePinField,
           ),
           const SizedBox(height: 15),
 
@@ -667,6 +670,7 @@ class _Page2FormState extends State<Page2Form> {
             _sameAsPinController,
             keyboardType: TextInputType.number,
             maxLength: 6,
+            validator: FormHelper.validatePinField,
           ),
           const SizedBox(height: 20),
 
@@ -799,12 +803,11 @@ class _Page2FormState extends State<Page2Form> {
           Row(
             children: [
               Expanded(
-                child: _buildTextField(
+                child: FormHelper.buildDatePickerField(
+                  context,
                   'Date',
                   _altProofDateController,
-                  hint: 'DDMMYYYY',
-                  maxLength: 8,
-                  keyboardType: TextInputType.number,
+                  validator: FormHelper.validateDateField,
                 ),
               ),
             ],
@@ -927,11 +930,11 @@ class _Page2FormState extends State<Page2Form> {
               ),
               const SizedBox(width: 15),
               Expanded(
-                child: _buildTextField(
+                child: FormHelper.buildDatePickerField(
+                  context,
                   'Date:',
                   _declarationDateController,
-                  hint: 'DD/MM/YYYY',
-                  maxLength: 10,
+                  validator: FormHelper.validateDateField,
                 ),
               ),
             ],
@@ -1317,11 +1320,13 @@ class _Page2FormState extends State<Page2Form> {
     TextInputType? keyboardType,
     int maxLines = 1,
     int? maxLength,
+    String? Function(String?)? validator,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextFormField(
         controller: controller,
+        validator: validator,
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,

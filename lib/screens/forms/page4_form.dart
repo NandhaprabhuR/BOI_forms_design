@@ -484,6 +484,7 @@ class _Page4FormState extends State<Page4Form> {
             'Age (Years)',
             _nomineeAgeController,
             keyboardType: TextInputType.number,
+            validator: FormHelper.validateNumberField,
           ),
           const SizedBox(height: 12),
 
@@ -491,6 +492,7 @@ class _Page4FormState extends State<Page4Form> {
             context,
             'Date of Birth of nominee (in case of minor) DDMMYYYY',
             _nomineeDobController,
+            validator: FormHelper.validateDateField,
           ),
           const SizedBox(height: 12),
 
@@ -510,6 +512,7 @@ class _Page4FormState extends State<Page4Form> {
             'Guardian Age (Years)',
             _guardianAgeController,
             keyboardType: TextInputType.number,
+            validator: FormHelper.validateNumberField,
           ),
           const SizedBox(height: 12),
 
@@ -612,7 +615,7 @@ class _Page4FormState extends State<Page4Form> {
             context,
             'Date (DDMMYYYY)', 
             _witnessDateController,
-            validator: (val) => val!.isEmpty ? 'Required' : null
+            validator: FormHelper.validateDateField,
           ),
           const SizedBox(height: 12),
 
@@ -762,12 +765,14 @@ class _Page4FormState extends State<Page4Form> {
                       context,
                       'Date of Birth of Minor',
                       _minorDobController,
+                      validator: FormHelper.validateDateField,
                     ),
                     const SizedBox(height: 8),
                     FormHelper.buildDatePickerField(
                       context,
                       'Guardian Order Date',
                       _guardianOrderDateController,
+                      validator: FormHelper.validateDateField,
                     ),
                   ],
                 ),
@@ -871,7 +876,12 @@ class _Page4FormState extends State<Page4Form> {
           // Place and Date
           FormHelper.buildTextField('Place:', _declarationPlaceController),
           const SizedBox(height: 12),
-          FormHelper.buildTextField('Date:', _declarationDateController),
+          FormHelper.buildDatePickerField(
+            context,
+            'Date:',
+            _declarationDateController,
+            validator: FormHelper.validateDateField,
+          ),
           const SizedBox(height: 16),
 
           // Declaration Signatures
@@ -941,9 +951,11 @@ class _Page4FormState extends State<Page4Form> {
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
-                FormHelper.buildTextField(
+                FormHelper.buildDatePickerField(
+                  context,
                   'Date: (DDMMYYYY)',
                   _officeOpenAccountDateController,
+                  validator: FormHelper.validateDateField,
                 ),
                 const SizedBox(height: 12),
                 _buildSignatureBox(

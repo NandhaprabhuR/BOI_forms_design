@@ -489,10 +489,11 @@ class _Page7FormState extends State<Page7Form> {
             '2. Date of Birth / Incorporation of declarant',
           ),
           const SizedBox(height: 8),
-          FormHelper.buildTextField(
+          FormHelper.buildDatePickerField(
+            context,
             'Date of Birth (DD/MM/YYYY)',
             _dobController,
-            maxLines: 1,
+            validator: FormHelper.validateDateField,
           ),
           const SizedBox(height: 20),
 
@@ -566,7 +567,9 @@ class _Page7FormState extends State<Page7Form> {
           FormHelper.buildTextField(
             'Pin code',
             _pinCodeController,
-            maxLines: 1,
+            keyboardType: TextInputType.number,
+            maxLength: 6,
+            validator: FormHelper.validatePinField,
           ),
           const SizedBox(height: 20),
 
@@ -576,7 +579,8 @@ class _Page7FormState extends State<Page7Form> {
           FormHelper.buildTextField(
             'Telephone Number (with STD code)',
             _telephoneSTDController,
-            maxLines: 1,
+            keyboardType: TextInputType.phone,
+            validator: FormHelper.validateNumberField,
           ),
           const SizedBox(height: 20),
 
@@ -586,7 +590,9 @@ class _Page7FormState extends State<Page7Form> {
           FormHelper.buildTextField(
             'Mobile Number',
             _mobileNumberController,
-            maxLines: 1,
+            keyboardType: TextInputType.phone,
+            maxLength: 10,
+            validator: FormHelper.validatePhoneField,
           ),
           const SizedBox(height: 20),
 
@@ -596,17 +602,19 @@ class _Page7FormState extends State<Page7Form> {
           FormHelper.buildTextField(
             'Amount of Transaction (Rs.)',
             _transactionAmountController,
-            maxLines: 1,
+            keyboardType: TextInputType.number,
+            validator: FormHelper.validateDecimalField,
           ),
           const SizedBox(height: 20),
 
           // 13. Date of transaction
           FormHelper.buildSectionTitle('13. Date of transaction'),
           const SizedBox(height: 8),
-          FormHelper.buildTextField(
+          FormHelper.buildDatePickerField(
+            context,
             'Date of transaction (DD/MM/YYYY)',
             _transactionDateController,
-            maxLines: 1,
+            validator: FormHelper.validateDateField,
           ),
           const SizedBox(height: 20),
 
@@ -618,7 +626,8 @@ class _Page7FormState extends State<Page7Form> {
           FormHelper.buildTextField(
             'Number of persons involved',
             _jointPersonsCountController,
-            maxLines: 1,
+            keyboardType: TextInputType.number,
+            validator: FormHelper.validateNumberField,
           ),
           const SizedBox(height: 20),
 
@@ -762,10 +771,11 @@ class _Page7FormState extends State<Page7Form> {
           Row(
             children: [
               Expanded(
-                child: FormHelper.buildTextField(
+                child: FormHelper.buildDatePickerField(
+                  context,
                   'Date of Application',
                   _panApplicationDateController,
-                  maxLines: 1,
+                  validator: FormHelper.validateDateField,
                 ),
               ),
               const SizedBox(width: 12),

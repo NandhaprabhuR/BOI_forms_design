@@ -83,8 +83,118 @@ class FormHelper {
           ),
         ),
         keyboardType: TextInputType.datetime,
+        readOnly: true,
       ),
     );
+  }
+
+  // Validation Helpers
+  static String? validateNumberField(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field cannot be empty';
+    }
+    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+      return 'Please enter only numbers';
+    }
+    return null;
+  }
+
+  static String? validateDecimalField(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field cannot be empty';
+    }
+    if (!RegExp(r'^[0-9]+(\.[0-9]{1,2})?$').hasMatch(value)) {
+      return 'Please enter a valid decimal number';
+    }
+    return null;
+  }
+
+  static String? validateTextField(String? value, {int minLength = 1}) {
+    if (value == null || value.isEmpty) {
+      return 'This field cannot be empty';
+    }
+    if (value.length < minLength) {
+      return 'Minimum $minLength characters required';
+    }
+    // Reject special characters except space, hyphen, and apostrophe
+    if (!RegExp(r"^[a-zA-Z\s\-']+$").hasMatch(value)) {
+      return 'Please enter only letters';
+    }
+    return null;
+  }
+
+  static String? validateNameField(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Name cannot be empty';
+    }
+    if (!RegExp(r"^[a-zA-Z\s\-']+$").hasMatch(value)) {
+      return 'Name can only contain letters, spaces, hyphens, and apostrophes';
+    }
+    return null;
+  }
+
+  static String? validateEmailField(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Email cannot be empty';
+    }
+    if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+        .hasMatch(value)) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
+  static String? validatePhoneField(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Phone number cannot be empty';
+    }
+    if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+      return 'Phone number must be exactly 10 digits';
+    }
+    return null;
+  }
+
+  static String? validateDateField(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Date cannot be empty';
+    }
+    // Validate DD/MM/YYYY format
+    if (!RegExp(r'^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/([0-9]{4})$')
+        .hasMatch(value)) {
+      return 'Please enter date in DD/MM/YYYY format';
+    }
+    return null;
+  }
+
+  static String? validatePinField(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'PIN code cannot be empty';
+    }
+    if (!RegExp(r'^[0-9]{6}$').hasMatch(value)) {
+      return 'PIN code must be exactly 6 digits';
+    }
+    return null;
+  }
+
+  static String? validateAccountNumberField(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Account number cannot be empty';
+    }
+    if (!RegExp(r'^[0-9]{9,18}$').hasMatch(value)) {
+      return 'Account number should be between 9 and 18 digits';
+    }
+    return null;
+  }
+
+  static String? validateConditionalField(
+    String? value,
+    bool isRequired, {
+    String fieldName = 'This field',
+  }) {
+    if (isRequired && (value == null || value.isEmpty)) {
+      return '$fieldName is required';
+    }
+    return null;
   }
 
   static void addListeners(

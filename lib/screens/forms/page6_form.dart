@@ -528,10 +528,11 @@ class _Page6FormState extends State<Page6Form> {
           const SizedBox(height: 12),
 
           // Date
-          FormHelper.buildTextField(
+          FormHelper.buildDatePickerField(
+            context,
             'Date',
             _acknowledgementDateController,
-            maxLines: 1,
+            validator: FormHelper.validateDateField,
           ),
           const SizedBox(height: 16),
 
